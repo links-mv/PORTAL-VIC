@@ -32,14 +32,8 @@
             max-width: 450px; 
         }
 
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .logo {
-            max-width: 120px; 
-            height: auto;
-        }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo { max-width: 120px; height: auto; }
         
         h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 22px; }
         h3.saudacao { color: #333; text-align: center; font-size: 24px; margin-bottom: 5px; }
@@ -66,8 +60,6 @@
 
         .item-carrinho { background: var(--cyan-light); padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px;}
         .loading-text { text-align: center; font-size: 12px; color: #888; margin-top: 10px; }
-        
-        .pergunta-mais { text-align: center; font-weight: bold; margin: 20px 0 10px; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -79,13 +71,15 @@
 
     <h2>Portal de EPI - VIC</h2>
 
+    <!-- PASSO 0: INICIAL -->
     <div id="passo0" class="passo ativo">
         <h3 id="texto-saudacao" class="saudacao">Olá!</h3>
         <p class="subtexto">Sistema de requisição de materiais.</p>
         <button id="btn-iniciar" onclick="iniciarPedido()">Iniciar Pedido</button>
-        <div id="status-sinc" class="loading-text">Verificando atualizações...</div>
+        <div id="status-sinc" class="loading-text">Sincronizando dados...</div>
     </div>
 
+    <!-- PASSO 1: LOGIN -->
     <div id="passo1" class="passo">
         <label for="matricula">Matrícula:</label>
         <input type="number" id="matricula" placeholder="Digite sua matrícula">
@@ -93,24 +87,25 @@
         <button onclick="irParaPasso(0)" class="btn-voltar">Voltar</button>
     </div>
 
+    <!-- PASSO 2: SELEÇÃO DE EPI -->
     <div id="passo2" class="passo">
         <h3 id="nome-exibicao" style="text-align:center; color:var(--primary); margin-bottom: 20px;">Olá!</h3>
         
         <label for="epi">Selecione o EPI:</label>
-        <select id="epi" onchange="atualizarDetalhesEPI()">
+        <select id="epi" onchange="atualizarCamposVariaveis()">
             <option value="">Carregando itens...</option>
         </select>
 
-        <!-- VARIAÇÃO 1 -->
-        <div id="area-detalhes-1" style="display:none;">
-            <label id="label-detalhe-1" for="detalhe-item-1">Variação 1:</label>
-            <select id="detalhe-item-1"></select>
+        <!-- VARIAÇÃO 1 (Ex: Sexo) -->
+        <div id="container-var1" style="display:none;">
+            <label id="label-var1" for="select-var1">Variação 1:</label>
+            <select id="select-var1"></select>
         </div>
 
-        <!-- VARIAÇÃO 2 -->
-        <div id="area-detalhes-2" style="display:none;">
-            <label id="label-detalhe-2" for="detalhe-item-2">Variação 2:</label>
-            <select id="detalhe-item-2"></select>
+        <!-- VARIAÇÃO 2 (Ex: Tamanho) -->
+        <div id="container-var2" style="display:none;">
+            <label id="label-var2" for="select-var2">Variação 2:</label>
+            <select id="select-var2"></select>
         </div>
 
         <label for="quantidade">Quantidade:</label>
@@ -120,38 +115,33 @@
         <button onclick="irParaPasso(1)" class="btn-voltar">Sair / Trocar Usuário</button>
     </div>
 
+    <!-- RESUMO / CARRINHO -->
     <div id="passo-carrinho" class="passo">
         <h3 style="text-align:center; color:var(--primary);">Resumo do Pedido</h3>
         <div id="lista-carrinho" style="margin-top:20px;"></div>
-        <div class="pergunta-mais">Deseja adicionar mais algum item?</div>
-        <button onclick="irParaPasso(2)" style="background: var(--cyan-bg); margin-top: 5px;">+ Sim, Adicionar Mais</button>
-        <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Não, Finalizar Pedido</button>
+        <button onclick="irParaPasso(2)" style="background: var(--cyan-bg);">+ Adicionar Outro Item</button>
+        <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Finalizar Pedido</button>
     </div>
 
+    <!-- FINALIZAÇÃO -->
     <div id="passo3" class="passo" style="text-align: center;">
         <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
         <h3 style="color: #28a745;">Pedido Enviado!</h3>
-        <p>Seu número de protocolo é:</p>
+        <p>Número de protocolo:</p>
         <h1 id="num-protocolo" style="color: var(--primary); font-size: 45px; margin: 10px 0;">0000</h1>
-        <button onclick="window.location.reload()">Fazer Novo Pedido</button>
+        <button onclick="window.location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzozhrkGyu9eqI57PLXklaEXAmj-gXx1iAzihIUaj47yjYq_wTMbfZ3VkAdte8m9Hcz0g/exec';
+    // URL DO SEU SCRIPT (Mantenha a mesma que você já usa)
+    const SCRIPT_URL = 'SUA_URL_AQUI'; 
     
     let baseDados = { funcionarios: {}, epis: [] };
     let carrinho = [];
-    let dadosProntos = false;
 
     window.onload = () => {
         definirSaudacao();
-        const cache = localStorage.getItem('cacheVIC');
-        if (cache) {
-            baseDados = JSON.parse(cache);
-            dadosProntos = true;
-            document.getElementById("status-sinc").innerText = "Dados carregados (offline).";
-        }
         sincronizarDados();
     };
 
@@ -166,161 +156,126 @@
     async function sincronizarDados() {
         try {
             const response = await fetch(SCRIPT_URL);
-            const dadosNovos = await response.json();
-            baseDados = dadosNovos;
-            localStorage.setItem('cacheVIC', JSON.stringify(dadosNovos));
-            dadosProntos = true;
-            document.getElementById("status-sinc").innerText = "Sincronizado com sucesso.";
-            const btn = document.getElementById("btn-iniciar");
-            if (btn.disabled) { btn.innerText = "Iniciar Pedido"; btn.disabled = false; }
-        } catch (error) {
-            document.getElementById("status-sinc").innerText = "Aviso: Modo offline ativo.";
+            baseDados = await response.json();
+            document.getElementById("status-sinc").innerText = "Dados prontos.";
+        } catch (e) {
+            document.getElementById("status-sinc").innerText = "Erro ao carregar dados.";
         }
     }
 
-    function iniciarPedido() {
-        if (dadosProntos) irParaPasso(1);
-        else {
-            const btn = document.getElementById("btn-iniciar");
-            btn.innerText = "Sincronizando... Aguarde";
-            btn.disabled = true;
-        }
-    }
-
-    function irParaPasso(num) {
+    function irParaPasso(n) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        const target = typeof num === 'string' ? num : 'passo' + num;
-        document.getElementById(target).classList.add('ativo');
+        const id = (typeof n === 'string') ? n : 'passo' + n;
+        document.getElementById(id).classList.add('ativo');
     }
+
+    function iniciarPedido() { irParaPasso(1); }
 
     function identificarUsuario() {
         const mat = document.getElementById("matricula").value;
         if (baseDados.funcionarios[mat]) {
             document.getElementById("nome-exibicao").innerText = "Olá, " + baseDados.funcionarios[mat];
-            popularListaEPIs();
+            popularEPIs();
             irParaPasso(2);
         } else {
             alert("Matrícula não encontrada.");
         }
     }
 
-    function popularListaEPIs() {
-        const select = document.getElementById("epi");
-        select.innerHTML = '<option value="">Selecione um item...</option>';
-        baseDados.epis.forEach(item => {
-            select.innerHTML += `<option value="${item.nome}">${item.nome}</option>`;
+    function popularEPIs() {
+        const sel = document.getElementById("epi");
+        sel.innerHTML = '<option value="">Selecione...</option>';
+        baseDados.epis.forEach(e => {
+            sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`;
         });
     }
 
-    function atualizarDetalhesEPI() {
-        const epiSelecionado = document.getElementById("epi").value;
-        const area1 = document.getElementById("area-detalhes-1");
-        const area2 = document.getElementById("area-detalhes-2");
-        const selectDet1 = document.getElementById("detalhe-item-1");
-        const selectDet2 = document.getElementById("detalhe-item-2");
-        const labelDet1 = document.getElementById("label-detalhe-1");
-        const labelDet2 = document.getElementById("label-detalhe-2");
+    // A MÁGICA PARA AS NOVAS VARIÁVEIS ACONTECE AQUI
+    function atualizarCamposVariaveis() {
+        const nomeEpi = document.getElementById("epi").value;
+        const epi = baseDados.epis.find(x => x.nome === nomeEpi);
+        
+        const c1 = document.getElementById("container-var1");
+        const c2 = document.getElementById("container-var2");
+        const s1 = document.getElementById("select-var1");
+        const s2 = document.getElementById("select-var2");
+        const l1 = document.getElementById("label-var1");
+        const l2 = document.getElementById("label-var2");
 
-        const dados = baseDados.epis.find(e => e.nome === epiSelecionado);
+        if (epi) {
+            // Ajusta Variação 1
+            if (epi.label && epi.opcoes.length > 0) {
+                c1.style.display = "block";
+                l1.innerText = epi.label + ":";
+                s1.innerHTML = epi.opcoes.map(o => `<option value="${o}">${o}</option>`).join("");
+            } else { c1.style.display = "none"; s1.innerHTML = ""; }
 
-        if (dados) {
-            // Lógica Variação 1
-            if (dados.label && dados.opcoes && dados.opcoes.length > 0) {
-                area1.style.display = "block";
-                labelDet1.innerText = dados.label + ":";
-                selectDet1.innerHTML = dados.opcoes.map(opt => `<option value="${opt}">${opt}</option>`).join("");
-            } else {
-                area1.style.display = "none";
-                selectDet1.innerHTML = "";
-            }
-
-            // Lógica Variação 2
-            if (dados.label2 && dados.opcoes2 && dados.opcoes2.length > 0) {
-                area2.style.display = "block";
-                labelDet2.innerText = dados.label2 + ":";
-                selectDet2.innerHTML = dados.opcoes2.map(opt => `<option value="${opt}">${opt}</option>`).join("");
-            } else {
-                area2.style.display = "none";
-                selectDet2.innerHTML = "";
-            }
-        } else {
-            area1.style.display = "none";
-            area2.style.display = "none";
+            // Ajusta Variação 2
+            if (epi.label2 && epi.opcoes2.length > 0) {
+                c2.style.display = "block";
+                l2.innerText = epi.label2 + ":";
+                s2.innerHTML = epi.opcoes2.map(o => `<option value="${o}">${o}</option>`).join("");
+            } else { c2.style.display = "none"; s2.innerHTML = ""; }
         }
     }
 
     function adicionarAoCarrinho() {
         const epi = document.getElementById("epi").value;
-        const det1 = document.getElementById("detalhe-item-1").value || "";
-        const det2 = document.getElementById("detalhe-item-2").value || "";
+        if (!epi) return alert("Selecione um item.");
+
+        const v1 = document.getElementById("select-var1").value || "";
+        const v2 = document.getElementById("select-var2").value || "";
         const qtd = document.getElementById("quantidade").value;
 
-        if (!epi) return alert("Selecione um EPI primeiro.");
+        // Formata os detalhes: "Masculino / G"
+        let detalhes = v1;
+        if (v1 && v2) detalhes += " / " + v2;
+        else if (v2) detalhes = v2;
 
-        // Junta as variações para o resumo
-        let descricaoDet = det1;
-        if (det1 && det2) descricaoDet += " / " + det2;
-        else if (det2) descricaoDet = det2;
-
-        carrinho.push({ epi, det: descricaoDet, det1, det2, qtd });
+        carrinho.push({ epi, detalhes, qtd });
         renderizarCarrinho();
-        
-        document.getElementById("epi").value = "";
-        document.getElementById("area-detalhes-1").style.display = "none";
-        document.getElementById("area-detalhes-2").style.display = "none";
-        document.getElementById("quantidade").value = "1";
-        
         irParaPasso('passo-carrinho');
     }
 
     function renderizarCarrinho() {
-        const div = document.getElementById("lista-carrinho");
-        div.innerHTML = "";
-        carrinho.forEach((item) => {
-            div.innerHTML += `
-                <div class="item-carrinho">
-                    <strong>${item.qtd}x</strong> ${item.epi} <br>
-                    <small>${item.det}</small>
-                </div>`;
-        });
+        const lista = document.getElementById("lista-carrinho");
+        lista.innerHTML = carrinho.map(i => `
+            <div class="item-carrinho">
+                <strong>${i.qtd}x</strong> ${i.epi} <br>
+                <small>${i.detalhes}</small>
+            </div>
+        `).join("");
     }
 
     async function enviarTudo() {
         const btn = document.getElementById("btn-finalizar-pedido");
-        btn.innerText = "Processando... Aguarde";
+        btn.innerText = "Enviando...";
         btn.disabled = true;
 
-        let ultimoNum = localStorage.getItem('protocoloVIC') || 100;
-        let novoNum = parseInt(ultimoNum) + 1;
-        localStorage.setItem('protocoloVIC', novoNum);
-        let formatado = novoNum.toString().padStart(4, '0');
-
-        const nomeFunc = document.getElementById("nome-exibicao").innerText.replace("Olá, ", "");
+        const protocolo = Math.floor(1000 + Math.random() * 9000);
+        const nome = document.getElementById("nome-exibicao").innerText.replace("Olá, ", "");
 
         try {
             for (let item of carrinho) {
-                const dados = {
-                    protocolo: formatado,
-                    funcionario: nomeFunc,
-                    epi: item.epi,
-                    detalhes: item.det, // Envia a descrição combinada
-                    quantidade: item.qtd
-                };
-
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(dados)
+                    body: JSON.stringify({
+                        protocolo: protocolo,
+                        funcionario: nome,
+                        epi: item.epi,
+                        detalhes: item.detalhes,
+                        quantidade: item.qtd
+                    })
                 });
             }
-            document.getElementById("num-protocolo").innerText = formatado;
+            document.getElementById("num-protocolo").innerText = protocolo;
             irParaPasso(3);
         } catch (e) {
-            alert("Erro ao enviar. Tente novamente.");
-            btn.innerText = "Tentar Novamente";
+            alert("Erro ao enviar pedido.");
             btn.disabled = false;
+            btn.innerText = "Finalizar Pedido";
         }
     }
 </script>
-
 </body>
 </html>
