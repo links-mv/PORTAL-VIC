@@ -3,152 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de EPI - VIC</title>
+    <title>Portal EPI - VIC</title>
     <style>
         :root { --primary: #004a99; --cyan: #00bcd4; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--cyan), #008ba3); margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: var(--white); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 450px; }
-        h2 { color: var(--primary); text-align: center; margin: 0 0 20px 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #e0f7fa; margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { color: var(--primary); text-align: center; margin-top: 0; }
         .passo { display: none; }
         .passo.ativo { display: block; }
-        label { display: block; margin: 12px 0 5px; font-weight: bold; font-size: 14px; }
-        input, select, button { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-add { background: var(--cyan); }
-        .btn-finish { background: #28a745; margin-top: 20px; }
-        .carrinho-fixo { margin-top: 20px; border-top: 2px dashed #ddd; padding-top: 15px; }
-        .item-c { background: #f0faff; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid var(--primary); font-size: 13px; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; }
+        input, select, button { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        button:hover { opacity: 0.9; }
+        .btn-add { background: var(--cyan); margin-top: 20px; }
+        .btn-enviar { background: #28a745; margin-top: 15px; }
+        .item-carrinho { background: #f1f8e9; border-left: 5px solid #28a745; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 14px; }
+        .resumo-box { margin-top: 25px; border-top: 2px solid #eee; padding-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Portal de EPI - VIC</h2>
+    <h2>Portal EPI - VIC</h2>
 
+    <!-- PASSO 0: CARREGAMENTO -->
     <div id="passo0" class="passo ativo">
-        <button onclick="irParaPasso(1)">Iniciar Pedido</button>
-        <div id="status" style="text-align:center; font-size:12px; margin-top:10px;">Conectando ao banco...</div>
+        <p style="text-align:center;">Sincronizando dados...</p>
+        <div id="status-msg" style="text-align:center; font-weight:bold; color: var(--primary);">Aguarde...</div>
     </div>
 
+    <!-- PASSO 1: LOGIN -->
     <div id="passo1" class="passo">
-        <label>Matrícula:</label>
-        <input type="tel" id="matricula">
-        <button onclick="login()">Acessar</button>
+        <label>Sua Matrícula:</label>
+        <input type="tel" id="matricula" placeholder="Ex: 12345">
+        <button onclick="fazerLogin()">Entrar</button>
     </div>
 
+    <!-- PASSO 2: SELEÇÃO -->
     <div id="passo2" class="passo">
-        <h3 id="user-display" style="text-align:center; color:var(--primary);"></h3>
+        <p id="boas-vindas" style="text-align:center; font-weight:bold;"></p>
         
-        <label>Selecione o EPI:</label>
-        <select id="epi" onchange="mostrarVars()"><option value="">Carregando...</option></select>
-        
-        <div id="v1-box" style="display:none;"><label id="l1"></label><select id="s1"></select></div>
-        <div id="v2-box" style="display:none;"><label id="l2"></label><select id="s2"></select></div>
-        
-        <button class="btn-add" onclick="add()">Adicionar à Lista</button>
+        <label>Escolha o EPI:</label>
+        <select id="epi-select" onchange="ajustarCampos()"></select>
 
-        <div id="area-carrinho" class="carrinho-fixo" style="display:none;">
-            <div style="font-weight:bold; font-size:12px; color:#666; margin-bottom:10px;">ITENS NO PEDIDO:</div>
-            <div id="lista-carrinho"></div>
-            <button class="btn-finish" id="btn-enviar" onclick="enviar()">Finalizar Pedido</button>
+        <div id="campos-extras"></div>
+
+        <button class="btn-add" onclick="adicionarItem()">+ Adicionar ao Pedido</button>
+
+        <div id="resumo-container" class="resumo-box" style="display:none;">
+            <p style="font-weight:bold; font-size:12px; color:#666;">ITENS NO PEDIDO:</p>
+            <div id="lista-itens"></div>
+            <button class="btn-enviar" id="btn-final" onclick="finalizarTudo()">Finalizar e Enviar</button>
         </div>
     </div>
 
+    <!-- PASSO 3: SUCESSO -->
     <div id="passo3" class="passo" style="text-align:center;">
-        <div style="font-size:50px;">✅</div>
-        <h3>Pedido Concluído!</h3>
-        <p>Protocolo: <strong id="prot-txt" style="font-size:24px; color:var(--primary);">...</strong></p>
-        <button onclick="location.reload()">Novo Pedido</button>
+        <span style="font-size: 50px;">✅</span>
+        <h3>Enviado com Sucesso!</h3>
+        <p>Anote seu Protocolo:</p>
+        <div id="protocolo-final" style="font-size: 32px; font-weight: bold; color: var(--primary);">0000</div>
+        <button onclick="location.reload()" style="background:#666;">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = 'COLE_AQUI_SEU_LINK_DE_IMPLANTAÇÃO';
+    // --- COLOQUE SEU LINK ABAIXO ---
+    const SCRIPT_URL = 'COLE_AQUI_SEU_LINK_DO_GOOGLE_SCRIPT';
     
-    let db = { funcionarios: {}, epis: [] };
-    let cart = [];
+    let dadosBanco = { funcionarios: {}, epis: [] };
+    let carrinho = [];
 
     window.onload = async () => {
+        const msg = document.getElementById("status-msg");
         try {
-            const r = await fetch(SCRIPT_URL);
-            db = await r.json();
-            document.getElementById("status").innerText = "✅ Sistema Pronto";
-            const s = document.getElementById("epi");
-            s.innerHTML = '<option value="">Selecione...</option>';
-            db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-        } catch(e) { document.getElementById("status").innerText = "❌ Erro de Conexão"; }
+            const resp = await fetch(SCRIPT_URL);
+            dadosBanco = await resp.json();
+            msg.innerText = "✅ Conectado!";
+            setTimeout(() => {
+                popularEpis();
+                irPara(1);
+            }, 800);
+        } catch (e) {
+            msg.innerText = "❌ Erro de conexão. Verifique o link.";
+        }
     };
 
-    function irParaPasso(n) {
-        document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        document.getElementById('passo'+n).classList.add('ativo');
+    function irPara(p) {
+        document.querySelectorAll('.passo').forEach(div => div.classList.remove('ativo'));
+        document.getElementById('passo' + p).classList.add('ativo');
     }
 
-    function login() {
-        const m = document.getElementById("matricula").value.trim();
-        if(db.funcionarios[m]) {
-            document.getElementById("user-display").innerText = "Olá, " + db.funcionarios[m];
-            irParaPasso(2);
-        } else { alert("Matrícula não encontrada."); }
+    function popularEpis() {
+        const sel = document.getElementById("epi-select");
+        sel.innerHTML = '<option value="">Selecione...</option>';
+        dadosBanco.epis.forEach(item => {
+            sel.innerHTML += `<option value="${item.nome}">${item.nome}</option>`;
+        });
     }
 
-    function mostrarVars() {
-        const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
-        const b1 = document.getElementById("v1-box"), b2 = document.getElementById("v2-box");
-        if(e) {
-            b1.style.display = e.label ? "block" : "none";
-            if(e.label) {
-                document.getElementById("l1").innerText = e.label;
-                document.getElementById("s1").innerHTML = e.opcoes.map(o => `<option value="${o}">${o}</option>`).join("");
+    function fazerLogin() {
+        const mat = document.getElementById("matricula").value.trim();
+        if (dadosBanco.funcionarios[mat]) {
+            document.getElementById("boas-vindas").innerText = "Olá, " + dadosBanco.funcionarios[mat];
+            irPara(2);
+        } else {
+            alert("Matrícula não encontrada!");
+        }
+    }
+
+    function ajustarCampos() {
+        const epiNome = document.getElementById("epi-select").value;
+        const epi = dadosBanco.epis.find(x => x.nome === epiNome);
+        const box = document.getElementById("campos-extras");
+        box.innerHTML = "";
+
+        if (epi) {
+            if (epi.label && epi.opcoes.length > 0) {
+                box.innerHTML += `<label>${epi.label}</label><select id="extra1">${epi.opcoes.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
             }
-            b2.style.display = e.label2 ? "block" : "none";
-            if(e.label2) {
-                document.getElementById("l2").innerText = e.label2;
-                document.getElementById("s2").innerHTML = e.opcoes2.map(o => `<option value="${o}">${o}</option>`).join("");
+            if (epi.label2 && epi.opcoes2.length > 0) {
+                box.innerHTML += `<label>${epi.label2}</label><select id="extra2">${epi.opcoes2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
             }
         }
     }
 
-    function add() {
-        const e = document.getElementById("epi").value;
-        if(!e) return alert("Selecione um EPI.");
-        const d1 = document.getElementById("s1").value || "";
-        const d2 = document.getElementById("s2").value || "";
-        cart.push({ epi: e, det: d1 + (d1 && d2 ? " / " : "") + d2 });
+    function adicionarItem() {
+        const nome = document.getElementById("epi-select").value;
+        if (!nome) return alert("Escolha um EPI!");
+
+        const ex1 = document.getElementById("extra1") ? document.getElementById("extra1").value : "";
+        const ex2 = document.getElementById("extra2") ? document.getElementById("extra2").value : "";
+        const det = (ex1 + " " + ex2).trim();
+
+        carrinho.push({ epi: nome, detalhes: det });
         
-        document.getElementById("epi").value = "";
-        document.getElementById("v1-box").style.display = "none";
-        document.getElementById("v2-box").style.display = "none";
+        // Reset campos
+        document.getElementById("epi-select").value = "";
+        document.getElementById("campos-extras").innerHTML = "";
         
-        document.getElementById("area-carrinho").style.display = "block";
-        document.getElementById("lista-carrinho").innerHTML = cart.map(i => `<div class="item-c"><b>${i.epi}</b><br><small>${i.det}</small></div>`).join("");
+        atualizarLista();
     }
 
-    async function enviar() {
-        const btn = document.getElementById("btn-enviar");
-        btn.innerText = "Salvando..."; btn.disabled = true;
-        const nome = document.getElementById("user-display").innerText.replace("Olá, ", "");
-        
-        irParaPasso(3);
+    function atualizarLista() {
+        const container = document.getElementById("resumo-container");
+        const lista = document.getElementById("lista-itens");
+        container.style.display = "block";
+        lista.innerHTML = carrinho.map(i => `<div class="item-carrinho"><b>${i.epi}</b><br>${i.detalhes}</div>`).join('');
+    }
+
+    async function finalizarTudo() {
+        const btn = document.getElementById("btn-final");
+        btn.innerText = "Enviando... Aguarde.";
+        btn.disabled = true;
+
+        const func = document.getElementById("boas-vindas").innerText.replace("Olá, ", "");
+        let ultimoProt = "0000";
 
         try {
-            let pFinal = "";
-            for(let i of cart) {
-                const resp = await fetch(SCRIPT_URL, { 
+            for (const item of carrinho) {
+                const r = await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Força o envio mesmo com restrições CORS
-                    body: JSON.stringify({ funcionario: nome, epi: i.epi, detalhes: i.det })
+                    mode: 'no-cors', // Garante o envio sem erro de segurança
+                    body: JSON.stringify({
+                        funcionario: func,
+                        epi: item.epi,
+                        detalhes: item.detalhes
+                    })
                 });
             }
-            // Como usamos no-cors, o navegador não lê a resposta. 
-            // Vamos apenas recarregar o dado de protocolo do servidor para mostrar.
-            const r2 = await fetch(SCRIPT_URL);
-            const d2 = await r2.json();
-            // Pegamos o último protocolo gravado (o que acabamos de gerar - 1)
-            document.getElementById("prot-txt").innerText = "Enviado com Sucesso";
-        } catch(e) {
-            alert("Erro crítico ao salvar.");
-            location.reload();
+            // Como usamos no-cors, simulamos o protocolo ou buscamos o mais recente
+            document.getElementById("protocolo-final").innerText = "CONCLUÍDO";
+            irPara(3);
+        } catch (e) {
+            alert("Erro ao enviar. Tente novamente.");
+            btn.disabled = false;
         }
     }
 </script>
