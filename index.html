@@ -5,176 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal EPI - VLI</title>
     <style>
-        :root { --primary: #004a99; --cyan: #00bcd4; --white: #ffffff; }
+        :root { --primary: #004a99; --cyan: #00bcd4; }
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: linear-gradient(135deg, #004a99 0%, #00bcd4 100%);
+            font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--cyan) 100%);
             margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
         .container { 
-            background: rgba(255, 255, 255, 0.98); padding: 30px; border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 420px; 
+            background: #fff; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            width: 100%; max-width: 380px; text-align: center;
         }
-        .logo-header { text-align: center; margin-bottom: 25px; }
-        .logo-header img { max-width: 180px; height: auto; }
-        
-        h2 { color: var(--primary); text-align: center; margin: 0 0 20px; font-size: 20px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .logo { max-width: 160px; margin-bottom: 20px; }
+        h2 { color: var(--primary); font-size: 18px; text-transform: uppercase; margin-bottom: 20px; }
         .passo { display: none; }
-        .passo.ativo { display: block; animation: slideUp 0.4s ease; }
-        
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #333; font-size: 14px; }
-        input, select, button { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 12px; font-size: 16px; box-sizing: border-box; }
-        
-        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        button:active { transform: scale(0.97); }
-        
-        .btn-add { background: var(--cyan); margin-top: 20px; color: #004a99; }
+        .passo.ativo { display: block; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; text-align: left; font-size: 14px; }
+        input, select, button { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        button { background: var(--primary); color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-add { background: var(--cyan); color: #004a99; margin-top: 15px; }
         .btn-enviar { background: #28a745; margin-top: 15px; }
-        
-        .item-card { background: #f8fcff; border-left: 6px solid var(--primary); padding: 12px; margin-top: 10px; border-radius: 10px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .lista-carrinho { margin-top: 25px; border-top: 2px dashed #ddd; padding-top: 15px; }
-        .prot-info { background: #f0f0f0; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #666; display: inline-block; margin-bottom: 15px; }
+        .card { background: #f9f9f9; border-left: 5px solid var(--primary); padding: 10px; margin-top: 8px; text-align: left; font-size: 14px; }
+        .carrinho { margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="logo-header">
-        <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" alt="Logo VLI">
-    </div>
+    <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" class="logo">
     
-    <h2>Solicitação de EPI</h2>
-
-    <!-- Carregamento -->
+    <!-- Tela 0: Início -->
     <div id="p0" class="passo ativo">
-        <p style="text-align:center; color:#666;">Buscando tabelas e funcionários...</p>
+        <h2>Portal de EPI</h2>
+        <p style="color:#666; font-size: 14px;">Bem-vindo ao sistema de solicitações.</p>
+        <button onclick="iniciar()">Clique para Iniciar</button>
     </div>
 
-    <!-- Login -->
+    <!-- Tela 1: Login -->
     <div id="p1" class="passo">
         <label>Sua Matrícula:</label>
-        <input type="tel" id="mat-input" placeholder="Ex: 102030">
-        <button onclick="fazerLogin()">Acessar Portal</button>
+        <input type="tel" id="mat" placeholder="Digite o número">
+        <button onclick="logar()">Entrar</button>
     </div>
 
-    <!-- Seleção -->
+    <!-- Tela 2: Seleção -->
     <div id="p2" class="passo">
-        <div id="prot-tag" class="prot-info"></div>
-        <p id="user-display" style="font-weight:bold; color: var(--primary); margin: 0 0 15px;"></p>
-        
-        <label>Selecione o Material:</label>
-        <select id="epi-sel" onchange="mostrarExtras()"></select>
-        <div id="extras-box"></div>
-
-        <button class="btn-add" onclick="colocarNoPedido()">+ Adicionar ao Pedido</button>
-
-        <div id="area-pedido" class="lista-carrinho" style="display:none;">
-            <p style="font-size:11px; font-weight:bold; color:#888; margin-bottom: 10px;">ITENS SELECIONADOS:</p>
-            <div id="corpo-lista"></div>
-            <button class="btn-enviar" id="btn-final" onclick="salvarTudo()">Finalizar Pedido</button>
+        <p id="user" style="font-weight:bold; color:var(--primary);"></p>
+        <label>Item:</label>
+        <select id="epi" onchange="render()"></select>
+        <div id="ext"></div>
+        <button class="btn-add" onclick="add()">+ Adicionar Item</button>
+        <div id="cart-box" class="carrinho" style="display:none;">
+            <div id="lista"></div>
+            <button class="btn-enviar" id="btn-env" onclick="env()">Enviar Pedido</button>
         </div>
     </div>
 
-    <!-- Concluído -->
-    <div id="p3" class="passo" style="text-align:center;">
-        <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
-        <h3 style="color: #28a745;">Pedido Enviado!</h3>
-        <p id="resumo-final" style="color:#666;"></p>
-        <button onclick="location.reload()" style="background:#555;">Novo Pedido</button>
+    <!-- Tela 3: Fim -->
+    <div id="p3" class="passo">
+        <div style="font-size: 50px;">✅</div>
+        <h3>Pedido Enviado!</h3>
+        <p style="color:#666;">Seus itens foram registrados com sucesso na planilha.</p>
+        <button onclick="location.reload()" style="background:#666;">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLPASIT6clTTipjS804v_MhdAqURqGQ0y-zFJ6sXLMzmFmEFrV68sUpOzQp_z0nQcXhQ/exec';
-    
-    let db = { funcionarios: {}, epis: [] };
-    let cart = [];
-    let idUnico = "";
+    const URL = 'https://script.google.com/macros/s/AKfycbzLPASIT6clTTipjS804v_MhdAqURqGQ0y-zFJ6sXLMzmFmEFrV68sUpOzQp_z0nQcXhQ/exec';
+    let db = { funcionarios: {}, epis: [] }, cart = [], prot = "";
 
-    window.onload = async () => {
-        try {
-            const r = await fetch(SCRIPT_URL);
-            db = await r.json();
-            const s = document.getElementById("epi-sel");
-            s.innerHTML = '<option value="">Selecione...</option>';
-            db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            mudar(1);
-        } catch (e) {
-            alert("Erro de conexão com o banco VLI.");
-        }
-    };
+    // Inicia o carregamento silencioso assim que a página abre
+    const load = fetch(URL).then(r => r.json()).then(d => db = d);
 
-    function mudar(n) {
+    function ir(n) {
         document.querySelectorAll('.passo').forEach(d => d.classList.remove('ativo'));
         document.getElementById('p' + n).classList.add('ativo');
     }
 
-    function gerarID() {
-        const d = new Date();
-        return "VLI-" + d.getDate() + (d.getMonth()+1) + d.getHours() + d.getMinutes() + d.getSeconds();
+    async function iniciar() {
+        const btn = document.querySelector('#p0 button');
+        btn.innerText = "Carregando...";
+        await load; // Espera o fetch terminar se ainda não terminou
+        const s = document.getElementById("epi");
+        s.innerHTML = '<option value="">Selecione...</option>';
+        db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+        ir(1);
     }
 
-    function fazerLogin() {
-        const m = document.getElementById("mat-input").value.trim();
+    function logar() {
+        const m = document.getElementById("mat").value.trim();
         if (db.funcionarios[m]) {
-            idUnico = gerarID();
-            document.getElementById("user-display").innerText = "Colaborador: " + db.funcionarios[m];
-            document.getElementById("prot-tag").innerText = "PEDIDO: " + idUnico;
-            mudar(2);
-        } else { alert("Matrícula não encontrada."); }
+            const d = new Date();
+            prot = `VLI-${d.getDate()}${d.getMonth()+1}-${d.getHours()}${d.getMinutes()}${d.getSeconds()}`;
+            document.getElementById("user").innerText = db.funcionarios[m];
+            ir(2);
+        } else alert("Matrícula não encontrada.");
     }
 
-    function mostrarExtras() {
-        const e = db.epis.find(x => x.nome === document.getElementById("epi-sel").value);
-        const b = document.getElementById("extras-box");
-        b.innerHTML = "";
+    function render() {
+        const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
+        const x = document.getElementById("ext"); x.innerHTML = "";
         if (e) {
-            if (e.label) b.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
-            if (e.label2) b.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+            if (e.label) x.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+            if (e.label2) x.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
         }
     }
 
-    function colocarNoPedido() {
-        const n = document.getElementById("epi-sel").value;
-        if (!n) return alert("Escolha um material.");
-        const v1 = document.getElementById("v1") ? document.getElementById("v1").value : "";
-        const v2 = document.getElementById("v2") ? document.getElementById("v2").value : "";
-        
-        cart.push({ epi: n, det: (v1 + " " + v2).trim() });
-        
-        document.getElementById("area-pedido").style.display = "block";
-        document.getElementById("corpo-lista").innerHTML = cart.map(i => `<div class="item-card"><b>${i.epi}</b><br><small>${i.det}</small></div>`).join('');
-        
-        document.getElementById("epi-sel").value = "";
-        document.getElementById("extras-box").innerHTML = "";
+    function add() {
+        const n = document.getElementById("epi").value;
+        if (!n) return;
+        const v1 = document.getElementById("v1")?.value || "", v2 = document.getElementById("v2")?.value || "";
+        cart.push({ n, d: (v1 + " " + v2).trim() });
+        document.getElementById("cart-box").style.display = "block";
+        document.getElementById("lista").innerHTML = cart.map(i => `<div class="card"><b>${i.n}</b><br>${i.d}</div>`).join('');
+        document.getElementById("epi").value = ""; document.getElementById("ext").innerHTML = "";
     }
 
-    async function salvarTudo() {
-        const btn = document.getElementById("btn-final");
-        btn.innerText = "Salvando..."; btn.disabled = true;
-        const nome = document.getElementById("user-display").innerText.replace("Colaborador: ", "");
-
-        try {
-            for (const i of cart) {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ 
-                        protocolo: idUnico, 
-                        funcionario: nome, 
-                        epi: i.epi, 
-                        detalhes: i.det 
-                    })
-                });
-            }
-            document.getElementById("resumo-final").innerText = "Pedido " + idUnico + " gravado na planilha.";
-            mudar(3);
-        } catch (e) {
-            alert("Erro ao salvar.");
-            btn.disabled = false;
+    async function env() {
+        const b = document.getElementById("btn-env"); b.innerText = "Enviando..."; b.disabled = true;
+        const u = document.getElementById("user").innerText;
+        for (const i of cart) {
+            await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ protocolo: prot, funcionario: u, epi: i.n, detalhes: i.d }) });
         }
+        ir(3);
     }
 </script>
 </body>
