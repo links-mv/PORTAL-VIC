@@ -57,34 +57,30 @@
     <div id="passo-resumo" class="passo">
         <h3 style="text-align:center;">Itens Selecionados</h3>
         <div id="lista"></div>
-        <button onclick="resetarEirPara2()" style="background:var(--cyan)">+ Adicionar Outro EPI</button>
+        <button onclick="resetarEirPara2()" style="background:var(--cyan)">+ Outro EPI</button>
         <button id="btn-final" onclick="enviar()" style="background:#28a745">Finalizar e Enviar</button>
     </div>
 
     <div id="passo3" class="passo" style="text-align:center;">
         <div style="font-size:50px;">✅</div>
         <h3>Pedido Concluído!</h3>
-        <p>Seu protocolo é: <strong id="prot-txt" style="font-size:24px; color:var(--primary);">0001</strong></p>
+        <p>Seu protocolo é: <strong id="prot-txt" style="font-size:24px; color:var(--primary);">Aguarde...</strong></p>
         <button onclick="location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    // Link do seu script
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCNIHNRJxEORY_yekUlnFBlZLCDpHFe21EFKNLgWR74NHXVQpRgJHYBrvvdI9OuuZMg/exec';
     
-    let db = { funcionarios: {}, epis: [], proximoProtocolo: "0001" };
+    let db = { funcionarios: {}, epis: [] };
     let cart = [];
 
     window.onload = async () => {
         try {
             const r = await fetch(SCRIPT_URL);
-            const data = await r.json();
-            if (data.proximoProtocolo) {
-                db = data;
-                document.getElementById("status-sinc").innerText = "✅ Sistema Pronto";
-                popEpi();
-            }
+            db = await r.json();
+            document.getElementById("status-sinc").innerText = "✅ Sistema Pronto";
+            popEpi();
         } catch(e) { document.getElementById("status-sinc").innerText = "❌ Erro de Conexão"; }
     };
 
@@ -104,7 +100,7 @@
     function popEpi() {
         const s = document.getElementById("epi");
         s.innerHTML = '<option value="">Selecione o material...</option>';
-        db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+        if(db.epis) db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
     }
 
     function mostrarVars() {
@@ -148,29 +144,28 @@
 
     async function enviar() {
         const btn = document.getElementById("btn-final");
-        btn.innerText = "Gravando..."; btn.disabled = true;
+        btn.innerText = "Finalizando..."; btn.disabled = true;
         const nome = document.getElementById("user-display").innerText.replace("Olá, ", "");
-        const protocoloAtual = db.proximoProtocolo;
         
+        irParaPasso(3); // Vai para a tela final de "Aguarde"
+
         try {
+            let ultimoProt = "";
             for(let i of cart) {
-                await fetch(SCRIPT_URL, { 
+                const response = await fetch(SCRIPT_URL, { 
                     method: 'POST', 
-                    mode: 'no-cors',
                     body: JSON.stringify({ 
-                        protocolo: protocoloAtual, 
                         funcionario: nome, 
                         epi: i.epi, 
                         detalhes: i.det
                     }) 
                 });
+                ultimoProt = await response.text();
             }
-            document.getElementById("prot-txt").innerText = protocoloAtual;
-            irParaPasso(3);
+            document.getElementById("prot-txt").innerText = ultimoProt;
         } catch(e) { 
             alert("Erro ao salvar."); 
-            btn.disabled = false; 
-            btn.innerText = "Finalizar e Enviar"; 
+            location.reload();
         }
     }
 </script>
