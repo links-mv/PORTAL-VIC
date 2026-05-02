@@ -44,35 +44,32 @@
 
     <div id="passo2" class="passo">
         <h3 id="user-display" style="text-align:center; color:var(--primary);"></h3>
-        <label>EPI:</label>
+        <label>Selecione o EPI:</label>
         <select id="epi" onchange="mostrarVars()"><option value="">Carregando...</option></select>
         
         <div id="v1-box" style="display:none;"><label id="l1"></label><select id="s1"></select></div>
         <div id="v2-box" style="display:none;"><label id="l2"></label><select id="s2"></select></div>
         
-        <label>Quantidade:</label>
-        <input type="number" id="qtd" value="1" min="1">
-        
-        <button onclick="add()" style="background:var(--cyan)">Adicionar Item</button>
+        <button onclick="add()" style="background:var(--cyan)">Adicionar ao Pedido</button>
+        <button onclick="location.reload()" class="btn-voltar">Sair</button>
     </div>
 
     <div id="passo-resumo" class="passo">
-        <h3 style="text-align:center;">Resumo</h3>
+        <h3 style="text-align:center;">Itens Selecionados</h3>
         <div id="lista"></div>
-        <button onclick="resetarEirPara2()" style="background:var(--cyan)">+ Outro Item</button>
-        <button id="btn-final" onclick="enviar()" style="background:#28a745">Finalizar Pedido</button>
+        <button onclick="resetarEirPara2()" style="background:var(--cyan)">+ Adicionar Outro EPI</button>
+        <button id="btn-final" onclick="enviar()" style="background:#28a745">Finalizar e Enviar</button>
     </div>
 
     <div id="passo3" class="passo" style="text-align:center;">
         <div style="font-size:50px;">✅</div>
-        <h3>Pedido Enviado!</h3>
-        <p>Protocolo: <strong id="prot-txt" style="font-size:24px; color:var(--primary);"></strong></p>
+        <h3>Pedido Concluído!</h3>
+        <p>Seu protocolo é: <strong id="prot-txt" style="font-size:24px; color:var(--primary);"></strong></p>
         <button onclick="location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    // URL DO SEU SCRIPT
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCNIHNRJxEORY_yekUlnFBlZLCDpHFe21EFKNLgWR74NHXVQpRgJHYBrvvdI9OuuZMg/exec';
     
     let db = { funcionarios: {}, epis: [], proximoProtocolo: "0001" };
@@ -82,7 +79,7 @@
         try {
             const r = await fetch(SCRIPT_URL);
             db = await r.json();
-            document.getElementById("status-sinc").innerText = "✅ Banco Conectado";
+            document.getElementById("status-sinc").innerText = "✅ Sistema Pronto";
             popEpi();
         } catch(e) { document.getElementById("status-sinc").innerText = "❌ Erro de Conexão"; }
     };
@@ -102,7 +99,7 @@
 
     function popEpi() {
         const s = document.getElementById("epi");
-        s.innerHTML = '<option value="">Selecione...</option>';
+        s.innerHTML = '<option value="">Selecione o material...</option>';
         db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
     }
 
@@ -110,13 +107,13 @@
         const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
         const b1 = document.getElementById("v1-box"), b2 = document.getElementById("v2-box");
         if(e) {
-            if(e.label) { 
+            if(e.label && e.opcoes[0] !== "") { 
                 b1.style.display="block"; 
                 document.getElementById("l1").innerText=e.label; 
                 document.getElementById("s1").innerHTML=e.opcoes.map(o=>`<option value="${o}">${o}</option>`).join(""); 
             } else b1.style.display="none";
             
-            if(e.label2) { 
+            if(e.label2 && e.opcoes2[0] !== "") { 
                 b2.style.display="block"; 
                 document.getElementById("l2").innerText=e.label2; 
                 document.getElementById("s2").innerHTML=e.opcoes2.map(o=>`<option value="${o}">${o}</option>`).join(""); 
@@ -126,7 +123,6 @@
 
     function resetarEirPara2() {
         document.getElementById("epi").value = "";
-        document.getElementById("qtd").value = "1";
         document.getElementById("v1-box").style.display = "none";
         document.getElementById("v2-box").style.display = "none";
         irParaPasso(2);
@@ -134,21 +130,21 @@
 
     function add() {
         const e = document.getElementById("epi").value;
-        if(!e) return alert("Selecione o EPI");
+        if(!e) return alert("Selecione o EPI primeiro.");
         const d1 = document.getElementById("s1").value || "";
         const d2 = document.getElementById("s2").value || "";
-        cart.push({ epi: e, det: d1 + (d1 && d2 ? " / " : "") + d2, q: document.getElementById("qtd").value });
+        cart.push({ epi: e, det: d1 + (d1 && d2 ? " / " : "") + d2 });
         render();
         irParaPasso('resumo');
     }
 
     function render() {
-        document.getElementById("lista").innerHTML = cart.map(i => `<div class="item-c"><b>${i.q}x</b> ${i.epi}<br><small>${i.det}</small></div>`).join("");
+        document.getElementById("lista").innerHTML = cart.map(i => `<div class="item-c"><b>EPI:</b> ${i.epi}<br><small>Especificação: ${i.det}</small></div>`).join("");
     }
 
     async function enviar() {
         const btn = document.getElementById("btn-final");
-        btn.innerText = "Gravando na Planilha..."; btn.disabled = true;
+        btn.innerText = "Enviando Dados..."; btn.disabled = true;
         const nome = document.getElementById("user-display").innerText.replace("Olá, ", "");
         
         try {
@@ -160,17 +156,16 @@
                         protocolo: db.proximoProtocolo, 
                         funcionario: nome, 
                         epi: i.epi, 
-                        detalhes: i.det, 
-                        quantidade: i.q 
+                        detalhes: i.det
                     }) 
                 });
             }
             document.getElementById("prot-txt").innerText = db.proximoProtocolo;
             irParaPasso(3);
         } catch(e) { 
-            alert("Erro de rede. Verifique se o script está publicado como 'Qualquer pessoa'."); 
+            alert("Erro ao salvar o pedido."); 
             btn.disabled = false; 
-            btn.innerText = "Finalizar Pedido"; 
+            btn.innerText = "Finalizar e Enviar"; 
         }
     }
 </script>
