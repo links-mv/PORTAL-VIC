@@ -10,6 +10,7 @@
             --cyan-bg: #00bcd4; 
             --cyan-light: #e0f7fa; 
             --white: #ffffff;
+            --success: #28a745;
         }
         
         body { 
@@ -27,8 +28,6 @@
         .logo { max-width: 120px; height: auto; }
         
         h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 22px; }
-        h3.saudacao { color: #333; text-align: center; font-size: 24px; margin-bottom: 5px; }
-        p.subtexto { text-align: center; color: #666; margin-bottom: 25px; }
         
         .passo { display: none; }
         .passo.ativo { display: block; animation: fadeIn 0.4s; }
@@ -43,11 +42,11 @@
         button:disabled { background: #999; cursor: not-allowed; }
         
         .btn-adicionar { background: var(--cyan-bg); }
-        .btn-finalizar { background: #28a745; }
+        .btn-finalizar { background: var(--success); }
         .btn-voltar { background: none; color: #666; border: 1px solid #ddd; margin-top: 10px; }
 
         .item-carrinho { background: var(--cyan-light); padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px;}
-        .loading-text { text-align: center; font-size: 12px; color: #888; margin-top: 10px; }
+        .loading-text { text-align: center; font-size: 12px; color: #888; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -59,31 +58,30 @@
 
     <h2>Portal de EPI - VIC</h2>
 
-    <!-- PASSO 0: INÍCIO -->
+    <!-- PASSO 0: INÍCIO E CONEXÃO -->
     <div id="passo0" class="passo ativo">
-        <h3 id="texto-saudacao" class="saudacao">Olá!</h3>
-        <p class="subtexto">Sistema de requisição de materiais.</p>
+        <h3 id="texto-saudacao" style="text-align:center;">Olá!</h3>
+        <p style="text-align:center; color:#666;">Sistema de requisição de materiais.</p>
         <button id="btn-iniciar" onclick="irParaPasso(1)">Iniciar Pedido</button>
-        <div id="status-sinc" class="loading-text">Sincronizando dados...</div>
+        <div id="status-sinc" class="loading-text">Conectando ao banco de dados...</div>
     </div>
 
     <!-- PASSO 1: LOGIN (MATRÍCULA SOMENTE NÚMEROS) -->
     <div id="passo1" class="passo">
-        <label for="matricula">Matrícula:</label>
-        <!-- Ajustado para teclado numérico e apenas números -->
+        <label for="matricula">Digite sua Matrícula:</label>
         <input type="tel" 
                id="matricula" 
                inputmode="numeric" 
                pattern="[0-9]*" 
-               placeholder="Digite apenas números"
+               placeholder="Apenas números"
                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         <button onclick="identificarUsuario()">Acessar Sistema</button>
         <button onclick="irParaPasso(0)" class="btn-voltar">Voltar</button>
     </div>
 
-    <!-- PASSO 2: SELEÇÃO -->
+    <!-- PASSO 2: SELEÇÃO DE EPI -->
     <div id="passo2" class="passo">
-        <h3 id="nome-exibicao" style="text-align:center; color:var(--primary);"></h3>
+        <h3 id="nome-exibicao" style="text-align:center; color:var(--primary); margin-bottom: 20px;"></h3>
         
         <label for="epi">Selecione o EPI:</label>
         <select id="epi" onchange="atualizarCamposVariaveis()">
@@ -104,34 +102,35 @@
         <input type="number" id="quantidade" value="1" min="1">
         
         <button onclick="adicionarAoCarrinho()" class="btn-adicionar">Adicionar ao Pedido</button>
-        <button onclick="irParaPasso(1)" class="btn-voltar">Sair</button>
+        <button onclick="location.reload()" class="btn-voltar">Sair / Trocar Usuário</button>
     </div>
 
-    <!-- RESUMO -->
+    <!-- RESUMO DO CARRINHO -->
     <div id="passo-carrinho" class="passo">
         <h3 style="text-align:center; color:var(--primary);">Resumo do Pedido</h3>
         <div id="lista-carrinho"></div>
         <button onclick="irParaPasso(2)" style="background: var(--cyan-bg);">+ Adicionar Outro Item</button>
-        <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Finalizar Pedido</button>
+        <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Finalizar e Enviar</button>
     </div>
 
     <!-- SUCESSO -->
     <div id="passo3" class="passo" style="text-align: center;">
         <div style="font-size: 60px;">✅</div>
-        <h3 style="color: #28a745;">Pedido Enviado!</h3>
-        <p>Protocolo:</p>
-        <h1 id="num-protocolo" style="color: var(--primary);">0000</h1>
+        <h3 style="color: var(--success);">Pedido Enviado!</h3>
+        <p>Anote seu protocolo:</p>
+        <h1 id="num-protocolo" style="color: var(--primary); font-size: 40px; margin: 10px 0;">0000</h1>
         <button onclick="window.location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    // COLE SUA URL AQUI
-    const SCRIPT_URL = 'SUA_URL_DO_APPS_SCRIPT_AQUI'; 
+    // Link do seu script fornecido
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCNIHNRJxEORY_yekUlnFBlZLCDpHFe21EFKNLgWR74NHXVQpRgJHYBrvvdI9OuuZMg/exec'; 
     
     let baseDados = { funcionarios: {}, epis: [] };
     let carrinho = [];
 
+    // Ao carregar a página, tenta sincronizar com a planilha
     window.onload = () => {
         const h = new Date().getHours();
         document.getElementById("texto-saudacao").innerText = (h<12?"Bom dia":h<18?"Boa tarde":"Boa noite") + "!";
@@ -139,59 +138,67 @@
     };
 
     async function sincronizar() {
+        const statusEl = document.getElementById("status-sinc");
         try {
             const resp = await fetch(SCRIPT_URL);
             baseDados = await resp.json();
+            
             if (baseDados.erro) {
-                document.getElementById("status-sinc").innerText = "Erro: " + baseDados.erro;
+                statusEl.innerText = "❌ " + baseDados.erro;
+                statusEl.style.color = "red";
             } else {
-                document.getElementById("status-sinc").innerText = "Sistema pronto.";
+                statusEl.innerText = "✅ Banco de dados conectado";
+                statusEl.style.color = "green";
+                popularEPIs();
             }
         } catch (e) {
-            document.getElementById("status-sinc").innerText = "Erro de conexão.";
+            statusEl.innerText = "❌ Erro de conexão com a planilha";
+            statusEl.style.color = "red";
         }
     }
 
     function irParaPasso(n) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        const id = (typeof n === 'string') ? n : 'passo' + n;
+        const id = (n === 'carrinho') ? 'passo-carrinho' : 'passo' + n;
         document.getElementById(id).classList.add('ativo');
     }
 
     function identificarUsuario() {
-        const inputMat = document.getElementById("matricula").value;
-        const matLimpa = inputMat.toString().trim();
+        const matInput = document.getElementById("matricula").value.trim();
         
-        if (baseDados.funcionarios && baseDados.funcionarios[matLimpa]) {
-            document.getElementById("nome-exibicao").innerText = "Olá, " + baseDados.funcionarios[matLimpa];
-            popularEPIs();
+        if (baseDados.funcionarios && baseDados.funcionarios[matInput]) {
+            document.getElementById("nome-exibicao").innerText = "Olá, " + baseDados.funcionarios[matInput];
             irParaPasso(2);
         } else {
-            alert("Matrícula " + matLimpa + " não encontrada na aba Funcionarios.");
+            alert("Matrícula " + matInput + " não encontrada na aba Funcionarios.");
         }
     }
 
     function popularEPIs() {
         const sel = document.getElementById("epi");
-        sel.innerHTML = '<option value="">Selecione...</option>';
-        baseDados.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+        sel.innerHTML = '<option value="">Selecione o item...</option>';
+        baseDados.epis.forEach(e => {
+            sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`;
+        });
     }
 
     function atualizarCamposVariaveis() {
-        const epi = baseDados.epis.find(x => x.nome === document.getElementById("epi").value);
+        const epiSelecionado = document.getElementById("epi").value;
+        const epi = baseDados.epis.find(x => x.nome === epiSelecionado);
+        
         const c1 = document.getElementById("container-var1"), c2 = document.getElementById("container-var2");
         const s1 = document.getElementById("select-var1"), s2 = document.getElementById("select-var2");
         
         if (epi) {
-            // Variação 1
-            if (epi.label && epi.opcoes.length > 0) {
+            // Lógica para Variação 1 (ex: Tamanho)
+            if (epi.label && epi.opcoes.length > 0 && epi.opcoes[0] !== "") {
                 c1.style.display = "block";
                 document.getElementById("label-var1").innerText = epi.label + ":";
                 s1.innerHTML = epi.opcoes.map(o => `<option value="${o}">${o}</option>`).join("");
             } else { c1.style.display = "none"; s1.innerHTML = ""; }
 
-            // Variação 2
-            if (epi.label2 && epi.opcoes2.length > 0) {
+            // Lógica para Variação 2 (ex: Sexo)
+            if (epi.label2 && epi.opcoes2.length > 0 && epi.opcoes2[0] !== "") {
                 c2.style.display = "block";
                 document.getElementById("label-var2").innerText = epi.label2 + ":";
                 s2.innerHTML = epi.opcoes2.map(o => `<option value="${o}">${o}</option>`).join("");
@@ -201,43 +208,48 @@
 
     function adicionarAoCarrinho() {
         const epi = document.getElementById("epi").value;
-        if (!epi) return alert("Selecione um item.");
+        if (!epi) return alert("Selecione um EPI primeiro.");
+        
         const v1 = document.getElementById("select-var1").value || "";
         const v2 = document.getElementById("select-var2").value || "";
         
         let detalhes = v1 + (v1 && v2 ? " / " : "") + v2;
+        
         carrinho.push({ 
-            epi, 
+            epi: epi, 
             detalhes: detalhes || "N/A", 
             qtd: document.getElementById("quantidade").value 
         });
         
         renderizarCarrinho();
-        irParaPasso('passo-carrinho');
+        irParaPasso('carrinho');
     }
 
     function renderizarCarrinho() {
-        document.getElementById("lista-carrinho").innerHTML = carrinho.map(i => `
+        const lista = document.getElementById("lista-carrinho");
+        lista.innerHTML = carrinho.map((item, index) => `
             <div class="item-carrinho">
-                <strong>${i.qtd}x</strong> ${i.epi}<br>
-                <small>${i.detalhes}</small>
+                <strong>${item.qtd}x</strong> ${item.epi}<br>
+                <small>Especificação: ${item.detalhes}</small>
             </div>
         `).join("");
     }
 
     async function enviarTudo() {
         const btn = document.getElementById("btn-finalizar-pedido");
-        btn.innerText = "Enviando..."; btn.disabled = true;
+        btn.innerText = "Enviando aguarde..."; btn.disabled = true;
+        
         const prot = Math.floor(1000 + Math.random() * 9000);
-        const nome = document.getElementById("nome-exibicao").innerText.replace("Olá, ", "");
+        const nomeFunc = document.getElementById("nome-exibicao").innerText.replace("Olá, ", "");
 
         try {
             for (let item of carrinho) {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
+                    mode: 'no-cors', // Importante para evitar erros de CORS no Google
                     body: JSON.stringify({ 
                         protocolo: prot, 
-                        funcionario: nome, 
+                        funcionario: nomeFunc, 
                         epi: item.epi, 
                         detalhes: item.detalhes, 
                         quantidade: item.qtd 
@@ -247,9 +259,9 @@
             document.getElementById("num-protocolo").innerText = prot;
             irParaPasso(3);
         } catch (e) {
-            alert("Erro ao enviar pedido."); 
+            alert("Erro ao salvar dados. Verifique a aba Pedidos."); 
             btn.disabled = false; 
-            btn.innerText = "Finalizar Pedido";
+            btn.innerText = "Finalizar e Enviar";
         }
     }
 </script>
