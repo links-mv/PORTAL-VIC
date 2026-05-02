@@ -5,48 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de EPI - VIC</title>
     <style>
-        :root { 
-            --primary: #004a99; 
-            --cyan-bg: #00bcd4; 
-            --cyan-light: #e0f7fa; 
-            --white: #ffffff;
-            --success: #28a745;
-        }
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, var(--cyan-bg), #008ba3); 
-            margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh;
-        }
-        
-        .container { 
-            background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            width: 100%; max-width: 450px; 
-        }
-
+        :root { --primary: #004a99; --cyan: #00bcd4; --white: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, var(--cyan), #008ba3); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 450px; }
         .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo { max-width: 120px; height: auto; }
-        
-        h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 22px; }
-        
+        .logo { max-width: 120px; }
+        h2 { color: var(--primary); text-align: center; margin-top: 0; }
         .passo { display: none; }
-        .passo.ativo { display: block; animation: fadeIn 0.4s; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #333; }
+        .passo.ativo { display: block; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; }
         input, select, button { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        
-        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        button:hover { background: #003570; transform: scale(1.02); }
-        button:disabled { background: #999; cursor: not-allowed; }
-        
-        .btn-adicionar { background: var(--cyan-bg); }
-        .btn-finalizar { background: var(--success); }
-        .btn-voltar { background: none; color: #666; border: 1px solid #ddd; margin-top: 10px; }
-
-        .item-carrinho { background: var(--cyan-light); padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px;}
-        .loading-text { text-align: center; font-size: 12px; color: #888; margin-top: 10px; font-weight: bold; }
+        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-voltar { background: none; color: #666; border: 1px solid #ddd; }
+        .item-c { background: #f0faff; padding: 10px; border-radius: 5px; margin-bottom: 8px; border-left: 4px solid var(--primary); font-size: 14px; }
+        .status { text-align: center; font-size: 12px; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -58,210 +30,147 @@
 
     <h2>Portal de EPI - VIC</h2>
 
-    <!-- PASSO 0: INÍCIO E CONEXÃO -->
     <div id="passo0" class="passo ativo">
-        <h3 id="texto-saudacao" style="text-align:center;">Olá!</h3>
-        <p style="text-align:center; color:#666;">Sistema de requisição de materiais.</p>
-        <button id="btn-iniciar" onclick="irParaPasso(1)">Iniciar Pedido</button>
-        <div id="status-sinc" class="loading-text">Conectando ao banco de dados...</div>
+        <button onclick="irParaPasso(1)">Iniciar Pedido</button>
+        <div id="status-sinc" class="status">Conectando...</div>
     </div>
 
-    <!-- PASSO 1: LOGIN (MATRÍCULA SOMENTE NÚMEROS) -->
     <div id="passo1" class="passo">
-        <label for="matricula">Digite sua Matrícula:</label>
-        <input type="tel" 
-               id="matricula" 
-               inputmode="numeric" 
-               pattern="[0-9]*" 
-               placeholder="Apenas números"
-               oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-        <button onclick="identificarUsuario()">Acessar Sistema</button>
+        <label>Matrícula:</label>
+        <input type="tel" id="matricula" placeholder="Somente números">
+        <button onclick="login()">Acessar</button>
         <button onclick="irParaPasso(0)" class="btn-voltar">Voltar</button>
     </div>
 
-    <!-- PASSO 2: SELEÇÃO DE EPI -->
     <div id="passo2" class="passo">
-        <h3 id="nome-exibicao" style="text-align:center; color:var(--primary); margin-bottom: 20px;"></h3>
+        <h3 id="user-display" style="text-align:center; color:var(--primary);"></h3>
+        <label>EPI:</label>
+        <select id="epi" onchange="mostrarVars()"><option value="">Carregando...</option></select>
         
-        <label for="epi">Selecione o EPI:</label>
-        <select id="epi" onchange="atualizarCamposVariaveis()">
-            <option value="">Carregando itens...</option>
-        </select>
-
-        <div id="container-var1" style="display:none;">
-            <label id="label-var1"></label>
-            <select id="select-var1"></select>
-        </div>
-
-        <div id="container-var2" style="display:none;">
-            <label id="label-var2"></label>
-            <select id="select-var2"></select>
-        </div>
-
-        <label for="quantidade">Quantidade:</label>
-        <input type="number" id="quantidade" value="1" min="1">
+        <div id="v1-box" style="display:none;"><label id="l1"></label><select id="s1"></select></div>
+        <div id="v2-box" style="display:none;"><label id="l2"></label><select id="s2"></select></div>
         
-        <button onclick="adicionarAoCarrinho()" class="btn-adicionar">Adicionar ao Pedido</button>
-        <button onclick="location.reload()" class="btn-voltar">Sair / Trocar Usuário</button>
+        <label>Quantidade:</label>
+        <input type="number" id="qtd" value="1" min="1">
+        
+        <button onclick="add()" style="background:var(--cyan)">Adicionar Item</button>
     </div>
 
-    <!-- RESUMO DO CARRINHO -->
-    <div id="passo-carrinho" class="passo">
-        <h3 style="text-align:center; color:var(--primary);">Resumo do Pedido</h3>
-        <div id="lista-carrinho"></div>
-        <button onclick="irParaPasso(2)" style="background: var(--cyan-bg);">+ Adicionar Outro Item</button>
-        <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Finalizar e Enviar</button>
+    <div id="passo-resumo" class="passo">
+        <h3 style="text-align:center;">Resumo</h3>
+        <div id="lista"></div>
+        <button onclick="resetarEirPara2()" style="background:var(--cyan)">+ Outro Item</button>
+        <button id="btn-final" onclick="enviar()" style="background:#28a745">Finalizar Pedido</button>
     </div>
 
-    <!-- SUCESSO -->
-    <div id="passo3" class="passo" style="text-align: center;">
-        <div style="font-size: 60px;">✅</div>
-        <h3 style="color: var(--success);">Pedido Enviado!</h3>
-        <p>Anote seu protocolo:</p>
-        <h1 id="num-protocolo" style="color: var(--primary); font-size: 40px; margin: 10px 0;">0000</h1>
-        <button onclick="window.location.reload()">Novo Pedido</button>
+    <div id="passo3" class="passo" style="text-align:center;">
+        <div style="font-size:50px;">✅</div>
+        <h3>Pedido Enviado!</h3>
+        <p>Protocolo: <strong id="prot-txt" style="font-size:24px; color:var(--primary);"></strong></p>
+        <button onclick="location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    // Link do seu script fornecido
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCNIHNRJxEORY_yekUlnFBlZLCDpHFe21EFKNLgWR74NHXVQpRgJHYBrvvdI9OuuZMg/exec'; 
+    // URL DO SEU SCRIPT
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCNIHNRJxEORY_yekUlnFBlZLCDpHFe21EFKNLgWR74NHXVQpRgJHYBrvvdI9OuuZMg/exec';
     
-    let baseDados = { funcionarios: {}, epis: [] };
-    let carrinho = [];
+    let db = { funcionarios: {}, epis: [], proximoProtocolo: "0001" };
+    let cart = [];
 
-    // Ao carregar a página, tenta sincronizar com a planilha
-    window.onload = () => {
-        const h = new Date().getHours();
-        document.getElementById("texto-saudacao").innerText = (h<12?"Bom dia":h<18?"Boa tarde":"Boa noite") + "!";
-        sincronizar();
-    };
-
-    async function sincronizar() {
-        const statusEl = document.getElementById("status-sinc");
+    window.onload = async () => {
         try {
-            const resp = await fetch(SCRIPT_URL);
-            baseDados = await resp.json();
-            
-            if (baseDados.erro) {
-                statusEl.innerText = "❌ " + baseDados.erro;
-                statusEl.style.color = "red";
-            } else {
-                statusEl.innerText = "✅ Banco de dados conectado";
-                statusEl.style.color = "green";
-                popularEPIs();
-            }
-        } catch (e) {
-            statusEl.innerText = "❌ Erro de conexão com a planilha";
-            statusEl.style.color = "red";
-        }
-    }
+            const r = await fetch(SCRIPT_URL);
+            db = await r.json();
+            document.getElementById("status-sinc").innerText = "✅ Banco Conectado";
+            popEpi();
+        } catch(e) { document.getElementById("status-sinc").innerText = "❌ Erro de Conexão"; }
+    };
 
     function irParaPasso(n) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        const id = (n === 'carrinho') ? 'passo-carrinho' : 'passo' + n;
-        document.getElementById(id).classList.add('ativo');
+        document.getElementById(n === 'resumo' ? 'passo-resumo' : 'passo'+n).classList.add('ativo');
     }
 
-    function identificarUsuario() {
-        const matInput = document.getElementById("matricula").value.trim();
-        
-        if (baseDados.funcionarios && baseDados.funcionarios[matInput]) {
-            document.getElementById("nome-exibicao").innerText = "Olá, " + baseDados.funcionarios[matInput];
+    function login() {
+        const m = document.getElementById("matricula").value.trim();
+        if(db.funcionarios[m]) {
+            document.getElementById("user-display").innerText = "Olá, " + db.funcionarios[m];
             irParaPasso(2);
-        } else {
-            alert("Matrícula " + matInput + " não encontrada na aba Funcionarios.");
+        } else { alert("Matrícula não encontrada."); }
+    }
+
+    function popEpi() {
+        const s = document.getElementById("epi");
+        s.innerHTML = '<option value="">Selecione...</option>';
+        db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+    }
+
+    function mostrarVars() {
+        const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
+        const b1 = document.getElementById("v1-box"), b2 = document.getElementById("v2-box");
+        if(e) {
+            if(e.label) { 
+                b1.style.display="block"; 
+                document.getElementById("l1").innerText=e.label; 
+                document.getElementById("s1").innerHTML=e.opcoes.map(o=>`<option value="${o}">${o}</option>`).join(""); 
+            } else b1.style.display="none";
+            
+            if(e.label2) { 
+                b2.style.display="block"; 
+                document.getElementById("l2").innerText=e.label2; 
+                document.getElementById("s2").innerHTML=e.opcoes2.map(o=>`<option value="${o}">${o}</option>`).join(""); 
+            } else b2.style.display="none";
         }
     }
 
-    function popularEPIs() {
-        const sel = document.getElementById("epi");
-        sel.innerHTML = '<option value="">Selecione o item...</option>';
-        baseDados.epis.forEach(e => {
-            sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`;
-        });
+    function resetarEirPara2() {
+        document.getElementById("epi").value = "";
+        document.getElementById("qtd").value = "1";
+        document.getElementById("v1-box").style.display = "none";
+        document.getElementById("v2-box").style.display = "none";
+        irParaPasso(2);
     }
 
-    function atualizarCamposVariaveis() {
-        const epiSelecionado = document.getElementById("epi").value;
-        const epi = baseDados.epis.find(x => x.nome === epiSelecionado);
-        
-        const c1 = document.getElementById("container-var1"), c2 = document.getElementById("container-var2");
-        const s1 = document.getElementById("select-var1"), s2 = document.getElementById("select-var2");
-        
-        if (epi) {
-            // Lógica para Variação 1 (ex: Tamanho)
-            if (epi.label && epi.opcoes.length > 0 && epi.opcoes[0] !== "") {
-                c1.style.display = "block";
-                document.getElementById("label-var1").innerText = epi.label + ":";
-                s1.innerHTML = epi.opcoes.map(o => `<option value="${o}">${o}</option>`).join("");
-            } else { c1.style.display = "none"; s1.innerHTML = ""; }
-
-            // Lógica para Variação 2 (ex: Sexo)
-            if (epi.label2 && epi.opcoes2.length > 0 && epi.opcoes2[0] !== "") {
-                c2.style.display = "block";
-                document.getElementById("label-var2").innerText = epi.label2 + ":";
-                s2.innerHTML = epi.opcoes2.map(o => `<option value="${o}">${o}</option>`).join("");
-            } else { c2.style.display = "none"; s2.innerHTML = ""; }
-        }
+    function add() {
+        const e = document.getElementById("epi").value;
+        if(!e) return alert("Selecione o EPI");
+        const d1 = document.getElementById("s1").value || "";
+        const d2 = document.getElementById("s2").value || "";
+        cart.push({ epi: e, det: d1 + (d1 && d2 ? " / " : "") + d2, q: document.getElementById("qtd").value });
+        render();
+        irParaPasso('resumo');
     }
 
-    function adicionarAoCarrinho() {
-        const epi = document.getElementById("epi").value;
-        if (!epi) return alert("Selecione um EPI primeiro.");
-        
-        const v1 = document.getElementById("select-var1").value || "";
-        const v2 = document.getElementById("select-var2").value || "";
-        
-        let detalhes = v1 + (v1 && v2 ? " / " : "") + v2;
-        
-        carrinho.push({ 
-            epi: epi, 
-            detalhes: detalhes || "N/A", 
-            qtd: document.getElementById("quantidade").value 
-        });
-        
-        renderizarCarrinho();
-        irParaPasso('carrinho');
+    function render() {
+        document.getElementById("lista").innerHTML = cart.map(i => `<div class="item-c"><b>${i.q}x</b> ${i.epi}<br><small>${i.det}</small></div>`).join("");
     }
 
-    function renderizarCarrinho() {
-        const lista = document.getElementById("lista-carrinho");
-        lista.innerHTML = carrinho.map((item, index) => `
-            <div class="item-carrinho">
-                <strong>${item.qtd}x</strong> ${item.epi}<br>
-                <small>Especificação: ${item.detalhes}</small>
-            </div>
-        `).join("");
-    }
-
-    async function enviarTudo() {
-        const btn = document.getElementById("btn-finalizar-pedido");
-        btn.innerText = "Enviando aguarde..."; btn.disabled = true;
+    async function enviar() {
+        const btn = document.getElementById("btn-final");
+        btn.innerText = "Gravando na Planilha..."; btn.disabled = true;
+        const nome = document.getElementById("user-display").innerText.replace("Olá, ", "");
         
-        const prot = Math.floor(1000 + Math.random() * 9000);
-        const nomeFunc = document.getElementById("nome-exibicao").innerText.replace("Olá, ", "");
-
         try {
-            for (let item of carrinho) {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // Importante para evitar erros de CORS no Google
+            for(let i of cart) {
+                await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors',
                     body: JSON.stringify({ 
-                        protocolo: prot, 
-                        funcionario: nomeFunc, 
-                        epi: item.epi, 
-                        detalhes: item.detalhes, 
-                        quantidade: item.qtd 
-                    })
+                        protocolo: db.proximoProtocolo, 
+                        funcionario: nome, 
+                        epi: i.epi, 
+                        detalhes: i.det, 
+                        quantidade: i.q 
+                    }) 
                 });
             }
-            document.getElementById("num-protocolo").innerText = prot;
+            document.getElementById("prot-txt").innerText = db.proximoProtocolo;
             irParaPasso(3);
-        } catch (e) {
-            alert("Erro ao salvar dados. Verifique a aba Pedidos."); 
+        } catch(e) { 
+            alert("Erro de rede. Verifique se o script está publicado como 'Qualquer pessoa'."); 
             btn.disabled = false; 
-            btn.innerText = "Finalizar e Enviar";
+            btn.innerText = "Finalizar Pedido"; 
         }
     }
 </script>
