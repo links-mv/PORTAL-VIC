@@ -13,11 +13,13 @@
         .passo.ativo { display: block; }
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #333; }
         input, select, button { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        button:hover { opacity: 0.9; }
         .btn-add { background: var(--cyan); margin-top: 20px; }
         .btn-enviar { background: #28a745; margin-top: 15px; }
-        .item-card { background: #eef9ff; border-left: 4px solid var(--primary); padding: 10px; margin-top: 8px; border-radius: 4px; font-size: 14px; }
+        .item-card { background: #eef9ff; border-left: 4px solid var(--primary); padding: 10px; margin-top: 8px; border-radius: 4px; font-size: 14px; position: relative; }
         .lista-container { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+        .status-badge { text-align: center; font-size: 12px; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -25,121 +27,159 @@
 <div class="container">
     <h2>Portal EPI - VIC</h2>
 
+    <!-- Passo 0: Carregamento Sincronizado -->
     <div id="p0" class="passo ativo">
-        <p style="text-align:center;">Carregando informações...</p>
-        <div id="status" style="text-align:center; font-weight:bold; color: var(--primary);">Buscando conexão...</div>
+        <p style="text-align:center;">Sincronizando com a planilha...</p>
+        <div id="status" class="status-badge" style="color: var(--primary);">Conectando...</div>
     </div>
 
+    <!-- Passo 1: Login por Matrícula -->
     <div id="p1" class="passo">
-        <label>Digite sua Matrícula:</label>
-        <input type="tel" id="mat-input">
-        <button onclick="logar()">Acessar</button>
+        <label>Matrícula do Colaborador:</label>
+        <input type="tel" id="mat-input" placeholder="Ex: 123456">
+        <button onclick="logar()">Entrar no Sistema</button>
     </div>
 
+    <!-- Passo 2: Seleção e Carrinho Visível -->
     <div id="p2" class="passo">
-        <p id="user-info" style="text-align:center; font-weight:bold; color: var(--primary);"></p>
+        <p id="user-info" style="text-align:center; font-weight:bold; color: var(--primary); margin-bottom: 20px;"></p>
         
-        <label>EPI:</label>
+        <label>Selecione o EPI:</label>
         <select id="epi-sel" onchange="renderExtras()"></select>
+        
         <div id="extras"></div>
 
-        <button class="btn-add" onclick="addItem()">+ Adicionar Item</button>
+        <button class="btn-add" onclick="addItem()">+ Adicionar ao Pedido</button>
 
+        <!-- Visualização dos itens já colocados -->
         <div id="carrinho" class="lista-container" style="display:none;">
-            <p style="font-size:12px; font-weight:bold; color:#888;">ITENS NO PEDIDO:</p>
+            <p style="font-size:12px; font-weight:bold; color:#888;">ITENS JÁ SELECIONADOS:</p>
             <div id="lista-corpo"></div>
-            <button class="btn-enviar" id="btn-final" onclick="enviarTudo()">Finalizar Pedido</button>
+            <button class="btn-enviar" id="btn-final" onclick="enviarTudo()">Finalizar e Gerar Protocolo</button>
         </div>
     </div>
 
+    <!-- Passo 3: Sucesso -->
     <div id="p3" class="passo" style="text-align:center;">
-        <div style="font-size: 50px;">✅</div>
+        <div style="font-size: 60px;">✅</div>
         <h3>Pedido Concluído!</h3>
-        <p>Protocolo gerado com sucesso na planilha.</p>
+        <p>As informações foram gravadas na aba <b>Pedidos</b> da sua planilha.</p>
         <button onclick="location.reload()" style="background:#555;">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    // --- COLE SEU LINK NOVO AQUI ---
-    const SCRIPT_URL = 'COLE_AQUI_SEU_LINK_DE_IMPLANTAÇÃO';
+    // Link oficial da sua API Google
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLPASIT6clTTipjS804v_MhdAqURqGQ0y-zFJ6sXLMzmFmEFrV68sUpOzQp_z0nQcXhQ/exec';
     
     let dados = { funcionarios: {}, epis: [] };
-    let itens = [];
+    let itensSelecionados = [];
 
+    // Carregamento automático ao abrir
     window.onload = async () => {
-        const status = document.getElementById("status");
+        const statusDisplay = document.getElementById("status");
         try {
-            const res = await fetch(SCRIPT_URL);
-            dados = await res.json();
+            const response = await fetch(SCRIPT_URL);
+            dados = await response.json();
+            
             if(dados.erro) throw new Error(dados.erro);
             
-            status.innerText = "✅ Pronto!";
+            statusDisplay.innerText = "✅ Conexão Estabelecida!";
             setTimeout(() => {
                 const sel = document.getElementById("epi-sel");
-                sel.innerHTML = '<option value="">Selecione...</option>';
+                sel.innerHTML = '<option value="">Selecione o material...</option>';
                 dados.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-                ir(1);
-            }, 500);
+                navegar(1);
+            }, 800);
         } catch (e) {
-            status.innerText = "❌ Erro de conexão. Verifique se o link está correto e se a permissão é 'Qualquer Pessoa'.";
+            statusDisplay.innerHTML = "❌ Erro de conexão.<br><small>Verifique se o Web App está implantado para 'Qualquer Pessoa'.</small>";
+            console.error(e);
         }
     };
 
-    function ir(n) {
+    function navegar(passo) {
         document.querySelectorAll('.passo').forEach(d => d.classList.remove('ativo'));
-        document.getElementById('p' + n).classList.add('ativo');
+        document.getElementById('p' + passo).classList.add('ativo');
     }
 
     function logar() {
-        const m = document.getElementById("mat-input").value.trim();
-        if (dados.funcionarios[m]) {
-            document.getElementById("user-info").innerText = "Colaborador: " + dados.funcionarios[m];
-            ir(2);
-        } else { alert("Matrícula não encontrada!"); }
+        const matricula = document.getElementById("mat-input").value.trim();
+        if (dados.funcionarios[matricula]) {
+            document.getElementById("user-info").innerText = "Colaborador: " + dados.funcionarios[matricula];
+            navegar(2);
+        } else { 
+            alert("Matrícula não localizada na aba Funcionarios."); 
+        }
     }
 
     function renderExtras() {
-        const epi = dados.epis.find(x => x.nome === document.getElementById("epi-sel").value);
-        const box = document.getElementById("extras");
-        box.innerHTML = "";
-        if (epi) {
-            if (epi.label) box.innerHTML += `<label>${epi.label}</label><select id="ex1">${epi.opcoes.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
-            if (epi.label2) box.innerHTML += `<label>${epi.label2}</label><select id="ex2">${epi.opcoes2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+        const epiNome = document.getElementById("epi-sel").value;
+        const epiDados = dados.epis.find(x => x.nome === epiNome);
+        const containerExtras = document.getElementById("extras");
+        containerExtras.innerHTML = "";
+        
+        if (epiDados) {
+            if (epiDados.label) {
+                containerExtras.innerHTML += `<label>${epiDados.label}</label><select id="ex1">${epiDados.opcoes.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+            }
+            if (epiDados.label2) {
+                containerExtras.innerHTML += `<label>${epiDados.label2}</label><select id="ex2">${epiDados.opcoes2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+            }
         }
     }
 
     function addItem() {
-        const nome = document.getElementById("epi-sel").value;
-        if (!nome) return alert("Selecione um EPI!");
-        const e1 = document.getElementById("ex1") ? document.getElementById("ex1").value : "";
-        const e2 = document.getElementById("ex2") ? document.getElementById("ex2").value : "";
+        const epiNome = document.getElementById("epi-sel").value;
+        if (!epiNome) return alert("Por favor, selecione um EPI antes de adicionar.");
         
-        itens.push({ epi: nome, detalhes: (e1 + " " + e2).trim() });
+        const extra1 = document.getElementById("ex1") ? document.getElementById("ex1").value : "";
+        const extra2 = document.getElementById("ex2") ? document.getElementById("ex2").value : "";
+        
+        itensSelecionados.push({ 
+            epi: epiNome, 
+            detalhes: (extra1 + " " + extra2).trim() 
+        });
+
+        // Atualiza a visualização do carrinho
+        const corpoLista = document.getElementById("lista-corpo");
         document.getElementById("carrinho").style.display = "block";
-        document.getElementById("lista-corpo").innerHTML = itens.map(i => `<div class="item-card"><b>${i.epi}</b><br>${i.detalhes}</div>`).join('');
+        corpoLista.innerHTML = itensSelecionados.map(i => `
+            <div class="item-card">
+                <b>${i.epi}</b><br>
+                <small>${i.detalhes}</small>
+            </div>
+        `).join('');
         
+        // Limpa a seleção para o próximo item
         document.getElementById("epi-sel").value = "";
         document.getElementById("extras").innerHTML = "";
     }
 
     async function enviarTudo() {
         const btn = document.getElementById("btn-final");
-        btn.innerText = "Enviando..."; btn.disabled = true;
-        const nome = document.getElementById("user-info").innerText.replace("Colaborador: ", "");
+        btn.innerText = "Processando..."; 
+        btn.disabled = true;
+        
+        const nomeColaborador = document.getElementById("user-info").innerText.replace("Colaborador: ", "");
 
         try {
-            for (const i of itens) {
+            // Envia cada item do carrinho para a planilha
+            for (const item of itensSelecionados) {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify({ funcionario: nome, epi: i.epi, detalhes: i.detalhes })
+                    body: JSON.stringify({ 
+                        funcionario: nomeColaborador, 
+                        epi: item.epi, 
+                        detalhes: item.detalhes 
+                    })
                 });
             }
-            ir(3);
+            navegar(3);
         } catch (e) {
-            alert("Erro ao salvar.");
+            alert("Ocorreu um erro ao salvar os dados. Verifique sua conexão.");
             btn.disabled = false;
+            btn.innerText = "Finalizar Pedido";
         }
     }
 </script>
