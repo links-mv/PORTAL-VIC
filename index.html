@@ -5,27 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de EPI - VIC</title>
     <style>
-        :root { --primary: #004a99; --secondary: #f4f4f4; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--secondary); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        :root { 
+            --primary: #004a99; /* Azul Escuro para botões e textos principais */
+            --cyan-bg: #00bcd4; /* Azul Ciano para o fundo */
+            --cyan-light: #e0f7fa; 
+            --white: #ffffff;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            /* Fundo azul ciano com um leve gradiente para ficar moderno */
+            background: linear-gradient(135deg, var(--cyan-bg), #008ba3); 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container { 
+            background: var(--white); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            width: 100%; 
+            max-width: 450px; 
+        }
+
+        /* Estilo da Logo */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 160px; /* Ajuste o tamanho da sua logo aqui */
+            height: auto;
+        }
+        
         h2 { color: var(--primary); text-align: center; margin-top: 0; }
+        h3.saudacao { color: #333; text-align: center; font-size: 24px; margin-bottom: 5px; }
+        p.subtexto { text-align: center; color: #666; margin-bottom: 25px; }
+        
         .passo { display: none; }
-        .passo.ativo { display: block; }
+        .passo.ativo { display: block; animation: fadeIn 0.4s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         label { display: block; margin: 15px 0 5px; font-weight: bold; color: #333; }
         input, select, button { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 5px rgba(0, 74, 153, 0.3); }
+        
         button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-        button:hover { background: #003570; }
-        .item-carrinho { background: #f9f9f9; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
-        .loading { text-align: center; font-style: italic; color: #666; }
+        button:hover { background: #003570; transform: scale(1.02); }
+        button:disabled { background: #999; cursor: not-allowed; transform: none; }
+        
+        .item-carrinho { background: var(--cyan-light); padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333;}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Portal de EPI - VIC</h2>
-    
-    <!-- Tela de Carregamento -->
-    <div id="loading" class="loading">Sincronizando com a planilha...</div>
+    <!-- Substitua o link do src pela imagem real da logo da VIC -->
+    <div class="logo-container">
+        <img src="https://via.placeholder.com/300x100.png?text=LOGO+DA+EMPRESA" alt="Logo VIC" class="logo">
+    </div>
+
+    <h2>Portal de EPI</h2>
+
+    <!-- PASSO 0: Tela Inicial (Boas-vindas) -->
+    <div id="passo0" class="passo ativo">
+        <h3 id="texto-saudacao" class="saudacao">Olá!</h3>
+        <p class="subtexto">Bem-vindo ao sistema de requisição.</p>
+        <button id="btn-iniciar" onclick="iniciarPedido()">Iniciar Pedido</button>
+    </div>
 
     <!-- PASSO 1: Identificação -->
     <div id="passo1" class="passo">
@@ -36,10 +92,11 @@
 
     <!-- PASSO 2: Seleção de EPI -->
     <div id="passo2" class="passo">
-        <h3 id="nome-exibicao">Olá!</h3>
+        <h3 id="nome-exibicao" style="text-align:center; color:var(--primary);">Olá!</h3>
+        
         <label for="epi">Selecione o EPI:</label>
         <select id="epi" onchange="atualizarDetalhesEPI()">
-            <option value="">Carregando lista...</option>
+            <option value="">Selecione um item...</option>
         </select>
 
         <div id="area-detalhes" style="display:none;">
@@ -50,38 +107,88 @@
         <label for="quantidade">Quantidade:</label>
         <input type="number" id="quantidade" value="1" min="1">
         
-        <button onclick="adicionarAoCarrinho()" style="background: #28a745;">+ Adicionar Item</button>
+        <button onclick="adicionarAoCarrinho()" style="background: #00bcd4; color: #fff;">+ Adicionar Item</button>
         <div id="lista-carrinho" style="margin-top:20px;"></div>
-        <button id="btn-finalizar" onclick="enviarTudo()" style="display:none;">Finalizar Pedido</button>
+        <button id="btn-finalizar" onclick="enviarTudo()" style="display:none; background: #28a745;">Finalizar Pedido</button>
     </div>
 
     <!-- PASSO 3: Sucesso -->
     <div id="passo3" class="passo" style="text-align: center;">
-        <div style="font-size: 50px;">✅</div>
-        <h3>Pedido Enviado!</h3>
+        <div style="font-size: 50px; margin-bottom: 10px;">✅</div>
+        <h3 style="color: #28a745;">Pedido Enviado!</h3>
         <p>Seu número de protocolo é:</p>
-        <h1 id="num-protocolo" style="color: var(--primary);">0000</h1>
-        <p id="resumo-final-texto" style="font-size: 14px; text-align: left;"></p>
+        <h1 id="num-protocolo" style="color: var(--primary); font-size: 40px; margin: 10px 0;">0000</h1>
         <button onclick="window.location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzozhrkGyu9eqI57PLXklaEXAmj-gXx1iAzihIUaj47yjYq_wTMbfZ3VkAdte8m9Hcz0g/exec'; //
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzozhrkGyu9eqI57PLXklaEXAmj-gXx1iAzihIUaj47yjYq_wTMbfZ3VkAdte8m9Hcz0g/exec';
+    
     let baseDados = { funcionarios: {}, epis: [] };
     let carrinho = [];
+    let dadosProntos = false;
+    let usuarioEsperando = false; // Caso ele clique antes de baixar tudo
 
-    // Carregar dados da planilha ao abrir o site
-    window.onload = async () => {
-        try {
-            const response = await fetch(SCRIPT_URL);
-            baseDados = await response.json();
-            document.getElementById("loading").style.display = "none";
-            document.getElementById("passo1").classList.add("ativo");
-        } catch (error) {
-            document.getElementById("loading").innerText = "Erro ao conectar com a planilha.";
-        }
+    window.onload = () => {
+        definirSaudacao();
+        carregarPlanilhaOculta();
     };
+
+    // Define Bom dia / Boa tarde / Boa noite
+    function definirSaudacao() {
+        const hora = new Date().getHours();
+        let saudacao = "Boa noite";
+        if (hora >= 5 && hora < 12) saudacao = "Bom dia";
+        else if (hora >= 12 && hora < 18) saudacao = "Boa tarde";
+        document.getElementById("texto-saudacao").innerText = saudacao + "!";
+    }
+
+    // Carrega os dados por trás sem travar a tela
+    async function carregarPlanilhaOculta() {
+        // Tenta usar o cache do celular primeiro para ser instantâneo
+        const cache = localStorage.getItem('cacheBancoEPI');
+        if (cache) {
+            baseDados = JSON.parse(cache);
+            dadosProntos = true;
+        }
+
+        try {
+            // Busca dados novos na nuvem para manter atualizado
+            const response = await fetch(SCRIPT_URL);
+            const dadosNovos = await response.json();
+            baseDados = dadosNovos;
+            dadosProntos = true;
+            localStorage.setItem('cacheBancoEPI', JSON.stringify(dadosNovos)); // Atualiza o cache
+            
+            // Se o usuário já tinha clicado no botão e estava esperando
+            if (usuarioEsperando) {
+                avancarParaPasso1();
+            }
+        } catch (error) {
+            console.error("Erro na sincronização:", error);
+            if (!cache) {
+                document.getElementById("btn-iniciar").innerText = "Erro. Recarregue a página.";
+            }
+        }
+    }
+
+    // Ação do Botão "Iniciar Pedido"
+    function iniciarPedido() {
+        if (dadosProntos) {
+            avancarParaPasso1();
+        } else {
+            // Se a internet estiver lenta e o script não baixou ainda
+            usuarioEsperando = true;
+            const btn = document.getElementById("btn-iniciar");
+            btn.innerText = "Sincronizando... Aguarde";
+            btn.disabled = true;
+        }
+    }
+
+    function avancarParaPasso1() {
+        irParaPasso(1);
+    }
 
     function irParaPasso(num) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
@@ -142,7 +249,7 @@
     function renderizarCarrinho() {
         const div = document.getElementById("lista-carrinho");
         div.innerHTML = "<strong>Itens no pedido:</strong>";
-        carrinho.forEach((item, index) => {
+        carrinho.forEach((item) => {
             div.innerHTML += `
                 <div class="item-carrinho">
                     ${item.qtd}x ${item.epi} (${item.det})
@@ -152,10 +259,9 @@
 
     async function enviarTudo() {
         const btn = document.getElementById("btn-finalizar");
-        btn.innerText = "Enviando...";
+        btn.innerText = "Enviando para a planilha...";
         btn.disabled = true;
 
-        // Gerar Protocolo
         let ultimoNum = localStorage.getItem('protocoloVIC') || 0;
         let novoNum = parseInt(ultimoNum) + 1;
         localStorage.setItem('protocoloVIC', novoNum);
