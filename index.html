@@ -3,182 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal EPI - VIC</title>
+    <title>Portal EPI - VLI</title>
     <style>
-        :root { --primary: #004a99; --cyan: #00bcd4; }
+        :root { --primary: #004a99; --cyan: #00bcd4; --white: #ffffff; }
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             background: linear-gradient(135deg, #004a99 0%, #00bcd4 100%);
             margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
         .container { 
-            background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; max-width: 400px; 
+            background: rgba(255, 255, 255, 0.98); padding: 30px; border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 420px; 
         }
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo-container img { max-width: 150px; height: auto; }
+        .logo-header { text-align: center; margin-bottom: 25px; }
+        .logo-header img { max-width: 180px; height: auto; }
         
-        h2 { color: var(--primary); text-align: center; margin: 0 0 20px; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { color: var(--primary); text-align: center; margin: 0 0 20px; font-size: 20px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .passo { display: none; }
-        .passo.ativo { display: block; animation: fadeIn 0.5s; }
+        .passo.ativo { display: block; animation: slideUp 0.4s ease; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #444; font-size: 14px; }
-        input, select, button { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #333; font-size: 14px; }
+        input, select, button { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 12px; font-size: 16px; box-sizing: border-box; }
         
-        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        button:active { transform: scale(0.98); }
+        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        button:active { transform: scale(0.97); }
         
         .btn-add { background: var(--cyan); margin-top: 20px; color: #004a99; }
         .btn-enviar { background: #28a745; margin-top: 15px; }
         
-        .item-card { background: #f0faff; border-left: 5px solid var(--primary); padding: 12px; margin-top: 10px; border-radius: 8px; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .lista-container { margin-top: 25px; border-top: 2px dashed #eee; padding-top: 15px; }
-        .protocolo-badge { display: inline-block; background: #eee; padding: 4px 10px; border-radius: 5px; font-size: 11px; margin-bottom: 10px; color: #666; }
+        .item-card { background: #f8fcff; border-left: 6px solid var(--primary); padding: 12px; margin-top: 10px; border-radius: 10px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .lista-carrinho { margin-top: 25px; border-top: 2px dashed #ddd; padding-top: 15px; }
+        .prot-info { background: #f0f0f0; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #666; display: inline-block; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="logo-container">
-        <!-- Sua logo configurada -->
-        <img src="https://logodownload.org/wp-content/uploads/2019/07/vic-logo.png" alt="Logo VIC">
+    <div class="logo-header">
+        <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" alt="Logo VLI">
     </div>
     
-    <h2>Portal EPI</h2>
+    <h2>Solicitação de EPI</h2>
 
     <!-- Carregamento -->
     <div id="p0" class="passo ativo">
-        <p style="text-align:center; color:#666;">Sincronizando dados...</p>
+        <p style="text-align:center; color:#666;">Buscando tabelas e funcionários...</p>
     </div>
 
     <!-- Login -->
     <div id="p1" class="passo">
-        <label>Matrícula:</label>
-        <input type="tel" id="mat-input" placeholder="Digite seu registro">
-        <button onclick="logar()">Acessar</button>
+        <label>Sua Matrícula:</label>
+        <input type="tel" id="mat-input" placeholder="Ex: 102030">
+        <button onclick="fazerLogin()">Acessar Portal</button>
     </div>
 
-    <!-- Pedido -->
+    <!-- Seleção -->
     <div id="p2" class="passo">
-        <div id="protocolo-view" class="protocolo-badge"></div>
-        <p id="user-info" style="font-weight:bold; color: var(--primary); margin: 0 0 15px;"></p>
+        <div id="prot-tag" class="prot-info"></div>
+        <p id="user-display" style="font-weight:bold; color: var(--primary); margin: 0 0 15px;"></p>
         
-        <label>Equipamento (EPI):</label>
-        <select id="epi-sel" onchange="renderExtras()"></select>
-        
-        <div id="extras"></div>
+        <label>Selecione o Material:</label>
+        <select id="epi-sel" onchange="mostrarExtras()"></select>
+        <div id="extras-box"></div>
 
-        <button class="btn-add" onclick="addItem()">+ Adicionar Item</button>
+        <button class="btn-add" onclick="colocarNoPedido()">+ Adicionar ao Pedido</button>
 
-        <div id="carrinho" class="lista-container" style="display:none;">
-            <p style="font-size:11px; font-weight:bold; color:#999; text-align:center;">ITENS DO PEDIDO ATUAL</p>
-            <div id="lista-corpo"></div>
-            <button class="btn-enviar" id="btn-final" onclick="enviarTudo()">Finalizar Pedido</button>
+        <div id="area-pedido" class="lista-carrinho" style="display:none;">
+            <p style="font-size:11px; font-weight:bold; color:#888; margin-bottom: 10px;">ITENS SELECIONADOS:</p>
+            <div id="corpo-lista"></div>
+            <button class="btn-enviar" id="btn-final" onclick="salvarTudo()">Finalizar Pedido</button>
         </div>
     </div>
 
-    <!-- Sucesso -->
+    <!-- Concluído -->
     <div id="p3" class="passo" style="text-align:center;">
-        <div style="font-size: 60px; margin-bottom: 10px;">✅</div>
-        <h3 style="color: #28a745;">Sucesso!</h3>
-        <p id="msg-final"></p>
-        <button onclick="location.reload()" style="background:#666;">Novo Pedido</button>
+        <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
+        <h3 style="color: #28a745;">Pedido Enviado!</h3>
+        <p id="resumo-final" style="color:#666;"></p>
+        <button onclick="location.reload()" style="background:#555;">Novo Pedido</button>
     </div>
 </div>
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLPASIT6clTTipjS804v_MhdAqURqGQ0y-zFJ6sXLMzmFmEFrV68sUpOzQp_z0nQcXhQ/exec';
     
-    let dados = { funcionarios: {}, epis: [] };
-    let itensPedido = [];
-    let numeroPedidoUnico = "";
+    let db = { funcionarios: {}, epis: [] };
+    let cart = [];
+    let idUnico = "";
 
     window.onload = async () => {
         try {
-            const res = await fetch(SCRIPT_URL);
-            dados = await res.json();
-            const sel = document.getElementById("epi-sel");
-            sel.innerHTML = '<option value="">Selecione...</option>';
-            dados.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            ir(1);
+            const r = await fetch(SCRIPT_URL);
+            db = await r.json();
+            const s = document.getElementById("epi-sel");
+            s.innerHTML = '<option value="">Selecione...</option>';
+            db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+            mudar(1);
         } catch (e) {
-            alert("Erro ao carregar banco de dados.");
+            alert("Erro de conexão com o banco VLI.");
         }
     };
 
-    function ir(n) {
+    function mudar(n) {
         document.querySelectorAll('.passo').forEach(d => d.classList.remove('ativo'));
         document.getElementById('p' + n).classList.add('ativo');
     }
 
-    function gerarProtocolo() {
-        const agora = new Date();
-        // Gera um ID baseado no minuto/segundo para ser único por pedido
-        return "PED-" + agora.getDate() + (agora.getMonth()+1) + agora.getHours() + agora.getMinutes() + agora.getSeconds();
+    function gerarID() {
+        const d = new Date();
+        return "VLI-" + d.getDate() + (d.getMonth()+1) + d.getHours() + d.getMinutes() + d.getSeconds();
     }
 
-    function logar() {
+    function fazerLogin() {
         const m = document.getElementById("mat-input").value.trim();
-        if (dados.funcionarios[m]) {
-            numeroPedidoUnico = gerarProtocolo(); // Define o ID fixo para todos os itens deste login
-            document.getElementById("user-info").innerText = "Olá, " + dados.funcionarios[m];
-            document.getElementById("protocolo-view").innerText = "ID PEDIDO: " + numeroPedidoUnico;
-            ir(2);
-        } else { alert("Matrícula inválida."); }
+        if (db.funcionarios[m]) {
+            idUnico = gerarID();
+            document.getElementById("user-display").innerText = "Colaborador: " + db.funcionarios[m];
+            document.getElementById("prot-tag").innerText = "PEDIDO: " + idUnico;
+            mudar(2);
+        } else { alert("Matrícula não encontrada."); }
     }
 
-    function renderExtras() {
-        const epi = dados.epis.find(x => x.nome === document.getElementById("epi-sel").value);
-        const box = document.getElementById("extras");
-        box.innerHTML = "";
-        if (epi) {
-            if (epi.label) box.innerHTML += `<label>${epi.label}</label><select id="ex1">${epi.opcoes.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
-            if (epi.label2) box.innerHTML += `<label>${epi.label2}</label><select id="ex2">${epi.opcoes2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+    function mostrarExtras() {
+        const e = db.epis.find(x => x.nome === document.getElementById("epi-sel").value);
+        const b = document.getElementById("extras-box");
+        b.innerHTML = "";
+        if (e) {
+            if (e.label) b.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+            if (e.label2) b.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
         }
     }
 
-    function addItem() {
-        const nome = document.getElementById("epi-sel").value;
-        if (!nome) return alert("Escolha um item.");
+    function colocarNoPedido() {
+        const n = document.getElementById("epi-sel").value;
+        if (!n) return alert("Escolha um material.");
+        const v1 = document.getElementById("v1") ? document.getElementById("v1").value : "";
+        const v2 = document.getElementById("v2") ? document.getElementById("v2").value : "";
         
-        const e1 = document.getElementById("ex1") ? document.getElementById("ex1").value : "";
-        const e2 = document.getElementById("ex2") ? document.getElementById("ex2").value : "";
+        cart.push({ epi: n, det: (v1 + " " + v2).trim() });
         
-        itensPedido.push({ epi: nome, detalhes: (e1 + " " + e2).trim() });
-        
-        document.getElementById("carrinho").style.display = "block";
-        document.getElementById("lista-corpo").innerHTML = itensPedido.map(i => `
-            <div class="item-card"><b>${i.epi}</b><br><small>${i.detalhes}</small></div>
-        `).join('');
+        document.getElementById("area-pedido").style.display = "block";
+        document.getElementById("corpo-lista").innerHTML = cart.map(i => `<div class="item-card"><b>${i.epi}</b><br><small>${i.det}</small></div>`).join('');
         
         document.getElementById("epi-sel").value = "";
-        document.getElementById("extras").innerHTML = "";
+        document.getElementById("extras-box").innerHTML = "";
     }
 
-    async function enviarTudo() {
+    async function salvarTudo() {
         const btn = document.getElementById("btn-final");
-        btn.innerText = "Gravando..."; btn.disabled = true;
-        const nomeFunc = document.getElementById("user-info").innerText.replace("Olá, ", "");
+        btn.innerText = "Salvando..."; btn.disabled = true;
+        const nome = document.getElementById("user-display").innerText.replace("Colaborador: ", "");
 
         try {
-            for (const item of itensPedido) {
+            for (const i of cart) {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({ 
-                        protocolo: numeroPedidoUnico, // Envia o MESMO número para todos
-                        funcionario: nomeFunc, 
-                        epi: item.epi, 
-                        detalhes: item.detalhes 
+                        protocolo: idUnico, 
+                        funcionario: nome, 
+                        epi: i.epi, 
+                        detalhes: i.det 
                     })
                 });
             }
-            document.getElementById("msg-final").innerText = "Pedido " + numeroPedidoUnico + " registrado.";
-            ir(3);
+            document.getElementById("resumo-final").innerText = "Pedido " + idUnico + " gravado na planilha.";
+            mudar(3);
         } catch (e) {
-            alert("Erro no envio.");
+            alert("Erro ao salvar.");
             btn.disabled = false;
         }
     }
