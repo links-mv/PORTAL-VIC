@@ -64,12 +64,13 @@
     <div id="passo3" class="passo" style="text-align:center;">
         <div style="font-size:50px;">✅</div>
         <h3>Pedido Concluído!</h3>
-        <p>Seu protocolo é: <strong id="prot-txt" style="font-size:24px; color:var(--primary);"></strong></p>
+        <p>Seu protocolo é: <strong id="prot-txt" style="font-size:24px; color:var(--primary);">0001</strong></p>
         <button onclick="location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <script>
+    // Link do seu script
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCNIHNRJxEORY_yekUlnFBlZLCDpHFe21EFKNLgWR74NHXVQpRgJHYBrvvdI9OuuZMg/exec';
     
     let db = { funcionarios: {}, epis: [], proximoProtocolo: "0001" };
@@ -78,9 +79,12 @@
     window.onload = async () => {
         try {
             const r = await fetch(SCRIPT_URL);
-            db = await r.json();
-            document.getElementById("status-sinc").innerText = "✅ Sistema Pronto";
-            popEpi();
+            const data = await r.json();
+            if (data.proximoProtocolo) {
+                db = data;
+                document.getElementById("status-sinc").innerText = "✅ Sistema Pronto";
+                popEpi();
+            }
         } catch(e) { document.getElementById("status-sinc").innerText = "❌ Erro de Conexão"; }
     };
 
@@ -91,7 +95,7 @@
 
     function login() {
         const m = document.getElementById("matricula").value.trim();
-        if(db.funcionarios[m]) {
+        if(db.funcionarios && db.funcionarios[m]) {
             document.getElementById("user-display").innerText = "Olá, " + db.funcionarios[m];
             irParaPasso(2);
         } else { alert("Matrícula não encontrada."); }
@@ -144,8 +148,9 @@
 
     async function enviar() {
         const btn = document.getElementById("btn-final");
-        btn.innerText = "Enviando Dados..."; btn.disabled = true;
+        btn.innerText = "Gravando..."; btn.disabled = true;
         const nome = document.getElementById("user-display").innerText.replace("Olá, ", "");
+        const protocoloAtual = db.proximoProtocolo;
         
         try {
             for(let i of cart) {
@@ -153,17 +158,17 @@
                     method: 'POST', 
                     mode: 'no-cors',
                     body: JSON.stringify({ 
-                        protocolo: db.proximoProtocolo, 
+                        protocolo: protocoloAtual, 
                         funcionario: nome, 
                         epi: i.epi, 
                         detalhes: i.det
                     }) 
                 });
             }
-            document.getElementById("prot-txt").innerText = db.proximoProtocolo;
+            document.getElementById("prot-txt").innerText = protocoloAtual;
             irParaPasso(3);
         } catch(e) { 
-            alert("Erro ao salvar o pedido."); 
+            alert("Erro ao salvar."); 
             btn.disabled = false; 
             btn.innerText = "Finalizar e Enviar"; 
         }
