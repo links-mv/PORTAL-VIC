@@ -64,7 +64,7 @@
         .btn-finalizar { background: #28a745; }
         .btn-voltar { background: none; color: #666; border: 1px solid #ddd; margin-top: 10px; }
 
-        .item-carrinho { background: var(--cyan-light); padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px; position: relative;}
+        .item-carrinho { background: var(--cyan-light); padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px;}
         .loading-text { text-align: center; font-size: 12px; color: #888; margin-top: 10px; }
         
         .pergunta-mais { text-align: center; font-weight: bold; margin: 20px 0 10px; color: var(--primary); }
@@ -79,7 +79,6 @@
 
     <h2>Portal de EPI - VIC</h2>
 
-    <!-- PASSO 0: Tela Inicial -->
     <div id="passo0" class="passo ativo">
         <h3 id="texto-saudacao" class="saudacao">Olá!</h3>
         <p class="subtexto">Sistema de requisição de materiais.</p>
@@ -87,7 +86,6 @@
         <div id="status-sinc" class="loading-text">Verificando atualizações...</div>
     </div>
 
-    <!-- PASSO 1: Identificação -->
     <div id="passo1" class="passo">
         <label for="matricula">Matrícula:</label>
         <input type="number" id="matricula" placeholder="Digite sua matrícula">
@@ -95,7 +93,6 @@
         <button onclick="irParaPasso(0)" class="btn-voltar">Voltar</button>
     </div>
 
-    <!-- PASSO 2: Seleção de EPI -->
     <div id="passo2" class="passo">
         <h3 id="nome-exibicao" style="text-align:center; color:var(--primary); margin-bottom: 20px;">Olá!</h3>
         
@@ -104,9 +101,16 @@
             <option value="">Carregando itens...</option>
         </select>
 
-        <div id="area-detalhes" style="display:none;">
-            <label id="label-detalhe" for="detalhe-item">Variação:</label>
-            <select id="detalhe-item"></select>
+        <!-- VARIAÇÃO 1 -->
+        <div id="area-detalhes-1" style="display:none;">
+            <label id="label-detalhe-1" for="detalhe-item-1">Variação 1:</label>
+            <select id="detalhe-item-1"></select>
+        </div>
+
+        <!-- VARIAÇÃO 2 -->
+        <div id="area-detalhes-2" style="display:none;">
+            <label id="label-detalhe-2" for="detalhe-item-2">Variação 2:</label>
+            <select id="detalhe-item-2"></select>
         </div>
 
         <label for="quantidade">Quantidade:</label>
@@ -116,19 +120,14 @@
         <button onclick="irParaPasso(1)" class="btn-voltar">Sair / Trocar Usuário</button>
     </div>
 
-    <!-- NOVO PASSO: Revisão e Carrinho -->
     <div id="passo-carrinho" class="passo">
         <h3 style="text-align:center; color:var(--primary);">Resumo do Pedido</h3>
-        
         <div id="lista-carrinho" style="margin-top:20px;"></div>
-        
         <div class="pergunta-mais">Deseja adicionar mais algum item?</div>
-        
         <button onclick="irParaPasso(2)" style="background: var(--cyan-bg); margin-top: 5px;">+ Sim, Adicionar Mais</button>
         <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Não, Finalizar Pedido</button>
     </div>
 
-    <!-- PASSO 3: Sucesso -->
     <div id="passo3" class="passo" style="text-align: center;">
         <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
         <h3 style="color: #28a745;">Pedido Enviado!</h3>
@@ -215,50 +214,73 @@
 
     function atualizarDetalhesEPI() {
         const epiSelecionado = document.getElementById("epi").value;
-        const area = document.getElementById("area-detalhes");
-        const selectDet = document.getElementById("detalhe-item");
-        const labelDet = document.getElementById("label-detalhe");
+        const area1 = document.getElementById("area-detalhes-1");
+        const area2 = document.getElementById("area-detalhes-2");
+        const selectDet1 = document.getElementById("detalhe-item-1");
+        const selectDet2 = document.getElementById("detalhe-item-2");
+        const labelDet1 = document.getElementById("label-detalhe-1");
+        const labelDet2 = document.getElementById("label-detalhe-2");
+
         const dados = baseDados.epis.find(e => e.nome === epiSelecionado);
 
         if (dados) {
-            area.style.display = "block";
-            labelDet.innerText = dados.label + ":";
-            selectDet.innerHTML = "";
-            dados.opcoes.forEach(opt => {
-                selectDet.innerHTML += `<option value="${opt}">${opt}</option>`;
-            });
+            // Lógica Variação 1
+            if (dados.label && dados.opcoes && dados.opcoes.length > 0) {
+                area1.style.display = "block";
+                labelDet1.innerText = dados.label + ":";
+                selectDet1.innerHTML = dados.opcoes.map(opt => `<option value="${opt}">${opt}</option>`).join("");
+            } else {
+                area1.style.display = "none";
+                selectDet1.innerHTML = "";
+            }
+
+            // Lógica Variação 2
+            if (dados.label2 && dados.opcoes2 && dados.opcoes2.length > 0) {
+                area2.style.display = "block";
+                labelDet2.innerText = dados.label2 + ":";
+                selectDet2.innerHTML = dados.opcoes2.map(opt => `<option value="${opt}">${opt}</option>`).join("");
+            } else {
+                area2.style.display = "none";
+                selectDet2.innerHTML = "";
+            }
         } else {
-            area.style.display = "none";
+            area1.style.display = "none";
+            area2.style.display = "none";
         }
     }
 
     function adicionarAoCarrinho() {
         const epi = document.getElementById("epi").value;
-        const det = document.getElementById("detalhe-item").value;
+        const det1 = document.getElementById("detalhe-item-1").value || "";
+        const det2 = document.getElementById("detalhe-item-2").value || "";
         const qtd = document.getElementById("quantidade").value;
 
         if (!epi) return alert("Selecione um EPI primeiro.");
 
-        carrinho.push({ epi, det, qtd });
+        // Junta as variações para o resumo
+        let descricaoDet = det1;
+        if (det1 && det2) descricaoDet += " / " + det2;
+        else if (det2) descricaoDet = det2;
+
+        carrinho.push({ epi, det: descricaoDet, det1, det2, qtd });
         renderizarCarrinho();
         
-        // Limpa a seleção para o próximo possível item
         document.getElementById("epi").value = "";
-        document.getElementById("area-detalhes").style.display = "none";
+        document.getElementById("area-detalhes-1").style.display = "none";
+        document.getElementById("area-detalhes-2").style.display = "none";
         document.getElementById("quantidade").value = "1";
         
-        // Vai para a página de revisão (Carrinho)
         irParaPasso('passo-carrinho');
     }
 
     function renderizarCarrinho() {
         const div = document.getElementById("lista-carrinho");
         div.innerHTML = "";
-        carrinho.forEach((item, index) => {
+        carrinho.forEach((item) => {
             div.innerHTML += `
                 <div class="item-carrinho">
                     <strong>${item.qtd}x</strong> ${item.epi} <br>
-                    <small>Variação: ${item.det}</small>
+                    <small>${item.det}</small>
                 </div>`;
         });
     }
@@ -281,7 +303,7 @@
                     protocolo: formatado,
                     funcionario: nomeFunc,
                     epi: item.epi,
-                    detalhes: item.det,
+                    detalhes: item.det, // Envia a descrição combinada
                     quantidade: item.qtd
                 };
 
