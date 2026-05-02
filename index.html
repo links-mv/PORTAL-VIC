@@ -60,15 +60,20 @@
         button:hover { background: #003570; transform: scale(1.02); }
         button:disabled { background: #999; cursor: not-allowed; }
         
-        .item-carrinho { background: var(--cyan-light); padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px;}
+        .btn-adicionar { background: var(--cyan-bg); }
+        .btn-finalizar { background: #28a745; }
+        .btn-voltar { background: none; color: #666; border: 1px solid #ddd; margin-top: 10px; }
+
+        .item-carrinho { background: var(--cyan-light); padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary); color: #333; font-size: 14px; position: relative;}
         .loading-text { text-align: center; font-size: 12px; color: #888; margin-top: 10px; }
+        
+        .pergunta-mais { text-align: center; font-weight: bold; margin: 20px 0 10px; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="logo-container">
-        <!-- Logo oficial da VLI Logística -->
         <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" alt="Logo VLI" class="logo">
     </div>
 
@@ -86,8 +91,8 @@
     <div id="passo1" class="passo">
         <label for="matricula">Matrícula:</label>
         <input type="number" id="matricula" placeholder="Digite sua matrícula">
-        <button onclick="identificarUsuario()">Acessar</button>
-        <button onclick="irParaPasso(0)" style="background:none; color: #666; margin-top: 10px;">Voltar</button>
+        <button onclick="identificarUsuario()">Acessar Sistema</button>
+        <button onclick="irParaPasso(0)" class="btn-voltar">Voltar</button>
     </div>
 
     <!-- PASSO 2: Seleção de EPI -->
@@ -96,7 +101,7 @@
         
         <label for="epi">Selecione o EPI:</label>
         <select id="epi" onchange="atualizarDetalhesEPI()">
-            <option value="">Aguarde...</option>
+            <option value="">Carregando itens...</option>
         </select>
 
         <div id="area-detalhes" style="display:none;">
@@ -107,18 +112,27 @@
         <label for="quantidade">Quantidade:</label>
         <input type="number" id="quantidade" value="1" min="1">
         
-        <button onclick="adicionarAoCarrinho()" style="background: var(--cyan-bg);">+ Adicionar Item</button>
+        <button onclick="adicionarAoCarrinho()" class="btn-adicionar">Adicionar ao Pedido</button>
+        <button onclick="irParaPasso(1)" class="btn-voltar">Sair / Trocar Usuário</button>
+    </div>
+
+    <!-- NOVO PASSO: Revisão e Carrinho -->
+    <div id="passo-carrinho" class="passo">
+        <h3 style="text-align:center; color:var(--primary);">Resumo do Pedido</h3>
         
         <div id="lista-carrinho" style="margin-top:20px;"></div>
         
-        <button id="btn-finalizar" onclick="enviarTudo()" style="display:none; background: #28a745;">Finalizar e Enviar</button>
+        <div class="pergunta-mais">Deseja adicionar mais algum item?</div>
+        
+        <button onclick="irParaPasso(2)" style="background: var(--cyan-bg); margin-top: 5px;">+ Sim, Adicionar Mais</button>
+        <button id="btn-finalizar-pedido" onclick="enviarTudo()" class="btn-finalizar">Não, Finalizar Pedido</button>
     </div>
 
     <!-- PASSO 3: Sucesso -->
     <div id="passo3" class="passo" style="text-align: center;">
         <div style="font-size: 60px; margin-bottom: 15px;">✅</div>
-        <h3 style="color: #28a745;">Sucesso!</h3>
-        <p>Pedido registrado com o protocolo:</p>
+        <h3 style="color: #28a745;">Pedido Enviado!</h3>
+        <p>Seu número de protocolo é:</p>
         <h1 id="num-protocolo" style="color: var(--primary); font-size: 45px; margin: 10px 0;">0000</h1>
         <button onclick="window.location.reload()">Fazer Novo Pedido</button>
     </div>
@@ -133,16 +147,12 @@
 
     window.onload = () => {
         definirSaudacao();
-        
-        // 1. TENTA CARREGAR DO CACHE (INSTANTÂNEO)
         const cache = localStorage.getItem('cacheVIC');
         if (cache) {
             baseDados = JSON.parse(cache);
             dadosProntos = true;
-            document.getElementById("status-sinc").innerText = "Banco de dados local pronto.";
+            document.getElementById("status-sinc").innerText = "Dados carregados (offline).";
         }
-        
-        // 2. BUSCA ATUALIZAÇÃO DA PLANILHA EM SEGUNDO PLANO
         sincronizarDados();
     };
 
@@ -158,29 +168,20 @@
         try {
             const response = await fetch(SCRIPT_URL);
             const dadosNovos = await response.json();
-            
             baseDados = dadosNovos;
             localStorage.setItem('cacheVIC', JSON.stringify(dadosNovos));
             dadosProntos = true;
-            
             document.getElementById("status-sinc").innerText = "Sincronizado com sucesso.";
-            
-            // Se o botão estava travado, libera agora
             const btn = document.getElementById("btn-iniciar");
-            if (btn.disabled) {
-                btn.innerText = "Iniciar Pedido";
-                btn.disabled = false;
-            }
+            if (btn.disabled) { btn.innerText = "Iniciar Pedido"; btn.disabled = false; }
         } catch (error) {
-            console.error("Erro na sincronização:", error);
-            document.getElementById("status-sinc").innerText = "Aviso: Usando dados offline.";
+            document.getElementById("status-sinc").innerText = "Aviso: Modo offline ativo.";
         }
     }
 
     function iniciarPedido() {
-        if (dadosProntos) {
-            irParaPasso(1);
-        } else {
+        if (dadosProntos) irParaPasso(1);
+        else {
             const btn = document.getElementById("btn-iniciar");
             btn.innerText = "Sincronizando... Aguarde";
             btn.disabled = true;
@@ -189,7 +190,8 @@
 
     function irParaPasso(num) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        document.getElementById('passo' + num).classList.add('ativo');
+        const target = typeof num === 'string' ? num : 'passo' + num;
+        document.getElementById(target).classList.add('ativo');
     }
 
     function identificarUsuario() {
@@ -199,7 +201,7 @@
             popularListaEPIs();
             irParaPasso(2);
         } else {
-            alert("Matrícula não encontrada. Verifique o número e tente novamente.");
+            alert("Matrícula não encontrada.");
         }
     }
 
@@ -216,7 +218,6 @@
         const area = document.getElementById("area-detalhes");
         const selectDet = document.getElementById("detalhe-item");
         const labelDet = document.getElementById("label-detalhe");
-
         const dados = baseDados.epis.find(e => e.nome === epiSelecionado);
 
         if (dados) {
@@ -240,23 +241,31 @@
 
         carrinho.push({ epi, det, qtd });
         renderizarCarrinho();
-        document.getElementById("btn-finalizar").style.display = "block";
+        
+        // Limpa a seleção para o próximo possível item
+        document.getElementById("epi").value = "";
+        document.getElementById("area-detalhes").style.display = "none";
+        document.getElementById("quantidade").value = "1";
+        
+        // Vai para a página de revisão (Carrinho)
+        irParaPasso('passo-carrinho');
     }
 
     function renderizarCarrinho() {
         const div = document.getElementById("lista-carrinho");
-        div.innerHTML = "<strong>Itens no pedido:</strong>";
-        carrinho.forEach((item) => {
+        div.innerHTML = "";
+        carrinho.forEach((item, index) => {
             div.innerHTML += `
                 <div class="item-carrinho">
-                    ${item.qtd}x ${item.epi} (${item.det})
+                    <strong>${item.qtd}x</strong> ${item.epi} <br>
+                    <small>Variação: ${item.det}</small>
                 </div>`;
         });
     }
 
     async function enviarTudo() {
-        const btn = document.getElementById("btn-finalizar");
-        btn.innerText = "Registrando na planilha...";
+        const btn = document.getElementById("btn-finalizar-pedido");
+        btn.innerText = "Processando... Aguarde";
         btn.disabled = true;
 
         let ultimoNum = localStorage.getItem('protocoloVIC') || 100;
@@ -281,11 +290,10 @@
                     body: JSON.stringify(dados)
                 });
             }
-
             document.getElementById("num-protocolo").innerText = formatado;
             irParaPasso(3);
         } catch (e) {
-            alert("Erro ao enviar. Verifique sua conexão.");
+            alert("Erro ao enviar. Tente novamente.");
             btn.innerText = "Tentar Novamente";
             btn.disabled = false;
         }
