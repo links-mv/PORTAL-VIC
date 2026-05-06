@@ -3,283 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal VIC | Gestão Operacional</title>
-    <!-- ÍCONE NA ABA DO NAVEGADOR (FAVICON) -->
+    <title>Portal VIC</title>
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1063/1063376.png">
-    
     <style>
-        :root {
-            --primary: #004a99; /* Azul VLI / Seriedade */
-            --secondary: #00bcd4;
-            --danger: #d90429;
-            --bg: #f0f2f5;
-            --card: #ffffff;
-            --text: #1a1a1a;
-        }
-
+        :root { --primary: #004a99; --secondary: #00bcd4; --danger: #d90429; --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            color: var(--text);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-            background: var(--card);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
-        }
-
-        /* Header com Logo */
-        .header {
-            background: var(--primary);
-            padding: 30px 20px;
-            text-align: center;
-            color: white;
-            border-radius: 0 0 30px 30px;
-        }
-
-        .logo-img {
-            width: 80px; /* Ajuste o tamanho da sua logo aqui */
-            height: auto;
-            margin-bottom: 15px;
-            filter: brightness(0) invert(1); /* Deixa a logo branca se for escura */
-        }
-
-        .header h1 { margin: 0; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; }
-        .header p { margin: 5px 0 0; opacity: 0.8; font-size: 13px; }
-
-        /* Status do Usuário Logado */
-        .user-pill {
-            background: #e9ecef;
-            margin: -15px auto 15px;
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--primary);
-            display: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-            z-index: 10;
-            border: 1px solid #dee2e6;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; color: var(--text); }
+        .container { width: 100%; max-width: 450px; background: var(--card); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        .header { background: var(--primary); padding: 30px 20px; text-align: center; color: white; border-radius: 0 0 30px 30px; }
+        .logo-img { width: 70px; margin-bottom: 10px; filter: brightness(0) invert(1); }
+        .user-pill { background: #e9ecef; margin: -15px auto 15px; padding: 8px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; color: var(--primary); display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.08); z-index: 10; border: 1px solid #dee2e6; }
         .content { padding: 20px; flex-grow: 1; }
-
-        /* Animações de Transição */
-        .step { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .step { display: none; animation: fadeIn 0.3s ease; }
         .step.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Estilização de Formulários */
-        label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 13px; color: #444; margin-top: 10px; }
-        input, select, textarea {
-            width: 100%;
-            padding: 14px;
-            margin-bottom: 15px;
-            border: 2px solid #edf2f7;
-            border-radius: 10px;
-            font-size: 16px;
-            background: #f8fafc;
-            color: var(--text);
-        }
-
-        input:focus { border-color: var(--secondary); outline: none; background: #fff; }
-
-        /* Botões */
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            text-transform: uppercase;
-        }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        label { display: block; font-weight: 700; margin-bottom: 5px; font-size: 13px; color: #444; margin-top: 15px; }
+        input, select, textarea { width: 100%; padding: 14px; border: 2px solid #edf2f7; border-radius: 10px; font-size: 16px; background: #f8fafc; }
+        input:focus, select:focus { border-color: var(--secondary); outline: none; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-main { background: var(--primary); color: white; }
         .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
         .btn-danger { background: var(--danger); color: white; }
-        .btn:active { transform: scale(0.97); }
-
-        /* Carrinho de EPIs */
-        .cart-item {
-            background: #f1f5f9;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 4px solid var(--secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 10px;
-            color: #bbb;
-            letter-spacing: 1px;
-        }
-
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
+        .cart-item { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--secondary); display: flex; justify-content: space-between; align-items: center; }
+        .footer { text-align: center; padding: 20px; font-size: 10px; color: #bbb; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .time-toggle { display: flex; gap: 10px; margin-bottom: 10px; }
+        .time-btn { flex: 1; padding: 10px; font-size: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; }
+        .time-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <!-- LOGO PRINCIPAL -->
-        <img src="https://cdn-icons-png.flaticon.com/512/1063/1063376.png" alt="Logo VIC" class="logo-img">
-        <h1>PORTAL VIC</h1>
-        <p>Unidade de Gestão Operacional</p>
+        <img src="https://cdn-icons-png.flaticon.com/512/1063/1063376.png" class="logo-img">
+        <h1 style="margin:0; font-size:18px;">PORTAL VIC</h1>
+        <p style="margin:5px 0 0; font-size:12px; opacity:0.8;">Gestão de EPI e Segurança</p>
     </div>
 
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- TELA 0: LOADING -->
-        <div id="step0" class="step active">
-            <div class="loader"></div>
-            <p style="text-align: center; color: #888; font-size: 14px;">Carregando banco de dados...</p>
-        </div>
+        <div id="step0" class="step active"><div class="loader"></div><p style="text-align:center; color:#888;">Sincronizando banco de dados...</p></div>
 
-        <!-- TELA 1: LOGIN -->
+        <!-- LOGIN -->
         <div id="step1" class="step">
-            <h3 style="text-align: center; margin-bottom: 20px;">Acesso ao Sistema</h3>
+            <h3 style="text-align:center;">Identificação</h3>
             <label>Matrícula</label>
-            <input type="tel" id="input-mat" placeholder="Digite sua matrícula" inputmode="numeric">
-            <button class="btn btn-main" onclick="handleLogin()">Entrar</button>
+            <input type="tel" id="input-mat" placeholder="000000" inputmode="numeric">
+            <button class="btn btn-main" onclick="handleLogin()">Entrar no Portal</button>
         </div>
 
-        <!-- TELA 2: MENU -->
+        <!-- MENU -->
         <div id="step2" class="step">
-            <h3 style="margin-bottom: 20px;">Selecione o Serviço</h3>
-            <button class="btn btn-outline" onclick="openEPI()">📦 Solicitar EPI</button>
-            <button class="btn btn-outline" onclick="goTo(4)">⚠️ Relatar Desvio</button>
-            <button class="btn" style="background:none; color:#bbb; font-size:11px; margin-top:40px;" onclick="location.reload()">Encerrar Sessão</button>
+            <button class="btn btn-outline" onclick="goTo(3)">📦 SOLICITAR EPI</button>
+            <button class="btn btn-outline" onclick="goTo(4)">⚠️ RELATAR DESVIO</button>
+            <button class="btn" style="background:none; color:#ccc; font-size:11px;" onclick="location.reload()">Sair do Sistema</button>
         </div>
 
-        <!-- TELA 3: SOLICITAÇÃO EPI -->
+        <!-- EPI -->
         <div id="step3" class="step">
-            <h3>Novo Pedido de EPI</h3>
-            <label>Equipamento</label>
+            <h3>Novo Pedido</h3>
+            <label>Equipamento (EPI)</label>
             <select id="select-epi" onchange="updateFields()"></select>
-            
             <div id="dynamic-area"></div>
+            <button class="btn btn-main" style="background:var(--secondary);" onclick="addItem()">+ Adicionar Item</button>
             
-            <button class="btn btn-main" style="background: var(--secondary); margin-top: 10px;" onclick="addItem()">+ Adicionar ao Pedido</button>
-            
-            <div id="cart-area" style="margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 15px;">
-                <label>Itens Selecionados:</label>
+            <div id="cart-area" style="display:none; margin-top:20px; border-top:1px solid #eee; padding-top:10px;">
+                <label>Itens no Pedido:</label>
                 <div id="cart-list"></div>
-                <button class="btn btn-main" id="btn-submit-epi" onclick="sendEPI()" style="margin-top:15px;">Confirmar e Enviar</button>
+                <button class="btn btn-main" id="btn-submit-epi" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
-            
-            <button class="btn" style="background:#eee; color:#666; margin-top: 20px;" onclick="goTo(2)">Voltar</button>
+            <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
         </div>
 
-        <!-- TELA 4: DESVIOS -->
+        <!-- DESVIO -->
         <div id="step4" class="step">
-            <h3>Relatar Desvio de Segurança</h3>
-            <label>Local da Ocorrência</label>
+            <h3>Relatar Desvio</h3>
+            <label>Horário do Ocorrido</label>
+            <div class="time-toggle">
+                <button id="btn-now" class="time-btn active" onclick="toggleTime(true)">HORA ATUAL</button>
+                <button id="btn-manual" class="time-btn" onclick="toggleTime(false)">OUTRO HORÁRIO</button>
+            </div>
+            <input type="time" id="desvio-hora" style="display:none; margin-bottom:15px;">
+
+            <label>Localização</label>
             <select id="desvio-area">
-                <option>Pátio de Cima</option>
-                <option>Pátio de Baixo</option>
-                <option>Oficina</option>
-                <option>Administrativo</option>
-                <option>Outros</option>
+                <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option>
             </select>
-            <label>Descrição do Fato</label>
-            <textarea id="desvio-desc" rows="5" placeholder="Relate o desvio encontrado..."></textarea>
-            <button class="btn btn-danger" id="btn-submit-desvio" onclick="sendDesvio()">Registrar Agora</button>
-            <button class="btn" style="background:#eee; color:#666;" onclick="goTo(2)">Cancelar</button>
+            <label>O que aconteceu?</label>
+            <textarea id="desvio-desc" rows="4" placeholder="Descreva o desvio observado..."></textarea>
+            <button class="btn btn-danger" id="btn-submit-desvio" onclick="sendDesvio()">Registrar Desvio</button>
+            <button class="btn" style="background:#eee;" onclick="goTo(2)">Cancelar</button>
         </div>
 
-        <!-- TELA 5: SUCESSO -->
-        <div id="step5" class="step" style="text-align: center; padding: 40px 10px;">
-            <div style="font-size: 60px; color: #4caf50; margin-bottom: 10px;">✔</div>
-            <h2 style="color: var(--primary); margin: 0;">Protocolo Registrado!</h2>
-            <p style="color: #888; font-size: 14px; margin-top: 10px;">Os dados foram salvos na planilha oficial.</p>
-            <button class="btn btn-main" style="margin-top: 30px;" onclick="goTo(2)">Voltar ao Menu</button>
+        <!-- SUCESSO -->
+        <div id="step5" class="step" style="text-align:center; padding:40px 0;">
+            <div style="font-size:50px; color:#4caf50;">✔</div>
+            <h2>Sucesso!</h2>
+            <p style="color:#888;">As informações foram enviadas para a central.</p>
+            <button class="btn btn-main" onclick="goTo(2)">Voltar ao Menu</button>
         </div>
     </div>
-
-    <div class="footer">
-        Powered by M.Custodio | Operação 2026
-    </div>
+    <div class="footer">Powered by M.Custodio | 2026</div>
 </div>
 
 <script>
-    // URL DO SEU SCRIPT (JÁ ATUALIZADO)
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyEZnWltuuaFVxos50rhtZirUc7gvwCBYLUdUTs067vTURPS7zUsLde-kS7oEXxarAixQ/exec';
-    
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzK14WOjPNpnzguF_6Y5xoXBgFuZmqaIydwaK9lQwB8EzGCG-9EcOyustO57pk7-Y1qvw/exec';
     let db = { funcionarios: {}, epis: [] };
     let cart = [];
     let user = { mat: "", nome: "" };
+    let useCurrentTime = true;
 
     window.onload = init;
 
     async function init() {
         try {
-            const response = await fetch(URL_SCRIPT);
-            const json = await response.json();
-            db = json.dados;
-            
-            const select = document.getElementById('select-epi');
-            select.innerHTML = '<option value="">Selecione o item...</option>';
-            db.epis.forEach(item => {
-                select.innerHTML += `<option value="${item.nome}">${item.nome}</option>`;
-            });
-            
+            const r = await fetch(URL_SCRIPT);
+            const j = await r.json();
+            db = j.dados;
+            const sel = document.getElementById('select-epi');
+            sel.innerHTML = '<option value="">Selecione...</option>';
+            db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             goTo(1);
-        } catch (e) {
-            alert("Erro de conexão com o Banco de Dados VIC.");
-        }
+        } catch (e) { alert("Erro ao carregar dados."); }
     }
 
-    function goTo(step) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        document.getElementById('step' + step).classList.add('active');
-        window.scrollTo(0,0);
+    function goTo(s) {
+        document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+        document.getElementById('step' + s).classList.add('active');
     }
 
     function handleLogin() {
-        const mat = document.getElementById('input-mat').value.trim();
-        if (db.funcionarios[mat]) {
-            user = { mat: mat, nome: db.funcionarios[mat] };
-            const pill = document.getElementById('user-pill');
-            pill.innerText = "USUÁRIO: " + user.nome.toUpperCase();
-            pill.style.display = "block";
+        const m = document.getElementById('input-mat').value.trim();
+        if (db.funcionarios[m]) {
+            user = { mat: m, nome: db.funcionarios[m] };
+            const p = document.getElementById('user-pill');
+            p.innerText = "COLABORADOR: " + user.nome;
+            p.style.display = "block";
             goTo(2);
-        } else {
-            alert("Matrícula não identificada no sistema.");
-        }
+        } else { alert("Matrícula inválida."); }
     }
 
     function updateFields() {
@@ -287,108 +151,69 @@
         const item = db.epis.find(i => i.nome === nome);
         const area = document.getElementById('dynamic-area');
         area.innerHTML = "";
-
         if (item) {
             if (item.label) {
-                let html = `<label>${item.label}</label><select id="opt1">`;
-                item.opcoes.forEach(o => html += `<option value="${o}">${o}</option>`);
-                area.innerHTML += html + `</select>`;
+                let h = `<label>${item.label}</label><select id="opt1">`;
+                item.opcoes.forEach(o => h += `<option value="${o}">${o}</option>`);
+                area.innerHTML += h + `</select>`;
             }
             if (item.label2) {
-                let html = `<label>${item.label2}</label><select id="opt2">`;
-                item.opcoes2.forEach(o => html += `<option value="${o}">${o}</option>`);
-                area.innerHTML += html + `</select>`;
+                let h = `<label>${item.label2}</label><select id="opt2">`;
+                item.opcoes2.forEach(o => h += `<option value="${o}">${o}</option>`);
+                area.innerHTML += h + `</select>`;
             }
         }
     }
 
     function addItem() {
-        const nome = document.getElementById('select-epi').value;
-        if (!nome) return alert("Selecione um item primeiro.");
-        
-        const o1 = document.getElementById('opt1')?.value || "";
-        const o2 = document.getElementById('opt2')?.value || "";
-        
-        const detalhes = `${o1} ${o2}`.trim();
-        cart.push({ nome, detalhes });
+        const n = document.getElementById('select-epi').value;
+        if (!n) return;
+        const d = `${document.getElementById('opt1')?.value || ""} ${document.getElementById('opt2')?.value || ""}`.trim();
+        cart.push({ n, d });
         renderCart();
     }
 
     function renderCart() {
-        const area = document.getElementById('cart-area');
-        const list = document.getElementById('cart-list');
-        area.style.display = cart.length ? "block" : "none";
-        
-        list.innerHTML = cart.map((item, i) => `
-            <div class="cart-item">
-                <div><strong>${item.nome}</strong><br><span style="font-size:12px; color:#666">${item.detalhes}</span></div>
-                <div onclick="cart.splice(${i},1);renderCart()" style="color:var(--danger); font-weight:bold; padding:5px; cursor:pointer">EXCLUIR</div>
-            </div>
-        `).join('');
+        const a = document.getElementById('cart-area');
+        const l = document.getElementById('cart-list');
+        a.style.display = cart.length ? "block" : "none";
+        l.innerHTML = cart.map((it, i) => `<div class="cart-item"><span><b>${it.n}</b> - ${it.d}</span><span onclick="cart.splice(${i},1);renderCart()" style="color:red; font-size:10px; cursor:pointer;">REMOVER</span></div>`).join('');
     }
 
     async function sendEPI() {
         const btn = document.getElementById('btn-submit-epi');
-        btn.disabled = true; 
-        btn.innerText = "PROCESSANDO...";
-        const protocolo = "VIC-" + Math.floor(Date.now() / 1000);
-
-        try {
-            for (const item of cart) {
-                await fetch(URL_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({
-                        tipo: "EPI", 
-                        protocolo: protocolo, 
-                        funcionario: user.nome,
-                        epi: item.nome, 
-                        detalhes: item.detalhes
-                    })
-                });
-            }
-            cart = []; 
-            goTo(5);
-        } catch (e) { 
-            alert("Erro ao enviar pedido."); 
-            btn.disabled = false; 
-            btn.innerText = "CONFIRMAR E ENVIAR";
+        btn.disabled = true; btn.innerText = "ENVIANDO...";
+        const prot = "VIC-" + Date.now();
+        for (const it of cart) {
+            await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: user.nome, epi: it.n, detalhes: it.d })});
         }
+        cart = []; goTo(5);
+    }
+
+    function toggleTime(current) {
+        useCurrentTime = current;
+        document.getElementById('btn-now').classList.toggle('active', current);
+        document.getElementById('btn-manual').classList.toggle('active', !current);
+        document.getElementById('desvio-hora').style.display = current ? 'none' : 'block';
     }
 
     async function sendDesvio() {
         const desc = document.getElementById('desvio-desc').value;
         const local = document.getElementById('desvio-area').value;
-        if (!desc) return alert("Por favor, descreva o desvio.");
-
-        const btn = document.getElementById('btn-submit-desvio');
-        btn.disabled = true; 
-        btn.innerText = "ENVIANDO...";
-
-        try {
-            await fetch(URL_SCRIPT, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    tipo: "DESVIO", 
-                    nome: user.nome, 
-                    matricula: user.mat,
-                    local: local, 
-                    descricao: desc
-                })
-            });
-            goTo(5);
-        } catch (e) { 
-            alert("Erro ao registrar desvio."); 
-            btn.disabled = false; 
-            btn.innerText = "REGISTRAR AGORA";
+        let hora = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+        
+        if (!useCurrentTime) {
+            const hManual = document.getElementById('desvio-hora').value;
+            if (!hManual) return alert("Informe o horário do ocorrido.");
+            hora = hManual;
         }
-    }
 
-    function openEPI() {
-        cart = [];
-        renderCart();
-        goTo(3);
+        if (!desc) return alert("Descreva o desvio.");
+        const btn = document.getElementById('btn-submit-desvio');
+        btn.disabled = true;
+
+        await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local, descricao: desc, horaFato: hora })});
+        goTo(5);
     }
 </script>
 </body>
