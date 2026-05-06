@@ -2,241 +2,208 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" href="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png">
-    <title>Portal VIC - Operacional</title>
+    <title>Portal VIC</title>
     <style>
-        :root { --primary: #004a99; --cyan: #00bcd4; --success: #28a745; --danger: #dc3545; --light: #f8f9fa; }
+        :root { --primary: #004a99; --cyan: #00bcd4; --success: #28a745; --danger: #dc3545; --dark: #333; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            font-family: 'Segoe UI', Arial, sans-serif; 
-            background: linear-gradient(135deg, var(--primary) 0%, var(--cyan) 100%);
-            margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: linear-gradient(180deg, #004a99 0%, #002a5a 100%);
+            margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--dark);
         }
         .container { 
-            background: #ffffff; padding: 25px; border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center;
-            position: relative;
+            background: #fff; width: 100%; max-width: 380px; border-radius: 15px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); overflow: hidden; padding-bottom: 20px;
         }
-        #user-header { 
-            display: none; background: #e9ecef; margin: -25px -25px 20px -25px; 
-            padding: 12px; font-size: 13px; font-weight: bold; color: var(--primary); 
-            border-bottom: 2px solid #ddd; border-radius: 20px 20px 0 0;
+        #header-user { 
+            display: none; background: #f1f3f5; padding: 10px; font-size: 12px; 
+            font-weight: bold; border-bottom: 1px solid #ddd; color: var(--primary);
         }
-        .logo { width: 130px; height: 50px; margin-bottom: 10px; object-fit: contain; }
-        h2 { color: var(--primary); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
+        .logo-area { padding: 20px; text-align: center; }
+        .logo { width: 100px; height: auto; }
         
-        .passo { display: none; }
-        .passo.ativo { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .passo { display: none; padding: 0 20px; animation: slideUp 0.3s ease-out; }
+        .passo.ativo { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        label { display: block; margin: 12px 0 5px; font-weight: bold; text-align: left; font-size: 13px; color: #333; }
-        input, select, button, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 15px; box-sizing: border-box; outline: none; }
-        textarea { resize: none; height: 90px; }
-        
-        button { background: var(--primary); color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        
-        .btn-menu { background: var(--light); color: var(--primary); border: 2px solid var(--primary); margin-bottom: 12px; text-align: left; display: flex; align-items: center; justify-content: space-between; padding: 15px; }
-        .btn-enviar { background: var(--success); margin-top: 15px; font-size: 16px; }
-        .card { background: #f1f3f5; border-left: 5px solid var(--primary); padding: 10px; margin-top: 8px; text-align: left; font-size: 13px; border-radius: 5px; }
-        .footer-credits { position: fixed; bottom: 10px; right: 15px; font-size: 10px; color: #fff; opacity: 0.7; }
+        h2 { font-size: 1.2rem; margin: 10px 0; color: var(--primary); text-transform: uppercase; }
+        label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; text-align: left; }
+        input, select, textarea, button { 
+            width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; 
+            border-radius: 8px; font-size: 16px; outline: none; transition: 0.2s;
+        }
+        button { background: var(--primary); color: #fff; border: none; font-weight: bold; cursor: pointer; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #ccc; }
+
+        .menu-grid { display: grid; gap: 10px; }
+        .btn-opt { 
+            background: #fff; color: var(--primary); border: 2px solid var(--primary); 
+            display: flex; justify-content: space-between; align-items: center; padding: 18px;
+        }
+        .card-epi { background: #f8f9fa; border-left: 4px solid var(--cyan); padding: 8px; margin-bottom: 5px; text-align: left; font-size: 12px; }
+        .footer { font-size: 9px; color: #aaa; margin-top: 10px; }
+        .creditos { position: fixed; bottom: 5px; width: 100%; text-align: center; color: rgba(255,255,255,0.5); font-size: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="user-header">👤 <span id="header-nome"></span></div>
+    <div id="header-user">👤 <span id="u-nome"></span></div>
     
-    <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" class="logo" alt="Logo VLI">
-    
-    <!-- TELA 0: SINCRONIZANDO -->
+    <div class="logo-area">
+        <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" class="logo" alt="VLI">
+    </div>
+
+    <!-- TELA 0: CARREGAMENTO -->
     <div id="p0" class="passo ativo">
-        <h2>Portal VIC</h2>
-        <p style="font-size: 14px; color: #666;">Carregando informações...</p>
-        <button id="btn-iniciar" onclick="iniciar()">Entrar no Sistema</button>
+        <h2>Bem-vindo</h2>
+        <p id="status-txt">Sincronizando portal...</p>
+        <button id="btn-entrar" onclick="init()" style="display:none">Entrar Agora</button>
     </div>
 
     <!-- TELA 1: LOGIN -->
     <div id="p1" class="passo">
         <label>Matrícula do Colaborador:</label>
-        <input type="tel" id="mat" placeholder="Sua matrícula">
-        <button onclick="logar()">Acessar</button>
+        <input type="tel" id="mat" placeholder="00000000" maxlength="15">
+        <button onclick="login()">Acessar Painel</button>
     </div>
 
-    <!-- TELA MENU -->
-    <div id="pMenu" class="passo">
-        <button class="btn-menu" onclick="ir('EPI')">Solicitar EPI's <span>🛡️</span></button>
-        <button class="btn-menu" onclick="ir('Desvio')" style="border-color: var(--danger); color: var(--danger);">Relatar Desvio <span>⚠️</span></button>
-        <button onclick="location.reload()" style="background:none; color:var(--danger); border:1px solid var(--danger); margin-top:20px; font-size:11px;">Sair / Trocar Usuário</button>
-    </div>
-
-    <!-- TELA EPI -->
-    <div id="pEPI" class="passo">
-        <label>Escolha o Item:</label>
-        <select id="epi" onchange="renderEpi()"></select>
-        <div id="ext-epi"></div>
-        <button style="background: var(--cyan); color:#004a99;" onclick="addCarrinho()">+ Adicionar Item</button>
-        <div id="box-carrinho" style="display:none; margin-top:20px; border-top:1px dashed #ccc; padding-top:10px;">
-            <div id="lista-epi"></div>
-            <button class="btn-enviar" id="btn-env-epi" onclick="enviarEpi()">Enviar Solicitação</button>
+    <!-- TELA 2: MENU -->
+    <div id="p2" class="passo">
+        <div class="menu-grid">
+            <button class="btn-opt" onclick="ir('3')">Solicitar EPI <span>🛡️</span></button>
+            <button class="btn-opt" onclick="ir('4')" style="border-color:var(--danger); color:var(--danger)">Relatar Desvio <span>⚠️</span></button>
         </div>
-        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:10px;">Voltar</button>
+        <button onclick="location.reload()" style="background:none; color:#999; font-size:11px; margin-top:15px; border:none">Sair do sistema</button>
     </div>
 
-    <!-- TELA DESVIO -->
-    <div id="pDesvio" class="passo">
-        <h2 style="color: var(--danger);">Desvio de Segurança</h2>
-        
-        <label>Quando ocorreu?</label>
-        <select id="data-tipo" onchange="toggleData()">
-            <option value="agora">Agora (Data/Hora atual)</option>
-            <option value="retro">Selecionar outra data</option>
-        </select>
-        <div id="box-data" style="display:none; margin-top:10px;">
-            <input type="datetime-local" id="data-retro">
+    <!-- TELA 3: EPI -->
+    <div id="p3" class="passo">
+        <label>Qual EPI deseja?</label>
+        <select id="sel-epi" onchange="camposEpi()"></select>
+        <div id="extra-epi"></div>
+        <button onclick="addEpi()" style="background:var(--cyan)">+ Adicionar Item</button>
+        <div id="carrinho" style="margin-top:15px; display:none">
+            <div id="itens-carrinho"></div>
+            <button onclick="envEpi()" id="b-env-epi" style="background:var(--success)">Enviar Pedido</button>
         </div>
+        <button onclick="ir('2')" style="background:#666; font-size:11px">Voltar</button>
+    </div>
 
-        <label>Área / Pátio:</label>
-        <select id="patio">
-            <option value="Pátio de Cima">Pátio de Cima</option>
-            <option value="Pátio de Baixo">Pátio de Baixo</option>
-            <option value="Pátio novo">Pátio novo</option>
-            <option value="Terminal do Carvão">Terminal do Carvão</option>
-            <option value="Oficina">Oficina</option>
-            <option value="Estação">Estação</option>
+    <!-- TELA 4: DESVIO -->
+    <div id="p4" class="passo">
+        <h2 style="color:var(--danger)">Novo Desvio</h2>
+        <label>Localização (Pátio):</label>
+        <select id="des-patio">
+            <option>Pátio de Cima</option>
+            <option>Pátio de Baixo</option>
+            <option>Pátio Novo</option>
+            <option>Terminal do Carvão</option>
+            <option>Oficina / Estação</option>
         </select>
-
-        <label>Especifique o Local:</label>
-        <input type="text" id="local-detalhe" placeholder="Ex: AMV, Linha X, Prédio Y">
-        
-        <label>O que aconteceu?</label>
-        <textarea id="desc-desvio" placeholder="Descreva o desvio observado..."></textarea>
-        
-        <button class="btn-enviar" id="btn-env-desvio" onclick="enviarDesvio()" style="background: var(--danger);">Registrar Desvio</button>
-        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:10px;">Cancelar</button>
+        <input type="text" id="des-local" placeholder="Ponto de referência">
+        <label>Descrição do Ocorrido:</label>
+        <textarea id="des-txt" placeholder="O que você observou?"></textarea>
+        <button onclick="envDesvio()" id="b-env-des" style="background:var(--danger)">Registrar Ocorrência</button>
+        <button onclick="ir('2')" style="background:#666; font-size:11px">Cancelar</button>
     </div>
 
-    <!-- TELA SUCESSO -->
-    <div id="pSucesso" class="passo">
-        <div style="font-size: 50px;">✅</div>
-        <h3 style="color: var(--success);">Enviado com Sucesso!</h3>
-        <button onclick="ir('Menu')" style="background:var(--primary);">Voltar ao Menu</button>
+    <!-- TELA 5: SUCESSO -->
+    <div id="p5" class="passo" style="text-align:center">
+        <h1 style="color:var(--success); font-size:50px">✔</h1>
+        <p>Dados registrados!</p>
+        <button onclick="ir('2')">Novo Registro</button>
     </div>
+
+    <div class="footer">Portal de Gestão Operacional</div>
 </div>
 
-<div class="footer-credits">Powered By M.Custodio</div>
+<div class="creditos">Powered By M.Custodio</div>
 
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbxVIxtIg3YO54dYbYw1isoWjmvYM3orahypq4GwL6KemxPMaKiWYifhAHIgJaBR4yQXsA/exec';
-    let db = { funcionarios: {}, epis: [] }, carrinho = [], userNome = "", userMat = "";
+    const URL = 'https://script.google.com/macros/s/AKfycbxH5o0jtrZwRmVYw2DbQxtwIqbgDL168BQ81nnzh7y6qzQ5OWOwQ_OqMUa-qPgt8JSO0g/exec';
+    let db = { funcionarios: {}, epis: [] }, cesta = [], uMat = "", uNome = "";
+
+    // Inicia carregando tudo em segundo plano
+    window.onload = () => init();
 
     function ir(n) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
         document.getElementById('p' + n).classList.add('ativo');
     }
 
-    function toggleData() {
-        document.getElementById("box-data").style.display = document.getElementById("data-tipo").value === "retro" ? "block" : "none";
-    }
-
-    async function iniciar() {
-        const btn = document.getElementById('btn-iniciar');
-        btn.innerText = "Sincronizando..."; btn.disabled = true;
+    async function init() {
         try {
             const r = await fetch(URL);
             db = await r.json();
-            const s = document.getElementById("epi");
-            s.innerHTML = '<option value="">Escolha...</option>';
+            const s = document.getElementById("sel-epi");
+            s.innerHTML = '<option value="">Selecione...</option>';
             db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            ir(1);
-        } catch (e) { 
-            alert("Erro ao carregar dados."); 
-            btn.innerText = "Tentar Novamente"; btn.disabled = false;
+            ir('1'); // Vai direto para o login se carregar rápido
+        } catch (e) {
+            document.getElementById("status-txt").innerText = "Erro de conexão!";
+            document.getElementById("btn-entrar").style.display = "block";
         }
     }
 
-    function logar() {
+    function login() {
         const m = document.getElementById("mat").value.trim();
         if (db.funcionarios[m]) {
-            userMat = m;
-            userNome = db.funcionarios[m];
-            document.getElementById("header-nome").innerText = userNome;
-            document.getElementById("user-header").style.display = "block";
-            ir('Menu');
-        } else { alert("Matrícula não cadastrada!"); }
+            uMat = m; uNome = db.funcionarios[m];
+            document.getElementById("u-nome").innerText = uNome;
+            document.getElementById("header-user").style.display = "block";
+            ir('2');
+        } else { alert("Matrícula não encontrada!"); }
     }
 
-    function renderEpi() {
-        const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
-        const box = document.getElementById("ext-epi"); box.innerHTML = "";
+    function camposEpi() {
+        const e = db.epis.find(x => x.nome === document.getElementById("sel-epi").value);
+        const div = document.getElementById("extra-epi"); div.innerHTML = "";
         if (e) {
-            if (e.label) box.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
-            if (e.label2) box.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+            if (e.label) div.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o=>`<option>${o}</option>`).join('')}</select>`;
+            if (e.label2) div.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o=>`<option>${o}</option>`).join('')}</select>`;
         }
     }
 
-    function addCarrinho() {
-        const n = document.getElementById("epi").value;
-        if (!n) return alert("Selecione um EPI!");
-        const v1 = document.getElementById("v1")?.value || "";
-        const v2 = document.getElementById("v2")?.value || "";
-        carrinho.push({ n, d: (v1 + " " + v2).trim() });
-        document.getElementById("box-carrinho").style.display = "block";
-        document.getElementById("lista-epi").innerHTML = carrinho.map(i => `<div class="card"><b>${i.n}</b><br><small>${i.d}</small></div>`).join('');
-        document.getElementById("epi").value = ""; document.getElementById("ext-epi").innerHTML = "";
+    function addEpi() {
+        const n = document.getElementById("sel-epi").value;
+        if (!n) return;
+        const d = ((document.getElementById("v1")?.value || "") + " " + (document.getElementById("v2")?.value || "")).trim();
+        cesta.push({ n, d });
+        document.getElementById("carrinho").style.display = "block";
+        document.getElementById("itens-carrinho").innerHTML = cesta.map(i => `<div class="card-epi"><b>${i.n}</b> - ${i.d}</div>`).join('');
+        document.getElementById("sel-epi").value = ""; document.getElementById("extra-epi").innerHTML = "";
     }
 
-    async function enviarEpi() {
-        const b = document.getElementById("btn-env-epi");
-        b.innerText = "Enviando..."; b.disabled = true;
-        const prot = "EPI-" + Math.floor(Date.now() / 10000);
+    async function envEpi() {
+        const b = document.getElementById("b-env-epi");
+        b.disabled = true; b.innerText = "Enviando...";
+        const prot = "EPI-" + Date.now().toString().slice(-6);
         try {
-            for (const i of carrinho) {
-                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: userNome, matricula: userMat, epi: i.n, detalhes: i.d }) });
+            for (const i of cesta) {
+                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: uNome, matricula: uMat, epi: i.n, detalhes: i.d }) });
             }
-            carrinho = []; ir('Sucesso');
-        } catch (e) { alert("Erro!"); b.innerText = "Tentar novamente"; b.disabled = false; }
+            cesta = []; document.getElementById("itens-carrinho").innerHTML = ""; ir('5');
+        } catch (e) { alert("Erro!"); b.disabled = false; b.innerText = "Tentar de novo"; }
     }
 
-    async function enviarDesvio() {
-        const patio = document.getElementById("patio").value;
-        const detalhe = document.getElementById("local-detalhe").value.trim();
-        const desc = document.getElementById("desc-desvio").value.trim();
-        const tData = document.getElementById("data-tipo").value;
-        
-        if (!detalhe || !desc) return alert("Preencha o local e a descrição!");
-
-        let dF, hF;
-        if (tData === "agora") {
-            const agora = new Date();
-            dF = agora.toLocaleDateString('pt-BR');
-            hF = agora.getHours() + ":" + agora.getMinutes().toString().padStart(2, '0');
-        } else {
-            const r = new Date(document.getElementById("data-retro").value);
-            if (isNaN(r)) return alert("Data inválida!");
-            dF = r.toLocaleDateString('pt-BR');
-            hF = r.getHours() + ":" + r.getMinutes().toString().padStart(2, '0');
-        }
-
-        const b = document.getElementById("btn-env-desvio");
-        b.innerText = "Registrando..."; b.disabled = true;
-
+    async function envDesvio() {
+        const p = document.getElementById("des-patio").value, l = document.getElementById("des-local").value, t = document.getElementById("des-txt").value;
+        if (!l || !t) return alert("Preencha tudo!");
+        const b = document.getElementById("b-env-des");
+        b.disabled = true; b.innerText = "Gravando...";
+        const agora = new Date();
         try {
-            await fetch(URL, { 
-                method: 'POST', mode: 'no-cors', 
-                body: JSON.stringify({ 
-                    tipo: "DESVIO", 
-                    nome: userNome, 
-                    matricula: userMat, 
-                    data: dF, 
-                    horario: hF, 
-                    local: patio + " | " + detalhe, 
-                    descricao: desc 
-                }) 
-            });
-            ir('Sucesso');
-        } catch (e) { alert("Erro!"); b.innerText = "Tentar novamente"; b.disabled = false; }
+            await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ 
+                tipo: "DESVIO", nome: uNome, matricula: uMat, 
+                data: agora.toLocaleDateString('pt-BR'), horario: agora.getHours()+":"+agora.getMinutes(),
+                local: p + " | " + l, descricao: t 
+            })});
+            ir('5');
+        } catch (e) { alert("Erro!"); b.disabled = false; }
     }
 </script>
 </body>
