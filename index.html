@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png">
-    <title>Portal de Serviços VIC</title>
+    <title>Portal VIC</title>
     <style>
         :root { --primary: #004a99; --cyan: #00bcd4; --success: #28a745; --danger: #dc3545; }
         body { 
@@ -15,104 +15,111 @@
         .container { 
             background: #ffffff; padding: 25px; border-radius: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; max-width: 380px; text-align: center;
+            position: relative; overflow: hidden;
         }
-        .logo { max-width: 160px; margin-bottom: 20px; height: auto; }
-        h2 { color: var(--primary); font-size: 18px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        /* Header Fixo do Usuário */
+        #user-header { 
+            display: none; background: #f1f3f5; margin: -25px -25px 20px -25px; padding: 10px;
+            font-size: 12px; font-weight: bold; color: var(--primary); border-bottom: 1px solid #ddd;
+        }
+        .logo { width: 140px; height: 50px; margin-bottom: 15px; object-fit: contain; }
+        h2 { color: var(--primary); font-size: 18px; text-transform: uppercase; margin-bottom: 10px; }
         .passo { display: none; }
         .passo.ativo { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        label { display: block; margin: 15px 0 5px; font-weight: bold; text-align: left; font-size: 14px; color: #444; }
-        input, select, button, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 16px; box-sizing: border-box; font-family: inherit; }
-        textarea { resize: none; height: 100px; }
+        label { display: block; margin: 12px 0 4px; font-weight: bold; text-align: left; font-size: 13px; color: #444; }
+        input, select, button, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-size: 15px; box-sizing: border-box; }
+        textarea { resize: none; height: 80px; }
         
         button { background: var(--primary); color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
         button:active { transform: scale(0.98); }
         
-        .btn-menu { background: #f8f9fa; color: var(--primary); border: 2px solid var(--primary); margin-bottom: 12px; text-align: left; display: flex; align-items: center; justify-content: space-between; }
-        .btn-menu:hover { background: #e9ecef; }
-
-        .btn-add { background: var(--cyan); color: #004a99; margin-top: 15px; }
+        .btn-menu { background: #f8f9fa; color: var(--primary); border: 2px solid var(--primary); margin-bottom: 10px; text-align: left; display: flex; align-items: center; justify-content: space-between; }
         .btn-enviar { background: var(--success); margin-top: 15px; }
-        
-        .card { background: #f9f9f9; border-left: 5px solid var(--primary); padding: 10px; margin-top: 8px; text-align: left; font-size: 14px; }
-        .carrinho { margin-top: 20px; border-top: 1px dashed #ccc; padding-top: 10px; }
-        
-        .footer-credits { position: fixed; bottom: 10px; right: 15px; font-size: 10px; color: rgba(255, 255, 255, 0.6); pointer-events: none; }
+        .card { background: #f9f9f9; border-left: 5px solid var(--primary); padding: 10px; margin-top: 8px; text-align: left; font-size: 13px; }
+        .footer-credits { position: fixed; bottom: 10px; right: 15px; font-size: 10px; color: rgba(255, 255, 255, 0.6); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <img src="https://www.vli-logistica.com.br/wp-content/uploads/2021/12/Logo_VLI.svg" class="logo" alt="Logo VLI">
+    <div id="user-header">👤 <span id="header-nome"></span></div>
+    
+    <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" class="logo" alt="Logo VLI">
     
     <!-- TELA 0: INÍCIO -->
     <div id="p0" class="passo ativo">
         <h2>Portal VIC</h2>
-        <p style="color:#666; font-size: 14px;">Bem-vindo ao portal de autoatendimento.</p>
         <button onclick="iniciar()">Clique para Iniciar</button>
     </div>
 
     <!-- TELA 1: LOGIN -->
     <div id="p1" class="passo">
-        <h2>Identificação</h2>
         <label>Matrícula do Colaborador:</label>
-        <input type="tel" id="mat" placeholder="Ex: 102030">
-        <button onclick="logar()">Acessar Portal</button>
+        <input type="tel" id="mat" placeholder="Sua matrícula">
+        <button onclick="logar()">Acessar</button>
     </div>
 
     <!-- TELA MENU -->
     <div id="pMenu" class="passo">
-        <p id="user-menu" style="font-weight:bold; color:var(--primary); margin-bottom: 20px;"></p>
-        
         <button class="btn-menu" onclick="ir('Ferias')">Marcação Férias <span>📅</span></button>
         <button class="btn-menu" onclick="ir(2)">Solicitar EPI's <span>🛡️</span></button>
         <button class="btn-menu" onclick="ir('Desvio')">Cadastrar Desvio <span>⚠️</span></button>
-        
-        <button onclick="location.reload()" style="background:#cc000033; color:#cc0000; margin-top:30px; font-size:12px;">Sair / Trocar Usuário</button>
+        <button onclick="location.reload()" style="background:transparent; color:#dc3545; border:1px solid #dc3545; margin-top:20px; font-size:11px;">Sair / Trocar Usuário</button>
     </div>
 
     <!-- TELA 2: EPI -->
     <div id="p2" class="passo">
-        <h3 style="font-size:14px; color:var(--primary);">SOLICITAÇÃO DE EPI</h3>
         <label>Selecione o Item:</label>
         <select id="epi" onchange="render()"></select>
         <div id="ext"></div>
-        <button class="btn-add" onclick="add()">+ Adicionar Item</button>
-        <div id="cart-box" class="carrinho" style="display:none;">
+        <button style="background: var(--cyan); color:#004a99;" onclick="add()">+ Adicionar Item</button>
+        <div id="cart-box" style="display:none; margin-top:20px; border-top:1px dashed #ccc; padding-top:10px;">
             <div id="lista"></div>
             <button class="btn-enviar" id="btn-env-epi" onclick="envEpi()">Finalizar e Enviar</button>
         </div>
-        <button onclick="ir('Menu')" style="background:#666; font-size:12px; margin-top:10px;">Voltar ao Menu</button>
+        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:10px;">Voltar</button>
     </div>
 
-    <!-- TELA FÉRIAS -->
-    <div id="pFerias" class="passo">
-        <h2>Solicitar Férias</h2>
-        <div style="border: 2px dashed #ccc; padding: 40px; color: #999;">[Futuro]</div>
-        <button onclick="ir('Menu')" style="background:#666; margin-top:15px;">Voltar ao Menu</button>
-    </div>
-
-    <!-- TELA DESVIO: AGORA FUNCIONAL -->
+    <!-- TELA DESVIO -->
     <div id="pDesvio" class="passo">
-        <h2 style="color: var(--danger);">Cadastrar Desvio</h2>
+        <h2 style="color: var(--danger); font-size: 16px;">Relatar Desvio</h2>
         
-        <label>Local do Desvio:</label>
-        <input type="text" id="desvio-local" placeholder="Ex: AMV (PA 4408)">
+        <label>Data do Ocorrido:</label>
+        <select id="data-opcao" onchange="toggleData()">
+            <option value="agora">Agora (Data e Hora atual)</option>
+            <option value="retroativo">Selecionar outra data</option>
+        </select>
+        <div id="custom-date-box" style="display:none; margin-top:10px;">
+            <input type="datetime-local" id="data-retro">
+        </div>
+
+        <label>Área/Pátio:</label>
+        <select id="desvio-patio">
+            <option value="Pátio de Cima">Pátio de Cima</option>
+            <option value="Pátio de Baixo">Pátio de Baixo</option>
+            <option value="Pátio novo">Pátio novo</option>
+            <option value="Terminal do Carvão">Terminal do Carvão</option>
+            <option value="Oficina">Oficina</option>
+            <option value="Estação">Estação</option>
+        </select>
+
+        <label>Especifique o Local:</label>
+        <input type="text" id="desvio-local-detalhe" placeholder="Ex: AMV 2° linha">
         
-        <label>Descrição da Ocorrência:</label>
-        <textarea id="desvio-desc" placeholder="Descreva o que aconteceu..."></textarea>
+        <label>Descrição:</label>
+        <textarea id="desvio-desc" placeholder="Detalhes da ocorrência..."></textarea>
         
-        <button class="btn-enviar" id="btn-env-desvio" onclick="envDesvio()" style="background: var(--danger);">Cadastrar Desvio</button>
-        <button onclick="ir('Menu')" style="background:#666; font-size:12px; margin-top:10px;">Cancelar</button>
+        <button class="btn-enviar" id="btn-env-desvio" onclick="envDesvio()" style="background: var(--danger);">Relatar Segurança</button>
+        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:10px;">Cancelar</button>
     </div>
 
     <!-- TELA 3: SUCESSO -->
     <div id="p3" class="passo">
-        <div style="font-size: 55px; margin-bottom: 10px;">✅</div>
-        <h3 style="color: #28a745; margin: 0;">Enviado com Sucesso!</h3>
-        <p id="msg-sucesso" style="color:#666; font-size: 14px;">A sua solicitação foi registrada.</p>
-        <button onclick="ir('Menu')" style="background:#004a99; margin-top: 15px;">Voltar ao Menu</button>
+        <div style="font-size: 50px;">✅</div>
+        <h3 id="msg-sucesso" style="color: #28a745;">Sucesso!</h3>
+        <button onclick="ir('Menu')" style="background:var(--primary);">Voltar ao Menu</button>
     </div>
 </div>
 
@@ -120,30 +127,29 @@
 
 <script>
     const URL = 'https://script.google.com/macros/s/AKfycbzLPASIT6clTTipjS804v_MhdAqURqGQ0y-zFJ6sXLMzmFmEFrV68sUpOzQp_z0nQcXhQ/exec';
-    let db = { funcionarios: {}, epis: [] }, cart = [], prot = "", userLogado = "", matLogada = "";
-
-    const fetchDados = fetch(URL).then(r => r.json()).catch(e => console.error("Erro:", e));
+    let db = { funcionarios: {}, epis: [] }, cart = [], userLogado = "", matLogada = "";
 
     function ir(n) {
         document.querySelectorAll('.passo').forEach(d => d.classList.remove('ativo'));
         document.getElementById('p' + n).classList.add('ativo');
     }
 
+    function toggleData() {
+        const box = document.getElementById("custom-date-box");
+        box.style.display = document.getElementById("data-opcao").value === "retroativo" ? "block" : "none";
+    }
+
     async function iniciar() {
         const btn = document.querySelector('#p0 button');
-        btn.innerText = "Sincronizando...";
-        btn.disabled = true;
+        btn.innerText = "Sincronizando..."; btn.disabled = true;
         try {
-            db = await fetchDados;
+            const r = await fetch(URL);
+            db = await r.json();
             const s = document.getElementById("epi");
             s.innerHTML = '<option value="">Escolha...</option>';
             db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             ir(1);
-        } catch (e) {
-            alert("Erro ao conectar.");
-            btn.innerText = "Clique para Iniciar";
-            btn.disabled = false;
-        }
+        } catch (e) { alert("Erro de conexão."); btn.innerText = "Tentar novamente"; btn.disabled = false; }
     }
 
     function logar() {
@@ -151,16 +157,12 @@
         if (db.funcionarios[m]) {
             matLogada = m;
             userLogado = db.funcionarios[m];
-            const d = new Date();
-            prot = `VLI-${d.getDate()}${d.getMonth()+1}-${d.getHours()}${d.getMinutes()}${d.getSeconds()}`;
-            document.getElementById("user-menu").innerText = "Olá, " + userLogado;
+            document.getElementById("header-nome").innerText = userLogado + " (" + matLogada + ")";
+            document.getElementById("user-header").style.display = "block";
             ir('Menu');
-        } else {
-            alert("Matrícula não cadastrada!");
-        }
+        } else { alert("Matrícula não cadastrada!"); }
     }
 
-    // --- LOGICA EPI ---
     function render() {
         const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
         const x = document.getElementById("ext"); x.innerHTML = "";
@@ -178,60 +180,54 @@
         cart.push({ n, d: (v1 + " " + v2).trim() });
         document.getElementById("cart-box").style.display = "block";
         document.getElementById("lista").innerHTML = cart.map(i => `<div class="card"><b>${i.n}</b><br><small>${i.d}</small></div>`).join('');
-        document.getElementById("epi").value = ""; 
-        document.getElementById("ext").innerHTML = "";
+        document.getElementById("epi").value = ""; document.getElementById("ext").innerHTML = "";
     }
 
     async function envEpi() {
-        const b = document.getElementById("btn-env-epi"); 
-        b.innerText = "Processando..."; b.disabled = true;
+        const b = document.getElementById("btn-env-epi");
+        b.innerText = "Enviando..."; b.disabled = true;
         try {
             for (const i of cart) {
-                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: userLogado, matricula: matLogada, epi: i.n, detalhes: i.d }) });
+                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", funcionario: userLogado, matricula: matLogada, epi: i.n, detalhes: i.d }) });
             }
-            cart = []; document.getElementById("cart-box").style.display = "none";
-            document.getElementById("msg-sucesso").innerText = "Sua solicitação de EPI foi registrada.";
-            ir(3);
-        } catch (e) { alert("Erro ao enviar."); b.innerText = "Finalizar e Enviar"; b.disabled = false; }
+            cart = []; ir(3);
+        } catch (e) { alert("Erro!"); b.innerText = "Tentar novamente"; b.disabled = false; }
     }
 
-    // --- LOGICA DESVIO (NOVA) ---
     async function envDesvio() {
-        const local = document.getElementById("desvio-local").value.trim();
+        const patio = document.getElementById("desvio-patio").value;
+        const detalhe = document.getElementById("desvio-local-detalhe").value.trim();
         const desc = document.getElementById("desvio-desc").value.trim();
+        const opcaoData = document.getElementById("data-opcao").value;
+        
+        if (!detalhe || !desc) return alert("Preencha todos os campos!");
+
+        let dataFinal, horaFinal;
+        if (opcaoData === "agora") {
+            const agora = new Date();
+            dataFinal = agora.toLocaleDateString('pt-BR');
+            horaFinal = agora.getHours() + ":" + agora.getMinutes().toString().padStart(2, '0');
+        } else {
+            const retro = new Date(document.getElementById("data-retro").value);
+            if (isNaN(retro)) return alert("Selecione uma data válida!");
+            dataFinal = retro.toLocaleDateString('pt-BR');
+            horaFinal = retro.getHours() + ":" + retro.getMinutes().toString().padStart(2, '0');
+        }
+
         const b = document.getElementById("btn-env-desvio");
-
-        if (!local || !desc) return alert("Por favor, preencha o local e a descrição.");
-
         b.innerText = "Enviando..."; b.disabled = true;
 
         try {
-            const agora = new Date();
-            const dataStr = agora.toLocaleDateString('pt-BR');
-            const horaStr = agora.getHours() + ":" + agora.getMinutes().toString().padStart(2, '0') + "h";
-
             await fetch(URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
+                method: 'POST', mode: 'no-cors', 
                 body: JSON.stringify({ 
-                    tipo: "DESVIO",
-                    nome: userLogado,
-                    matricula: matLogada,
-                    data: dataStr,
-                    horario: horaStr,
-                    local: local,
-                    descricao: desc
+                    tipo: "DESVIO", nome: userLogado, matricula: matLogada, 
+                    data: dataFinal, horario: horaFinal, 
+                    local: patio + " - " + detalhe, descricao: desc 
                 }) 
             });
-
-            document.getElementById("desvio-local").value = "";
-            document.getElementById("desvio-desc").value = "";
-            document.getElementById("msg-sucesso").innerText = "O desvio de segurança foi relatado com sucesso.";
             ir(3);
-        } catch (e) {
-            alert("Erro ao enviar desvio.");
-            b.innerText = "Cadastrar Desvio"; b.disabled = false;
-        }
+        } catch (e) { alert("Erro!"); b.innerText = "Tentar novamente"; b.disabled = false; }
     }
 </script>
 </body>
