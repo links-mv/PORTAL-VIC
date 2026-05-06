@@ -17,14 +17,13 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center;
             position: relative;
         }
-        /* Cabeçalho do Usuário Logado */
         #user-header { 
             display: none; background: #e9ecef; margin: -25px -25px 20px -25px; 
             padding: 12px; font-size: 13px; font-weight: bold; color: var(--primary); 
             border-bottom: 2px solid #ddd; border-radius: 20px 20px 0 0;
         }
         .logo { width: 130px; height: 50px; margin-bottom: 10px; object-fit: contain; }
-        h2 { color: var(--primary); font-size: 18px; margin-bottom: 15px; }
+        h2 { color: var(--primary); font-size: 18px; margin-bottom: 15px; text-transform: uppercase; }
         
         .passo { display: none; }
         .passo.ativo { display: block; animation: fadeIn 0.4s ease; }
@@ -47,61 +46,59 @@
 <body>
 
 <div class="container">
-    <!-- Nome do usuário fixo -->
-    <div id="user-header">👤 <span id="header-nome">Carregando...</span></div>
+    <div id="user-header">👤 <span id="header-nome"></span></div>
     
     <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" class="logo" alt="Logo VLI">
     
-    <!-- TELA INICIAL -->
+    <!-- TELA 0: SINCRONIZANDO -->
     <div id="p0" class="passo ativo">
         <h2>Portal VIC</h2>
-        <p style="font-size: 14px; color: #666;">Sincronizando base de dados...</p>
-        <button id="btn-iniciar" onclick="iniciar()">Iniciar Sistema</button>
+        <p style="font-size: 14px; color: #666;">Carregando informações...</p>
+        <button id="btn-iniciar" onclick="iniciar()">Entrar no Sistema</button>
     </div>
 
-    <!-- LOGIN -->
+    <!-- TELA 1: LOGIN -->
     <div id="p1" class="passo">
-        <label>Informe sua Matrícula:</label>
-        <input type="tel" id="mat" placeholder="Ex: 81000000">
-        <button onclick="logar()">Acessar Portal</button>
+        <label>Matrícula do Colaborador:</label>
+        <input type="tel" id="mat" placeholder="Sua matrícula">
+        <button onclick="logar()">Acessar</button>
     </div>
 
-    <!-- MENU PRINCIPAL -->
+    <!-- TELA MENU -->
     <div id="pMenu" class="passo">
         <button class="btn-menu" onclick="ir('EPI')">Solicitar EPI's <span>🛡️</span></button>
         <button class="btn-menu" onclick="ir('Desvio')" style="border-color: var(--danger); color: var(--danger);">Relatar Desvio <span>⚠️</span></button>
-        <button onclick="location.reload()" style="background:none; color:var(--danger); border:1px solid var(--danger); margin-top:20px; font-size:11px; padding:5px;">Sair / Trocar Usuário</button>
+        <button onclick="location.reload()" style="background:none; color:var(--danger); border:1px solid var(--danger); margin-top:20px; font-size:11px;">Sair / Trocar Usuário</button>
     </div>
 
-    <!-- ABA EPI -->
+    <!-- TELA EPI -->
     <div id="pEPI" class="passo">
-        <label>Selecione o EPI:</label>
-        <select id="epi" onchange="renderOpcoesEPI()"></select>
-        <div id="opcoes-extras-epi"></div>
-        <button style="background: var(--cyan); color:#004a99;" onclick="adicionarAoCarrinho()">+ Adicionar na Lista</button>
-        
-        <div id="carrinho-container" style="display:none; margin-top:20px; border-top:1px dashed #ccc; padding-top:10px;">
-            <div id="lista-carrinho"></div>
-            <button class="btn-enviar" id="btn-finalizar-epi" onclick="enviarPedidoEPI()">Finalizar Pedido</button>
+        <label>Escolha o Item:</label>
+        <select id="epi" onchange="renderEpi()"></select>
+        <div id="ext-epi"></div>
+        <button style="background: var(--cyan); color:#004a99;" onclick="addCarrinho()">+ Adicionar Item</button>
+        <div id="box-carrinho" style="display:none; margin-top:20px; border-top:1px dashed #ccc; padding-top:10px;">
+            <div id="lista-epi"></div>
+            <button class="btn-enviar" id="btn-env-epi" onclick="enviarEpi()">Enviar Solicitação</button>
         </div>
-        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:15px;">Voltar ao Menu</button>
+        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:10px;">Voltar</button>
     </div>
 
-    <!-- ABA DESVIO -->
+    <!-- TELA DESVIO -->
     <div id="pDesvio" class="passo">
-        <h2 style="color: var(--danger);">Segurança: Desvio</h2>
+        <h2 style="color: var(--danger);">Desvio de Segurança</h2>
         
-        <label>Data da Ocorrência:</label>
-        <select id="data-tipo" onchange="toggleDataRetroativa()">
-            <option value="agora">Registrar com data/hora de agora</option>
-            <option value="retroativo">Informar data passada</option>
+        <label>Quando ocorreu?</label>
+        <select id="data-tipo" onchange="toggleData()">
+            <option value="agora">Agora (Data/Hora atual)</option>
+            <option value="retro">Selecionar outra data</option>
         </select>
-        <div id="box-data-retro" style="display:none; margin-top:10px;">
-            <input type="datetime-local" id="data-manual">
+        <div id="box-data" style="display:none; margin-top:10px;">
+            <input type="datetime-local" id="data-retro">
         </div>
 
-        <label>Pátio / Área:</label>
-        <select id="desvio-patio">
+        <label>Área / Pátio:</label>
+        <select id="patio">
             <option value="Pátio de Cima">Pátio de Cima</option>
             <option value="Pátio de Baixo">Pátio de Baixo</option>
             <option value="Pátio novo">Pátio novo</option>
@@ -110,157 +107,136 @@
             <option value="Estação">Estação</option>
         </select>
 
-        <label>Especificar Local (AMV, Linha, Prédio):</label>
-        <input type="text" id="desvio-local-detalhe" placeholder="Ex: AMV 02, Linha 04...">
+        <label>Especifique o Local:</label>
+        <input type="text" id="local-detalhe" placeholder="Ex: AMV, Linha X, Prédio Y">
         
-        <label>Descrição do Desvio:</label>
-        <textarea id="desvio-desc" placeholder="Descreva o que aconteceu ou a condição insegura..."></textarea>
+        <label>O que aconteceu?</label>
+        <textarea id="desc-desvio" placeholder="Descreva o desvio observado..."></textarea>
         
-        <button class="btn-enviar" id="btn-env-desvio" onclick="enviarDesvio()" style="background: var(--danger);">Enviar Relato de Segurança</button>
-        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:15px;">Cancelar</button>
+        <button class="btn-enviar" id="btn-env-desvio" onclick="enviarDesvio()" style="background: var(--danger);">Registrar Desvio</button>
+        <button onclick="ir('Menu')" style="background:#666; font-size:11px; margin-top:10px;">Cancelar</button>
     </div>
 
-    <!-- SUCESSO -->
+    <!-- TELA SUCESSO -->
     <div id="pSucesso" class="passo">
-        <div style="font-size: 60px; color: var(--success);">✔</div>
-        <h3 style="color: var(--success);">Registrado com Sucesso!</h3>
-        <p id="feedback-msg">A planilha foi atualizada.</p>
-        <button onclick="ir('Menu')" style="background:var(--primary);">Voltar ao Início</button>
+        <div style="font-size: 50px;">✅</div>
+        <h3 style="color: var(--success);">Enviado com Sucesso!</h3>
+        <button onclick="ir('Menu')" style="background:var(--primary);">Voltar ao Menu</button>
     </div>
 </div>
 
 <div class="footer-credits">Powered By M.Custodio</div>
 
 <script>
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycby8Nciysq-fADY6YTv74RgTyI_rRLifIX5-3MTcFU_XGLOw2HbFeKTtunMDp0NMgwDFyQ/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbxVIxtIg3YO54dYbYw1isoWjmvYM3orahypq4GwL6KemxPMaKiWYifhAHIgJaBR4yQXsA/exec';
     let db = { funcionarios: {}, epis: [] }, carrinho = [], userNome = "", userMat = "";
 
-    function ir(nomePasso) {
+    function ir(n) {
         document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        document.getElementById('p' + nomePasso).classList.add('ativo');
+        document.getElementById('p' + n).classList.add('ativo');
     }
 
-    function toggleDataRetroativa() {
-        const display = document.getElementById("data-tipo").value === "retroativo" ? "block" : "none";
-        document.getElementById("box-data-retro").style.display = display;
+    function toggleData() {
+        document.getElementById("box-data").style.display = document.getElementById("data-tipo").value === "retro" ? "block" : "none";
     }
 
     async function iniciar() {
         const btn = document.getElementById('btn-iniciar');
         btn.innerText = "Sincronizando..."; btn.disabled = true;
         try {
-            const response = await fetch(URL_SCRIPT);
-            db = await response.json();
-            const comboEpi = document.getElementById("epi");
-            comboEpi.innerHTML = '<option value="">Selecione um item...</option>';
-            db.epis.forEach(item => comboEpi.innerHTML += `<option value="${item.nome}">${item.nome}</option>`);
+            const r = await fetch(URL);
+            db = await r.json();
+            const s = document.getElementById("epi");
+            s.innerHTML = '<option value="">Escolha...</option>';
+            db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             ir(1);
         } catch (e) { 
-            alert("Erro ao conectar com a planilha. Verifique a internet."); 
-            btn.innerText = "Tentar Novamente"; btn.disabled = false; 
+            alert("Erro ao carregar dados."); 
+            btn.innerText = "Tentar Novamente"; btn.disabled = false;
         }
     }
 
     function logar() {
-        const matriculaInput = document.getElementById("mat").value.trim();
-        if (db.funcionarios[matriculaInput]) {
-            userMat = matriculaInput;
-            userNome = db.funcionarios[matriculaInput];
+        const m = document.getElementById("mat").value.trim();
+        if (db.funcionarios[m]) {
+            userMat = m;
+            userNome = db.funcionarios[m];
             document.getElementById("header-nome").innerText = userNome;
             document.getElementById("user-header").style.display = "block";
             ir('Menu');
-        } else { 
-            alert("Matrícula não encontrada no sistema."); 
+        } else { alert("Matrícula não cadastrada!"); }
+    }
+
+    function renderEpi() {
+        const e = db.epis.find(x => x.nome === document.getElementById("epi").value);
+        const box = document.getElementById("ext-epi"); box.innerHTML = "";
+        if (e) {
+            if (e.label) box.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+            if (e.label2) box.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
         }
     }
 
-    function renderOpcoesEPI() {
-        const epiSelecionado = db.epis.find(x => x.nome === document.getElementById("epi").value);
-        const containerExtras = document.getElementById("opcoes-extras-epi"); 
-        containerExtras.innerHTML = "";
-        if (epiSelecionado) {
-            if (epiSelecionado.label) {
-                containerExtras.innerHTML += `<label>${epiSelecionado.label}</label><select id="v1">${epiSelecionado.opcoes.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
-            }
-            if (epiSelecionado.label2) {
-                containerExtras.innerHTML += `<label>${epiSelecionado.label2}</label><select id="v2">${epiSelecionado.opcoes2.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
-            }
-        }
-    }
-
-    function adicionarAoCarrinho() {
-        const nomeEpi = document.getElementById("epi").value;
-        if (!nomeEpi) return alert("Selecione um EPI primeiro!");
-        
+    function addCarrinho() {
+        const n = document.getElementById("epi").value;
+        if (!n) return alert("Selecione um EPI!");
         const v1 = document.getElementById("v1")?.value || "";
         const v2 = document.getElementById("v2")?.value || "";
-        const detalhes = (v1 + " " + v2).trim();
-
-        carrinho.push({ nome: nomeEpi, info: detalhes });
-        
-        document.getElementById("carrinho-container").style.display = "block";
-        document.getElementById("lista-carrinho").innerHTML = carrinho.map((item, index) => 
-            `<div class="card"><b>${item.nome}</b><br><small>${item.info}</small></div>`
-        ).join('');
-
-        document.getElementById("epi").value = "";
-        document.getElementById("opcoes-extras-epi").innerHTML = "";
+        carrinho.push({ n, d: (v1 + " " + v2).trim() });
+        document.getElementById("box-carrinho").style.display = "block";
+        document.getElementById("lista-epi").innerHTML = carrinho.map(i => `<div class="card"><b>${i.n}</b><br><small>${i.d}</small></div>`).join('');
+        document.getElementById("epi").value = ""; document.getElementById("ext-epi").innerHTML = "";
     }
 
-    async function enviarPedidoEPI() {
-        const b = document.getElementById("btn-finalizar-epi");
-        b.innerText = "Enviando Pedido..."; b.disabled = true;
-        const protocolo = "EPI-" + Math.floor(Math.random() * 9999);
-
+    async function enviarEpi() {
+        const b = document.getElementById("btn-env-epi");
+        b.innerText = "Enviando..."; b.disabled = true;
+        const prot = "EPI-" + Math.floor(Date.now() / 10000);
         try {
-            for (const item of carrinho) {
-                await fetch(URL_SCRIPT, { 
-                    method: 'POST', mode: 'no-cors', 
-                    body: JSON.stringify({ 
-                        tipo: "EPI", protocolo: protocolo, funcionario: userNome, 
-                        matricula: userMat, epi: item.nome, detalhes: item.info 
-                    }) 
-                });
+            for (const i of carrinho) {
+                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: userNome, matricula: userMat, epi: i.n, detalhes: i.d }) });
             }
-            carrinho = []; document.getElementById("lista-carrinho").innerHTML = "";
-            document.getElementById("carrinho-container").style.display = "none";
-            ir('Sucesso');
-        } catch (e) { alert("Erro ao enviar."); b.innerText = "Tentar Novamente"; b.disabled = false; }
+            carrinho = []; ir('Sucesso');
+        } catch (e) { alert("Erro!"); b.innerText = "Tentar novamente"; b.disabled = false; }
     }
 
     async function enviarDesvio() {
-        const patio = document.getElementById("desvio-patio").value;
-        const detalhe = document.getElementById("desvio-local-detalhe").value.trim();
-        const desc = document.getElementById("desvio-desc").value.trim();
-        const tipoData = document.getElementById("data-tipo").value;
+        const patio = document.getElementById("patio").value;
+        const detalhe = document.getElementById("local-detalhe").value.trim();
+        const desc = document.getElementById("desc-desvio").value.trim();
+        const tData = document.getElementById("data-tipo").value;
         
-        if (!detalhe || !desc) return alert("Por favor, detalhe o local e a descrição.");
+        if (!detalhe || !desc) return alert("Preencha o local e a descrição!");
 
         let dF, hF;
-        if (tipoData === "agora") {
+        if (tData === "agora") {
             const agora = new Date();
             dF = agora.toLocaleDateString('pt-BR');
             hF = agora.getHours() + ":" + agora.getMinutes().toString().padStart(2, '0');
         } else {
-            const dataManual = new Date(document.getElementById("data-manual").value);
-            if (isNaN(dataManual)) return alert("Data inválida.");
-            dF = dataManual.toLocaleDateString('pt-BR');
-            hF = dataManual.getHours() + ":" + dataManual.getMinutes().toString().padStart(2, '0');
+            const r = new Date(document.getElementById("data-retro").value);
+            if (isNaN(r)) return alert("Data inválida!");
+            dF = r.toLocaleDateString('pt-BR');
+            hF = r.getHours() + ":" + r.getMinutes().toString().padStart(2, '0');
         }
 
         const b = document.getElementById("btn-env-desvio");
-        b.innerText = "Registrando Segurança..."; b.disabled = true;
+        b.innerText = "Registrando..."; b.disabled = true;
 
         try {
-            await fetch(URL_SCRIPT, { 
+            await fetch(URL, { 
                 method: 'POST', mode: 'no-cors', 
                 body: JSON.stringify({ 
-                    tipo: "DESVIO", nome: userNome, matricula: userMat, 
-                    data: dF, horario: hF, local: patio + " | " + detalhe, descricao: desc 
+                    tipo: "DESVIO", 
+                    nome: userNome, 
+                    matricula: userMat, 
+                    data: dF, 
+                    horario: hF, 
+                    local: patio + " | " + detalhe, 
+                    descricao: desc 
                 }) 
             });
             ir('Sucesso');
-        } catch (e) { alert("Erro de conexão."); b.innerText = "Tentar Novamente"; b.disabled = false; }
+        } catch (e) { alert("Erro!"); b.innerText = "Tentar novamente"; b.disabled = false; }
     }
 </script>
 </body>
