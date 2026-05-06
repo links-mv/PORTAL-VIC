@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Operacional | VIC</title>
+    <title>Portal VIC | Gestão Operacional</title>
+    <!-- ÍCONE NA ABA DO NAVEGADOR (FAVICON) -->
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1063/1063376.png">
+    
     <style>
         :root {
-            --primary: #004a99;
+            --primary: #004a99; /* Azul VLI / Seriedade */
             --secondary: #00bcd4;
             --danger: #d90429;
             --bg: #f0f2f5;
@@ -35,103 +38,112 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        /* Header Estilizado */
+        /* Header com Logo */
         .header {
             background: var(--primary);
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
             color: white;
             border-radius: 0 0 30px 30px;
         }
 
-        .header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
-        .header p { margin: 5px 0 0; opacity: 0.8; font-size: 14px; }
+        .logo-img {
+            width: 80px; /* Ajuste o tamanho da sua logo aqui */
+            height: auto;
+            margin-bottom: 15px;
+            filter: brightness(0) invert(1); /* Deixa a logo branca se for escura */
+        }
 
-        /* Status de Usuário */
+        .header h1 { margin: 0; font-size: 20px; letter-spacing: 1px; text-transform: uppercase; }
+        .header p { margin: 5px 0 0; opacity: 0.8; font-size: 13px; }
+
+        /* Status do Usuário Logado */
         .user-pill {
             background: #e9ecef;
-            margin: -20px auto 20px;
-            padding: 8px 20px;
+            margin: -15px auto 15px;
+            padding: 8px 18px;
             border-radius: 50px;
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 800;
             color: var(--primary);
             display: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
             z-index: 10;
+            border: 1px solid #dee2e6;
         }
 
         .content { padding: 20px; flex-grow: 1; }
 
-        /* Transições de Tela */
-        .step { display: none; animation: slideUp 0.4s ease-out; }
+        /* Animações de Transição */
+        .step { display: none; animation: fadeIn 0.3s ease-in-out; }
         .step.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Inputs e Botões */
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #555; }
+        /* Estilização de Formulários */
+        label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 13px; color: #444; margin-top: 10px; }
         input, select, textarea {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 14px;
+            margin-bottom: 15px;
             border: 2px solid #edf2f7;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
             background: #f8fafc;
+            color: var(--text);
         }
 
         input:focus { border-color: var(--secondary); outline: none; background: #fff; }
 
+        /* Botões */
         .btn {
             width: 100%;
             padding: 16px;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.2s;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            text-transform: uppercase;
         }
 
         .btn-main { background: var(--primary); color: white; }
         .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
         .btn-danger { background: var(--danger); color: white; }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .btn:active { transform: scale(0.97); }
 
-        /* Lista de Itens */
+        /* Carrinho de EPIs */
         .cart-item {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border-left: 5px solid var(--secondary);
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--secondary);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 14px;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 20px;
-            font-size: 11px;
-            color: #aaa;
-            text-transform: uppercase;
+            font-size: 10px;
+            color: #bbb;
             letter-spacing: 1px;
         }
 
-        /* Loader */
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
             margin: 20px auto;
         }
@@ -142,87 +154,90 @@
 
 <div class="container">
     <div class="header">
+        <!-- LOGO PRINCIPAL -->
+        <img src="https://cdn-icons-png.flaticon.com/512/1063/1063376.png" alt="Logo VIC" class="logo-img">
         <h1>PORTAL VIC</h1>
-        <p>Gestão de Segurança e EPI</p>
+        <p>Unidade de Gestão Operacional</p>
     </div>
 
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- TELA 0: CARREGAMENTO -->
+        <!-- TELA 0: LOADING -->
         <div id="step0" class="step active">
             <div class="loader"></div>
-            <p style="text-align: center; color: #666;">Sincronizando dados...</p>
+            <p style="text-align: center; color: #888; font-size: 14px;">Carregando banco de dados...</p>
         </div>
 
         <!-- TELA 1: LOGIN -->
         <div id="step1" class="step">
-            <h2 style="text-align: center; margin-bottom: 30px;">Identificação</h2>
-            <label>Matrícula do Colaborador</label>
-            <input type="tel" id="input-mat" placeholder="Ex: 123456" inputmode="numeric">
-            <button class="btn btn-main" onclick="handleLogin()">Acessar Sistema</button>
+            <h3 style="text-align: center; margin-bottom: 20px;">Acesso ao Sistema</h3>
+            <label>Matrícula</label>
+            <input type="tel" id="input-mat" placeholder="Digite sua matrícula" inputmode="numeric">
+            <button class="btn btn-main" onclick="handleLogin()">Entrar</button>
         </div>
 
-        <!-- TELA 2: MENU PRINCIPAL -->
+        <!-- TELA 2: MENU -->
         <div id="step2" class="step">
-            <h2 style="margin-bottom: 25px;">O que deseja realizar?</h2>
+            <h3 style="margin-bottom: 20px;">Selecione o Serviço</h3>
             <button class="btn btn-outline" onclick="openEPI()">📦 Solicitar EPI</button>
             <button class="btn btn-outline" onclick="goTo(4)">⚠️ Relatar Desvio</button>
-            <button class="btn" style="background:none; color:#999; font-size:12px; margin-top:30px;" onclick="location.reload()">Sair do Sistema</button>
+            <button class="btn" style="background:none; color:#bbb; font-size:11px; margin-top:40px;" onclick="location.reload()">Encerrar Sessão</button>
         </div>
 
-        <!-- TELA 3: SOLICITAÇÃO DE EPI -->
+        <!-- TELA 3: SOLICITAÇÃO EPI -->
         <div id="step3" class="step">
-            <h2>Solicitar EPI</h2>
-            <label>Selecione o Item</label>
+            <h3>Novo Pedido de EPI</h3>
+            <label>Equipamento</label>
             <select id="select-epi" onchange="updateFields()"></select>
             
             <div id="dynamic-area"></div>
             
-            <button class="btn btn-main" style="background: var(--secondary);" onclick="addItem()">+ Adicionar Item</button>
+            <button class="btn btn-main" style="background: var(--secondary); margin-top: 10px;" onclick="addItem()">+ Adicionar ao Pedido</button>
             
-            <div id="cart-area" style="margin-top: 30px; display: none;">
-                <label>Itens no Pedido:</label>
+            <div id="cart-area" style="margin-top: 25px; display: none; border-top: 1px solid #eee; padding-top: 15px;">
+                <label>Itens Selecionados:</label>
                 <div id="cart-list"></div>
-                <button class="btn btn-main" id="btn-submit-epi" onclick="sendEPI()">Finalizar e Enviar</button>
+                <button class="btn btn-main" id="btn-submit-epi" onclick="sendEPI()" style="margin-top:15px;">Confirmar e Enviar</button>
             </div>
             
-            <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
+            <button class="btn" style="background:#eee; color:#666; margin-top: 20px;" onclick="goTo(2)">Voltar</button>
         </div>
 
-        <!-- TELA 4: RELATO DE DESVIO -->
+        <!-- TELA 4: DESVIOS -->
         <div id="step4" class="step">
-            <h2>Relatar Desvio</h2>
-            <label>Área da Ocorrência</label>
+            <h3>Relatar Desvio de Segurança</h3>
+            <label>Local da Ocorrência</label>
             <select id="desvio-area">
                 <option>Pátio de Cima</option>
                 <option>Pátio de Baixo</option>
                 <option>Oficina</option>
                 <option>Administrativo</option>
+                <option>Outros</option>
             </select>
-            <label>Descrição Breve</label>
-            <textarea id="desvio-desc" rows="4" placeholder="Descreva o que observou..."></textarea>
-            <button class="btn btn-danger" id="btn-submit-desvio" onclick="sendDesvio()">Registrar Desvio</button>
-            <button class="btn" style="background:#eee;" onclick="goTo(2)">Cancelar</button>
+            <label>Descrição do Fato</label>
+            <textarea id="desvio-desc" rows="5" placeholder="Relate o desvio encontrado..."></textarea>
+            <button class="btn btn-danger" id="btn-submit-desvio" onclick="sendDesvio()">Registrar Agora</button>
+            <button class="btn" style="background:#eee; color:#666;" onclick="goTo(2)">Cancelar</button>
         </div>
 
         <!-- TELA 5: SUCESSO -->
-        <div id="step5" class="step" style="text-align: center; padding: 40px 0;">
-            <div style="font-size: 70px; color: var(--secondary);">✔</div>
-            <h2 style="color: var(--primary);">Enviado com Sucesso!</h2>
-            <p style="color: #666; margin-bottom: 30px;">As informações já estão na planilha.</p>
-            <button class="btn btn-main" onclick="goTo(2)">Novo Registro</button>
+        <div id="step5" class="step" style="text-align: center; padding: 40px 10px;">
+            <div style="font-size: 60px; color: #4caf50; margin-bottom: 10px;">✔</div>
+            <h2 style="color: var(--primary); margin: 0;">Protocolo Registrado!</h2>
+            <p style="color: #888; font-size: 14px; margin-top: 10px;">Os dados foram salvos na planilha oficial.</p>
+            <button class="btn btn-main" style="margin-top: 30px;" onclick="goTo(2)">Voltar ao Menu</button>
         </div>
     </div>
 
     <div class="footer">
-        Powered by M.Custodio | 2026
+        Powered by M.Custodio | Operação 2026
     </div>
 </div>
 
 <script>
-    // URL ATUALIZADA DO SEU SCRIPT
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwR5B22QJ14pkp6-PWXIk5a8C7LMLlM5xX85yEipmKeoc1hHjJtp0pX2Z-HdIXerXFAYQ/exec';
+    // URL DO SEU SCRIPT (JÁ ATUALIZADO)
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyEZnWltuuaFVxos50rhtZirUc7gvwCBYLUdUTs067vTURPS7zUsLde-kS7oEXxarAixQ/exec';
     
     let db = { funcionarios: {}, epis: [] };
     let cart = [];
@@ -237,14 +252,14 @@
             db = json.dados;
             
             const select = document.getElementById('select-epi');
-            select.innerHTML = '<option value="">Selecione...</option>';
+            select.innerHTML = '<option value="">Selecione o item...</option>';
             db.epis.forEach(item => {
                 select.innerHTML += `<option value="${item.nome}">${item.nome}</option>`;
             });
             
             goTo(1);
         } catch (e) {
-            alert("Erro ao carregar banco de dados. Verifique a conexão.");
+            alert("Erro de conexão com o Banco de Dados VIC.");
         }
     }
 
@@ -259,11 +274,11 @@
         if (db.funcionarios[mat]) {
             user = { mat: mat, nome: db.funcionarios[mat] };
             const pill = document.getElementById('user-pill');
-            pill.innerText = "👤 " + user.nome.split(' ')[0].toUpperCase();
+            pill.innerText = "USUÁRIO: " + user.nome.toUpperCase();
             pill.style.display = "block";
             goTo(2);
         } else {
-            alert("Matrícula não encontrada!");
+            alert("Matrícula não identificada no sistema.");
         }
     }
 
@@ -276,12 +291,12 @@
         if (item) {
             if (item.label) {
                 let html = `<label>${item.label}</label><select id="opt1">`;
-                item.opcoes.forEach(o => html += `<option>${o}</option>`);
+                item.opcoes.forEach(o => html += `<option value="${o}">${o}</option>`);
                 area.innerHTML += html + `</select>`;
             }
             if (item.label2) {
                 let html = `<label>${item.label2}</label><select id="opt2">`;
-                item.opcoes2.forEach(o => html += `<option>${o}</option>`);
+                item.opcoes2.forEach(o => html += `<option value="${o}">${o}</option>`);
                 area.innerHTML += html + `</select>`;
             }
         }
@@ -289,12 +304,13 @@
 
     function addItem() {
         const nome = document.getElementById('select-epi').value;
-        if (!nome) return alert("Selecione um EPI");
+        if (!nome) return alert("Selecione um item primeiro.");
         
         const o1 = document.getElementById('opt1')?.value || "";
         const o2 = document.getElementById('opt2')?.value || "";
         
-        cart.push({ nome, detalhes: `${o1} ${o2}`.trim() });
+        const detalhes = `${o1} ${o2}`.trim();
+        cart.push({ nome, detalhes });
         renderCart();
     }
 
@@ -305,16 +321,17 @@
         
         list.innerHTML = cart.map((item, i) => `
             <div class="cart-item">
-                <div><b>${item.nome}</b><br><small>${item.detalhes}</small></div>
-                <div onclick="cart.splice(${i},1);renderCart()" style="color:red; font-weight:bold">X</div>
+                <div><strong>${item.nome}</strong><br><span style="font-size:12px; color:#666">${item.detalhes}</span></div>
+                <div onclick="cart.splice(${i},1);renderCart()" style="color:var(--danger); font-weight:bold; padding:5px; cursor:pointer">EXCLUIR</div>
             </div>
         `).join('');
     }
 
     async function sendEPI() {
         const btn = document.getElementById('btn-submit-epi');
-        btn.disabled = true; btn.innerText = "Enviando...";
-        const protocolo = "EPI-" + Math.floor(Date.now() / 1000);
+        btn.disabled = true; 
+        btn.innerText = "PROCESSANDO...";
+        const protocolo = "VIC-" + Math.floor(Date.now() / 1000);
 
         try {
             for (const item of cart) {
@@ -322,36 +339,50 @@
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({
-                        tipo: "EPI", protocolo, funcionario: user.nome,
-                        matricula: user.mat, epi: item.nome, detalhes: item.detalhes
+                        tipo: "EPI", 
+                        protocolo: protocolo, 
+                        funcionario: user.nome,
+                        epi: item.nome, 
+                        detalhes: item.detalhes
                     })
                 });
             }
-            cart = []; renderCart(); goTo(5);
-        } catch (e) { alert("Erro no envio"); btn.disabled = false; }
+            cart = []; 
+            goTo(5);
+        } catch (e) { 
+            alert("Erro ao enviar pedido."); 
+            btn.disabled = false; 
+            btn.innerText = "CONFIRMAR E ENVIAR";
+        }
     }
 
     async function sendDesvio() {
         const desc = document.getElementById('desvio-desc').value;
         const local = document.getElementById('desvio-area').value;
-        if (!desc) return alert("Descreva o desvio");
+        if (!desc) return alert("Por favor, descreva o desvio.");
 
         const btn = document.getElementById('btn-submit-desvio');
-        btn.disabled = true; btn.innerText = "Enviando...";
+        btn.disabled = true; 
+        btn.innerText = "ENVIANDO...";
 
         try {
             await fetch(URL_SCRIPT, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify({
-                    tipo: "DESVIO", nome: user.nome, matricula: user.mat,
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    horario: new Date().toLocaleTimeString('pt-BR'),
-                    local: local, descricao: desc
+                    tipo: "DESVIO", 
+                    nome: user.nome, 
+                    matricula: user.mat,
+                    local: local, 
+                    descricao: desc
                 })
             });
             goTo(5);
-        } catch (e) { alert("Erro no envio"); btn.disabled = false; }
+        } catch (e) { 
+            alert("Erro ao registrar desvio."); 
+            btn.disabled = false; 
+            btn.innerText = "REGISTRAR AGORA";
+        }
     }
 
     function openEPI() {
