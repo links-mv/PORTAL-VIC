@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal VIC</title>
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1063/1063376.png">
+    <title>Portal VIC | VLI</title>
+    <link rel="icon" type="image/png" href="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png">
     <style>
         :root { --primary: #004a99; --secondary: #00bcd4; --danger: #d90429; --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; color: var(--text); }
         .container { width: 100%; max-width: 450px; background: var(--card); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
         .header { background: var(--primary); padding: 30px 20px; text-align: center; color: white; border-radius: 0 0 30px 30px; }
-        .logo-img { width: 70px; margin-bottom: 10px; filter: brightness(0) invert(1); }
-        .user-pill { background: #e9ecef; margin: -15px auto 15px; padding: 8px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; color: var(--primary); display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.08); z-index: 10; border: 1px solid #dee2e6; }
+        .logo-img { width: 120px; height: auto; margin-bottom: 10px; }
+        .user-pill { background: #e9ecef; margin: -15px auto 15px; padding: 8px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; color: var(--primary); display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.08); z-index: 10; border: 1px solid #dee2e6; text-align:center; }
         .content { padding: 20px; flex-grow: 1; }
         .step { display: none; animation: fadeIn 0.3s ease; }
         .step.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         label { display: block; font-weight: 700; margin-bottom: 5px; font-size: 13px; color: #444; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 14px; border: 2px solid #edf2f7; border-radius: 10px; font-size: 16px; background: #f8fafc; }
-        input:focus, select:focus { border-color: var(--secondary); outline: none; }
         .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-main { background: var(--primary); color: white; }
         .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
@@ -37,7 +36,7 @@
 
 <div class="container">
     <div class="header">
-        <img src="https://cdn-icons-png.flaticon.com/512/1063/1063376.png" class="logo-img">
+        <img src="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png" class="logo-img">
         <h1 style="margin:0; font-size:18px;">PORTAL VIC</h1>
         <p style="margin:5px 0 0; font-size:12px; opacity:0.8;">Gestão de EPI e Segurança</p>
     </div>
@@ -45,9 +44,14 @@
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <div id="step0" class="step active"><div class="loader"></div><p style="text-align:center; color:#888;">Sincronizando banco de dados...</p></div>
+        <div id="step-start" class="step active" style="text-align: center; padding-top: 40px;">
+            <h2 style="color: var(--primary);">Bem-vindo</h2>
+            <p style="color: #666; margin-bottom: 40px;">Clique no botão abaixo para acessar os serviços operacionais.</p>
+            <button class="btn btn-main" style="padding: 25px; font-size: 18px;" onclick="initSystem()">INICIAR SISTEMA</button>
+        </div>
 
-        <!-- LOGIN -->
+        <div id="step0" class="step"><div class="loader"></div><p style="text-align:center; color:#888;">Sincronizando banco de dados...</p></div>
+
         <div id="step1" class="step">
             <h3 style="text-align:center;">Identificação</h3>
             <label>Matrícula</label>
@@ -55,21 +59,18 @@
             <button class="btn btn-main" onclick="handleLogin()">Entrar no Portal</button>
         </div>
 
-        <!-- MENU -->
         <div id="step2" class="step">
             <button class="btn btn-outline" onclick="goTo(3)">📦 SOLICITAR EPI</button>
             <button class="btn btn-outline" onclick="goTo(4)">⚠️ RELATAR DESVIO</button>
             <button class="btn" style="background:none; color:#ccc; font-size:11px;" onclick="location.reload()">Sair do Sistema</button>
         </div>
 
-        <!-- EPI -->
         <div id="step3" class="step">
             <h3>Novo Pedido</h3>
             <label>Equipamento (EPI)</label>
             <select id="select-epi" onchange="updateFields()"></select>
             <div id="dynamic-area"></div>
             <button class="btn btn-main" style="background:var(--secondary);" onclick="addItem()">+ Adicionar Item</button>
-            
             <div id="cart-area" style="display:none; margin-top:20px; border-top:1px solid #eee; padding-top:10px;">
                 <label>Itens no Pedido:</label>
                 <div id="cart-list"></div>
@@ -78,7 +79,6 @@
             <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
         </div>
 
-        <!-- DESVIO -->
         <div id="step4" class="step">
             <h3>Relatar Desvio</h3>
             <label>Horário do Ocorrido</label>
@@ -87,10 +87,9 @@
                 <button id="btn-manual" class="time-btn" onclick="toggleTime(false)">OUTRO HORÁRIO</button>
             </div>
             <input type="time" id="desvio-hora" style="display:none; margin-bottom:15px;">
-
             <label>Localização</label>
             <select id="desvio-area">
-                <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Estação</option><option>Carvão</option><option>Pátio Novo</option>
+                <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option>
             </select>
             <label>O que aconteceu?</label>
             <textarea id="desvio-desc" rows="4" placeholder="Descreva o desvio observado..."></textarea>
@@ -98,7 +97,6 @@
             <button class="btn" style="background:#eee;" onclick="goTo(2)">Cancelar</button>
         </div>
 
-        <!-- SUCESSO -->
         <div id="step5" class="step" style="text-align:center; padding:40px 0;">
             <div style="font-size:50px; color:#4caf50;">✔</div>
             <h2>Sucesso!</h2>
@@ -110,15 +108,20 @@
 </div>
 
 <script>
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzK14WOjPNpnzguF_6Y5xoXBgFuZmqaIydwaK9lQwB8EzGCG-9EcOyustO57pk7-Y1qvw/exec';
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbyEZnWltuuaFVxos50rhtZirUc7gvwCBYLUdUTs067vTURPS7zUsLde-kS7oEXxarAixQ/exec';
     let db = { funcionarios: {}, epis: [] };
     let cart = [];
     let user = { mat: "", nome: "" };
     let useCurrentTime = true;
 
-    window.onload = init;
+    function goTo(s) {
+        document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
+        const target = typeof s === 'string' ? document.getElementById(s) : document.getElementById('step' + s);
+        target.classList.add('active');
+    }
 
-    async function init() {
+    async function initSystem() {
+        goTo(0);
         try {
             const r = await fetch(URL_SCRIPT);
             const j = await r.json();
@@ -127,12 +130,7 @@
             sel.innerHTML = '<option value="">Selecione...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             goTo(1);
-        } catch (e) { alert("Erro ao carregar dados."); }
-    }
-
-    function goTo(s) {
-        document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
-        document.getElementById('step' + s).classList.add('active');
+        } catch (e) { alert("Erro ao carregar dados."); goTo('step-start'); }
     }
 
     function handleLogin() {
@@ -201,17 +199,14 @@
         const desc = document.getElementById('desvio-desc').value;
         const local = document.getElementById('desvio-area').value;
         let hora = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-        
         if (!useCurrentTime) {
             const hManual = document.getElementById('desvio-hora').value;
-            if (!hManual) return alert("Informe o horário do ocorrido.");
+            if (!hManual) return alert("Informe o horário.");
             hora = hManual;
         }
-
         if (!desc) return alert("Descreva o desvio.");
         const btn = document.getElementById('btn-submit-desvio');
         btn.disabled = true;
-
         await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local, descricao: desc, horaFato: hora })});
         goTo(5);
     }
