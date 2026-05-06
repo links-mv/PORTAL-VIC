@@ -2,208 +2,362 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="icon" type="image/png" href="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png">
-    <title>Portal VIC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Operacional | VIC</title>
     <style>
-        :root { --primary: #004a99; --cyan: #00bcd4; --success: #28a745; --danger: #dc3545; --dark: #333; }
+        :root {
+            --primary: #004a99;
+            --secondary: #00bcd4;
+            --danger: #d90429;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #1a1a1a;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: linear-gradient(180deg, #004a99 0%, #002a5a 100%);
-            margin: 0; padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--dark);
-        }
-        .container { 
-            background: #fff; width: 100%; max-width: 380px; border-radius: 15px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); overflow: hidden; padding-bottom: 20px;
-        }
-        #header-user { 
-            display: none; background: #f1f3f5; padding: 10px; font-size: 12px; 
-            font-weight: bold; border-bottom: 1px solid #ddd; color: var(--primary);
-        }
-        .logo-area { padding: 20px; text-align: center; }
-        .logo { width: 100px; height: auto; }
         
-        .passo { display: none; padding: 0 20px; animation: slideUp 0.3s ease-out; }
-        .passo.ativo { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 { font-size: 1.2rem; margin: 10px 0; color: var(--primary); text-transform: uppercase; }
-        label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; text-align: left; }
-        input, select, textarea, button { 
-            width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; 
-            border-radius: 8px; font-size: 16px; outline: none; transition: 0.2s;
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            color: var(--text);
         }
-        button { background: var(--primary); color: #fff; border: none; font-weight: bold; cursor: pointer; }
-        button:active { transform: scale(0.98); }
-        button:disabled { background: #ccc; }
 
-        .menu-grid { display: grid; gap: 10px; }
-        .btn-opt { 
-            background: #fff; color: var(--primary); border: 2px solid var(--primary); 
-            display: flex; justify-content: space-between; align-items: center; padding: 18px;
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
-        .card-epi { background: #f8f9fa; border-left: 4px solid var(--cyan); padding: 8px; margin-bottom: 5px; text-align: left; font-size: 12px; }
-        .footer { font-size: 9px; color: #aaa; margin-top: 10px; }
-        .creditos { position: fixed; bottom: 5px; width: 100%; text-align: center; color: rgba(255,255,255,0.5); font-size: 10px; }
+
+        /* Header Estilizado */
+        .header {
+            background: var(--primary);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+        .header p { margin: 5px 0 0; opacity: 0.8; font-size: 14px; }
+
+        /* Status de Usuário */
+        .user-pill {
+            background: #e9ecef;
+            margin: -20px auto 20px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .content { padding: 20px; flex-grow: 1; }
+
+        /* Transições de Tela */
+        .step { display: none; animation: slideUp 0.4s ease-out; }
+        .step.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Inputs e Botões */
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #555; }
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f8fafc;
+        }
+
+        input:focus { border-color: var(--secondary); outline: none; background: #fff; }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-main { background: var(--primary); color: white; }
+        .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* Lista de Itens */
+        .cart-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 5px solid var(--secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="header-user">👤 <span id="u-nome"></span></div>
-    
-    <div class="logo-area">
-        <img src="https://logodownload.org/wp-content/uploads/2020/05/vli-logistica-logo-0.png" class="logo" alt="VLI">
+    <div class="header">
+        <h1>PORTAL VIC</h1>
+        <p>Gestão de Segurança e EPI</p>
     </div>
 
-    <!-- TELA 0: CARREGAMENTO -->
-    <div id="p0" class="passo ativo">
-        <h2>Bem-vindo</h2>
-        <p id="status-txt">Sincronizando portal...</p>
-        <button id="btn-entrar" onclick="init()" style="display:none">Entrar Agora</button>
-    </div>
+    <div id="user-pill" class="user-pill"></div>
 
-    <!-- TELA 1: LOGIN -->
-    <div id="p1" class="passo">
-        <label>Matrícula do Colaborador:</label>
-        <input type="tel" id="mat" placeholder="00000000" maxlength="15">
-        <button onclick="login()">Acessar Painel</button>
-    </div>
-
-    <!-- TELA 2: MENU -->
-    <div id="p2" class="passo">
-        <div class="menu-grid">
-            <button class="btn-opt" onclick="ir('3')">Solicitar EPI <span>🛡️</span></button>
-            <button class="btn-opt" onclick="ir('4')" style="border-color:var(--danger); color:var(--danger)">Relatar Desvio <span>⚠️</span></button>
+    <div class="content">
+        <!-- TELA 0: CARREGAMENTO -->
+        <div id="step0" class="step active">
+            <div class="loader"></div>
+            <p style="text-align: center; color: #666;">Sincronizando dados...</p>
         </div>
-        <button onclick="location.reload()" style="background:none; color:#999; font-size:11px; margin-top:15px; border:none">Sair do sistema</button>
-    </div>
 
-    <!-- TELA 3: EPI -->
-    <div id="p3" class="passo">
-        <label>Qual EPI deseja?</label>
-        <select id="sel-epi" onchange="camposEpi()"></select>
-        <div id="extra-epi"></div>
-        <button onclick="addEpi()" style="background:var(--cyan)">+ Adicionar Item</button>
-        <div id="carrinho" style="margin-top:15px; display:none">
-            <div id="itens-carrinho"></div>
-            <button onclick="envEpi()" id="b-env-epi" style="background:var(--success)">Enviar Pedido</button>
+        <!-- TELA 1: LOGIN -->
+        <div id="step1" class="step">
+            <h2 style="text-align: center; margin-bottom: 30px;">Identificação</h2>
+            <label>Matrícula do Colaborador</label>
+            <input type="tel" id="input-mat" placeholder="Ex: 123456" inputmode="numeric">
+            <button class="btn btn-main" onclick="handleLogin()">Acessar Sistema</button>
         </div>
-        <button onclick="ir('2')" style="background:#666; font-size:11px">Voltar</button>
+
+        <!-- TELA 2: MENU PRINCIPAL -->
+        <div id="step2" class="step">
+            <h2 style="margin-bottom: 25px;">O que deseja realizar?</h2>
+            <button class="btn btn-outline" onclick="openEPI()">📦 Solicitar EPI</button>
+            <button class="btn btn-outline" onclick="goTo(4)">⚠️ Relatar Desvio</button>
+            <button class="btn" style="background:none; color:#999; font-size:12px; margin-top:30px;" onclick="location.reload()">Sair do Sistema</button>
+        </div>
+
+        <!-- TELA 3: SOLICITAÇÃO DE EPI -->
+        <div id="step3" class="step">
+            <h2>Solicitar EPI</h2>
+            <label>Selecione o Item</label>
+            <select id="select-epi" onchange="updateFields()"></select>
+            
+            <div id="dynamic-area"></div>
+            
+            <button class="btn btn-main" style="background: var(--secondary);" onclick="addItem()">+ Adicionar Item</button>
+            
+            <div id="cart-area" style="margin-top: 30px; display: none;">
+                <label>Itens no Pedido:</label>
+                <div id="cart-list"></div>
+                <button class="btn btn-main" id="btn-submit-epi" onclick="sendEPI()">Finalizar e Enviar</button>
+            </div>
+            
+            <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
+        </div>
+
+        <!-- TELA 4: RELATO DE DESVIO -->
+        <div id="step4" class="step">
+            <h2>Relatar Desvio</h2>
+            <label>Área da Ocorrência</label>
+            <select id="desvio-area">
+                <option>Pátio de Cima</option>
+                <option>Pátio de Baixo</option>
+                <option>Oficina</option>
+                <option>Administrativo</option>
+            </select>
+            <label>Descrição Breve</label>
+            <textarea id="desvio-desc" rows="4" placeholder="Descreva o que observou..."></textarea>
+            <button class="btn btn-danger" id="btn-submit-desvio" onclick="sendDesvio()">Registrar Desvio</button>
+            <button class="btn" style="background:#eee;" onclick="goTo(2)">Cancelar</button>
+        </div>
+
+        <!-- TELA 5: SUCESSO -->
+        <div id="step5" class="step" style="text-align: center; padding: 40px 0;">
+            <div style="font-size: 70px; color: var(--secondary);">✔</div>
+            <h2 style="color: var(--primary);">Enviado com Sucesso!</h2>
+            <p style="color: #666; margin-bottom: 30px;">As informações já estão na planilha.</p>
+            <button class="btn btn-main" onclick="goTo(2)">Novo Registro</button>
+        </div>
     </div>
 
-    <!-- TELA 4: DESVIO -->
-    <div id="p4" class="passo">
-        <h2 style="color:var(--danger)">Novo Desvio</h2>
-        <label>Localização (Pátio):</label>
-        <select id="des-patio">
-            <option>Pátio de Cima</option>
-            <option>Pátio de Baixo</option>
-            <option>Pátio Novo</option>
-            <option>Terminal do Carvão</option>
-            <option>Oficina / Estação</option>
-        </select>
-        <input type="text" id="des-local" placeholder="Ponto de referência">
-        <label>Descrição do Ocorrido:</label>
-        <textarea id="des-txt" placeholder="O que você observou?"></textarea>
-        <button onclick="envDesvio()" id="b-env-des" style="background:var(--danger)">Registrar Ocorrência</button>
-        <button onclick="ir('2')" style="background:#666; font-size:11px">Cancelar</button>
+    <div class="footer">
+        Powered by M.Custodio | 2026
     </div>
-
-    <!-- TELA 5: SUCESSO -->
-    <div id="p5" class="passo" style="text-align:center">
-        <h1 style="color:var(--success); font-size:50px">✔</h1>
-        <p>Dados registrados!</p>
-        <button onclick="ir('2')">Novo Registro</button>
-    </div>
-
-    <div class="footer">Portal de Gestão Operacional</div>
 </div>
 
-<div class="creditos">Powered By M.Custodio</div>
-
 <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbxH5o0jtrZwRmVYw2DbQxtwIqbgDL168BQ81nnzh7y6qzQ5OWOwQ_OqMUa-qPgt8JSO0g/exec';
-    let db = { funcionarios: {}, epis: [] }, cesta = [], uMat = "", uNome = "";
+    // URL ATUALIZADA DO SEU SCRIPT
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbwR5B22QJ14pkp6-PWXIk5a8C7LMLlM5xX85yEipmKeoc1hHjJtp0pX2Z-HdIXerXFAYQ/exec';
+    
+    let db = { funcionarios: {}, epis: [] };
+    let cart = [];
+    let user = { mat: "", nome: "" };
 
-    // Inicia carregando tudo em segundo plano
-    window.onload = () => init();
-
-    function ir(n) {
-        document.querySelectorAll('.passo').forEach(p => p.classList.remove('ativo'));
-        document.getElementById('p' + n).classList.add('ativo');
-    }
+    window.onload = init;
 
     async function init() {
         try {
-            const r = await fetch(URL);
-            db = await r.json();
-            const s = document.getElementById("sel-epi");
-            s.innerHTML = '<option value="">Selecione...</option>';
-            db.epis.forEach(e => s.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            ir('1'); // Vai direto para o login se carregar rápido
+            const response = await fetch(URL_SCRIPT);
+            const json = await response.json();
+            db = json.dados;
+            
+            const select = document.getElementById('select-epi');
+            select.innerHTML = '<option value="">Selecione...</option>';
+            db.epis.forEach(item => {
+                select.innerHTML += `<option value="${item.nome}">${item.nome}</option>`;
+            });
+            
+            goTo(1);
         } catch (e) {
-            document.getElementById("status-txt").innerText = "Erro de conexão!";
-            document.getElementById("btn-entrar").style.display = "block";
+            alert("Erro ao carregar banco de dados. Verifique a conexão.");
         }
     }
 
-    function login() {
-        const m = document.getElementById("mat").value.trim();
-        if (db.funcionarios[m]) {
-            uMat = m; uNome = db.funcionarios[m];
-            document.getElementById("u-nome").innerText = uNome;
-            document.getElementById("header-user").style.display = "block";
-            ir('2');
-        } else { alert("Matrícula não encontrada!"); }
+    function goTo(step) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step' + step).classList.add('active');
+        window.scrollTo(0,0);
     }
 
-    function camposEpi() {
-        const e = db.epis.find(x => x.nome === document.getElementById("sel-epi").value);
-        const div = document.getElementById("extra-epi"); div.innerHTML = "";
-        if (e) {
-            if (e.label) div.innerHTML += `<label>${e.label}</label><select id="v1">${e.opcoes.map(o=>`<option>${o}</option>`).join('')}</select>`;
-            if (e.label2) div.innerHTML += `<label>${e.label2}</label><select id="v2">${e.opcoes2.map(o=>`<option>${o}</option>`).join('')}</select>`;
+    function handleLogin() {
+        const mat = document.getElementById('input-mat').value.trim();
+        if (db.funcionarios[mat]) {
+            user = { mat: mat, nome: db.funcionarios[mat] };
+            const pill = document.getElementById('user-pill');
+            pill.innerText = "👤 " + user.nome.split(' ')[0].toUpperCase();
+            pill.style.display = "block";
+            goTo(2);
+        } else {
+            alert("Matrícula não encontrada!");
         }
     }
 
-    function addEpi() {
-        const n = document.getElementById("sel-epi").value;
-        if (!n) return;
-        const d = ((document.getElementById("v1")?.value || "") + " " + (document.getElementById("v2")?.value || "")).trim();
-        cesta.push({ n, d });
-        document.getElementById("carrinho").style.display = "block";
-        document.getElementById("itens-carrinho").innerHTML = cesta.map(i => `<div class="card-epi"><b>${i.n}</b> - ${i.d}</div>`).join('');
-        document.getElementById("sel-epi").value = ""; document.getElementById("extra-epi").innerHTML = "";
-    }
+    function updateFields() {
+        const nome = document.getElementById('select-epi').value;
+        const item = db.epis.find(i => i.nome === nome);
+        const area = document.getElementById('dynamic-area');
+        area.innerHTML = "";
 
-    async function envEpi() {
-        const b = document.getElementById("b-env-epi");
-        b.disabled = true; b.innerText = "Enviando...";
-        const prot = "EPI-" + Date.now().toString().slice(-6);
-        try {
-            for (const i of cesta) {
-                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: uNome, matricula: uMat, epi: i.n, detalhes: i.d }) });
+        if (item) {
+            if (item.label) {
+                let html = `<label>${item.label}</label><select id="opt1">`;
+                item.opcoes.forEach(o => html += `<option>${o}</option>`);
+                area.innerHTML += html + `</select>`;
             }
-            cesta = []; document.getElementById("itens-carrinho").innerHTML = ""; ir('5');
-        } catch (e) { alert("Erro!"); b.disabled = false; b.innerText = "Tentar de novo"; }
+            if (item.label2) {
+                let html = `<label>${item.label2}</label><select id="opt2">`;
+                item.opcoes2.forEach(o => html += `<option>${o}</option>`);
+                area.innerHTML += html + `</select>`;
+            }
+        }
     }
 
-    async function envDesvio() {
-        const p = document.getElementById("des-patio").value, l = document.getElementById("des-local").value, t = document.getElementById("des-txt").value;
-        if (!l || !t) return alert("Preencha tudo!");
-        const b = document.getElementById("b-env-des");
-        b.disabled = true; b.innerText = "Gravando...";
-        const agora = new Date();
+    function addItem() {
+        const nome = document.getElementById('select-epi').value;
+        if (!nome) return alert("Selecione um EPI");
+        
+        const o1 = document.getElementById('opt1')?.value || "";
+        const o2 = document.getElementById('opt2')?.value || "";
+        
+        cart.push({ nome, detalhes: `${o1} ${o2}`.trim() });
+        renderCart();
+    }
+
+    function renderCart() {
+        const area = document.getElementById('cart-area');
+        const list = document.getElementById('cart-list');
+        area.style.display = cart.length ? "block" : "none";
+        
+        list.innerHTML = cart.map((item, i) => `
+            <div class="cart-item">
+                <div><b>${item.nome}</b><br><small>${item.detalhes}</small></div>
+                <div onclick="cart.splice(${i},1);renderCart()" style="color:red; font-weight:bold">X</div>
+            </div>
+        `).join('');
+    }
+
+    async function sendEPI() {
+        const btn = document.getElementById('btn-submit-epi');
+        btn.disabled = true; btn.innerText = "Enviando...";
+        const protocolo = "EPI-" + Math.floor(Date.now() / 1000);
+
         try {
-            await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ 
-                tipo: "DESVIO", nome: uNome, matricula: uMat, 
-                data: agora.toLocaleDateString('pt-BR'), horario: agora.getHours()+":"+agora.getMinutes(),
-                local: p + " | " + l, descricao: t 
-            })});
-            ir('5');
-        } catch (e) { alert("Erro!"); b.disabled = false; }
+            for (const item of cart) {
+                await fetch(URL_SCRIPT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        tipo: "EPI", protocolo, funcionario: user.nome,
+                        matricula: user.mat, epi: item.nome, detalhes: item.detalhes
+                    })
+                });
+            }
+            cart = []; renderCart(); goTo(5);
+        } catch (e) { alert("Erro no envio"); btn.disabled = false; }
+    }
+
+    async function sendDesvio() {
+        const desc = document.getElementById('desvio-desc').value;
+        const local = document.getElementById('desvio-area').value;
+        if (!desc) return alert("Descreva o desvio");
+
+        const btn = document.getElementById('btn-submit-desvio');
+        btn.disabled = true; btn.innerText = "Enviando...";
+
+        try {
+            await fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    tipo: "DESVIO", nome: user.nome, matricula: user.mat,
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    horario: new Date().toLocaleTimeString('pt-BR'),
+                    local: local, descricao: desc
+                })
+            });
+            goTo(5);
+        } catch (e) { alert("Erro no envio"); btn.disabled = false; }
+    }
+
+    function openEPI() {
+        cart = [];
+        renderCart();
+        goTo(3);
     }
 </script>
 </body>
