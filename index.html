@@ -6,29 +6,46 @@
     <title>Portal VIC | VLI</title>
     <link rel="icon" type="image/png" href="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png">
     <style>
-        :root { --primary: #004a99; --secondary: #00bcd4; --danger: #d90429; --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; }
+        :root { 
+            --primary: #004a99; /* Azul VLI */
+            --secondary: #00bcd4; 
+            --danger: #d90429; 
+            --bg: #f0f2f5; 
+            --card: #ffffff; 
+            --text: #1a1a1a; 
+        }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; color: var(--text); }
         .container { width: 100%; max-width: 450px; background: var(--card); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+        
         .header { background: var(--primary); padding: 30px 20px; text-align: center; color: white; border-radius: 0 0 30px 30px; }
         .logo-img { width: 120px; height: auto; margin-bottom: 10px; }
+        
         .user-pill { background: #e9ecef; margin: -15px auto 15px; padding: 8px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; color: var(--primary); display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.08); z-index: 10; border: 1px solid #dee2e6; text-align:center; }
+        
         .content { padding: 20px; flex-grow: 1; }
         .step { display: none; animation: fadeIn 0.3s ease; }
         .step.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        
         label { display: block; font-weight: 700; margin-bottom: 5px; font-size: 13px; color: #444; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 14px; border: 2px solid #edf2f7; border-radius: 10px; font-size: 16px; background: #f8fafc; }
+        
+        /* BOTÕES AZUIS */
         .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-main { background: var(--primary); color: white; }
-        .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline { background: #eef2f7; border: 2px solid var(--primary); color: var(--primary); }
         .btn-danger { background: var(--danger); color: white; }
+        
         .cart-item { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--secondary); display: flex; justify-content: space-between; align-items: center; }
         .footer { text-align: center; padding: 20px; font-size: 10px; color: #bbb; }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        
         .time-toggle { display: flex; gap: 10px; margin-bottom: 10px; }
         .time-btn { flex: 1; padding: 10px; font-size: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; }
-        .time-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); }
+        .time-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .info-box { background: #e7f3ff; padding: 15px; border-radius: 10px; border-left: 5px solid var(--primary); margin-bottom: 15px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -42,13 +59,17 @@
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
+        <!-- TELA INICIAL -->
         <div id="step-start" class="step active" style="text-align: center; padding-top: 40px;">
             <h2 style="color: var(--primary);">Bem-vindo</h2>
             <p style="color: #666; margin-bottom: 40px;">Clique no botão abaixo para acessar os serviços operacionais.</p>
             <button class="btn btn-main" style="padding: 25px; font-size: 18px;" onclick="initSystem()">INICIAR SISTEMA</button>
         </div>
+
+        <!-- LOADER -->
         <div id="step0" class="step"><div class="loader"></div><p style="text-align:center; color:#888;">Sincronizando banco de dados...</p></div>
 
+        <!-- LOGIN -->
         <div id="step1" class="step">
             <h3 style="text-align:center;">Identificação</h3>
             <label>Matrícula</label>
@@ -56,14 +77,15 @@
             <button class="btn btn-main" onclick="handleLogin()">Entrar no Portal</button>
         </div>
 
-       <div id="step2" class="step">
-    <button class="btn btn-outline" onclick="goTo(3)">📦 SOLICITAR EPI</button>
-    <button class="btn btn-outline" onclick="goTo(4)">⚠️ RELATAR DESVIO</button>
-    <!-- O BOTÃO QUE ESTAVA FALTANDO: -->
-    <button class="btn btn-outline" onclick="checkFerias()">📅 MARCAÇÃO FÉRIAS</button>
-    <button class="btn" style="background:none; color:#ccc; font-size:11px;" onclick="location.reload()">Sair do Sistema</button>
-</div>
+        <!-- MENU PRINCIPAL -->
+        <div id="step2" class="step">
+            <button class="btn btn-outline" onclick="goTo(3)">📦 SOLICITAR EPI</button>
+            <button class="btn btn-outline" onclick="goTo(4)">⚠️ RELATAR DESVIO</button>
+            <button class="btn btn-outline" onclick="checkFerias()">📅 MARCAR FÉRIAS</button>
+            <button class="btn" style="background:none; color:#ccc; font-size:11px; margin-top:20px;" onclick="location.reload()">Sair do Sistema</button>
+        </div>
 
+        <!-- EPI -->
         <div id="step3" class="step">
             <h3>Novo Pedido</h3>
             <label>Equipamento (EPI)</label>
@@ -78,6 +100,7 @@
             <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
         </div>
 
+        <!-- DESVIO -->
         <div id="step4" class="step">
             <h3>Relatar Desvio</h3>
             <label>Quando ocorreu?</label>
@@ -102,37 +125,46 @@
             <button class="btn" style="background:#eee;" onclick="goTo(2)">Cancelar</button>
         </div>
 
-        <!-- NOVO STEP: FÉRIAS -->
+        <!-- FÉRIAS -->
         <div id="step6" class="step">
             <h3>Marcação de Férias</h3>
-            <div id="ferias-info" style="display:none; background:#e8f4fd; padding:15px; border-radius:10px; border-left:5px solid var(--primary); margin-bottom:15px;">
-                <p style="font-size:13px; margin:0; color:#333;"><b>Opções já registradas:</b></p>
-                <p id="ferias-resumo" style="font-size:12px; margin:5px 0; color:#666;"></p>
-                <p style="font-size:11px; color:var(--danger); font-weight:bold; margin:0;">Para alterar, entre em contato com a SUPERVISÃO.</p>
+            
+            <div id="view-bloqueio" style="display:none;">
+                <div class="info-box">
+                    <p><b>Opções registradas:</b></p>
+                    <p id="resumo-cadastrado" style="color:#555;"></p>
+                    <p style="color:var(--danger); font-weight:800; margin-top:10px;">PARA ALTERAR, ENTRE EM CONTATO COM A SUPERVISÃO.</p>
+                </div>
             </div>
 
-            <div id="ferias-form">
-                <label>Quantidade de dias</label>
+            <div id="view-formulario">
+                <label>Quantidade de dias desejada</label>
                 <select id="f-dias">
                     <option value="15">15 Dias</option>
                     <option value="20">20 Dias</option>
                     <option value="30">30 Dias</option>
                 </select>
+
                 <label>1ª Opção (Mês/Ano)</label>
                 <input type="month" id="f-op1">
+
                 <label>2ª Opção (Mês/Ano)</label>
                 <input type="month" id="f-op2">
+
                 <label>3ª Opção (Mês/Ano)</label>
                 <input type="month" id="f-op3">
-                <button class="btn btn-main" id="btn-ferias" onclick="sendFerias()">Gravar Férias</button>
+
+                <button class="btn btn-main" id="btn-save-ferias" onclick="sendFerias()">Gravar Escolhas</button>
             </div>
+            
             <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
         </div>
 
+        <!-- SUCESSO -->
         <div id="step5" class="step" style="text-align:center; padding:40px 0;">
             <div style="font-size:50px; color:#4caf50;">✔</div>
             <h2>Sucesso!</h2>
-            <p style="color:#888;">As informações foram enviadas para a central.</p>
+            <p style="color:#888;">As informações foram enviadas com sucesso.</p>
             <button class="btn btn-main" onclick="goTo(2)">Voltar ao Menu</button>
         </div>
     </div>
@@ -149,78 +181,94 @@
     function goTo(s) {
         document.querySelectorAll('.step').forEach(div => div.classList.remove('active'));
         const target = typeof s === 'string' ? document.getElementById(s) : document.getElementById('step' + s);
-        target.classList.add('active');
+        if(target) target.classList.add('active');
     }
 
     async function initSystem() {
-        goTo(1); // Vai direto para login (Otimização)
+        goTo(0);
         try {
             const r = await fetch(URL_SCRIPT);
             const j = await r.json();
             db = j.dados;
+            // Populando EPIs
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione...</option>';
-            db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-        } catch (e) { console.log("Erro ao carregar DB"); }
+            if(db.epis) db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+            goTo(1);
+        } catch (e) { 
+            alert("Erro ao sincronizar. Verifique a internet."); 
+            goTo('step-start');
+        }
     }
 
     function handleLogin() {
         const m = document.getElementById('input-mat').value.trim();
-        if (db.funcionarios[m]) {
+        if (db.funcionarios && db.funcionarios[m]) {
             user = { mat: m, nome: db.funcionarios[m] };
             document.getElementById('user-pill').innerText = "COLABORADOR: " + user.nome;
             document.getElementById('user-pill').style.display = "block";
             goTo(2);
-        } else { alert("Matrícula não encontrada."); }
+        } else { alert("Matrícula não encontrada no banco VIC."); }
     }
 
     function checkFerias() {
-        const jaTem = db.ferias[user.mat];
-        if (jaTem) {
-            document.getElementById('ferias-form').style.display = "none";
-            document.getElementById('ferias-info').style.display = "block";
-            document.getElementById('ferias-resumo').innerHTML = `1ª: ${jaTem.op1} | 2ª: ${jaTem.op2} | 3ª: ${jaTem.op3} | Dias: ${jaTem.dias}`;
+        // Se db.ferias não existir (caso a aba esteja vazia), tratamos como objeto vazio
+        const registro = (db.ferias && db.ferias[user.mat]) ? db.ferias[user.mat] : null;
+
+        if (registro) {
+            document.getElementById('view-formulario').style.display = "none";
+            document.getElementById('view-bloqueio').style.display = "block";
+            document.getElementById('resumo-cadastrado').innerHTML = 
+                `<b>Opção 1:</b> ${registro.op1}<br><b>Opção 2:</b> ${registro.op2}<br><b>Opção 3:</b> ${registro.op3}<br><b>Dias:</b> ${registro.dias}`;
         } else {
-            document.getElementById('ferias-form').style.display = "block";
-            document.getElementById('ferias-info').style.display = "none";
+            document.getElementById('view-formulario').style.display = "block";
+            document.getElementById('view-bloqueio').style.display = "none";
         }
         goTo(6);
     }
 
     async function sendFerias() {
-        const op1 = document.getElementById('f-op1').value;
-        const op2 = document.getElementById('f-op2').value;
-        const op3 = document.getElementById('f-op3').value;
+        const o1 = document.getElementById('f-op1').value;
+        const o2 = document.getElementById('f-op2').value;
+        const o3 = document.getElementById('f-op3').value;
         const dias = document.getElementById('f-dias').value;
-        
-        if(!op1 || !op2 || !op3) return alert("Preencha as 3 opções.");
-        
-        const btn = document.getElementById('btn-ferias');
+
+        if (!o1 || !o2 || !o3) return alert("Por favor, selecione os 3 meses.");
+
+        const btn = document.getElementById('btn-save-ferias');
         btn.disabled = true; btn.innerText = "GRAVANDO...";
 
+        // Formata YYYY-MM para MM/YYYY
         const fmt = (v) => v.split("-").reverse().join("/");
 
-        await fetch(URL_SCRIPT, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({
-                tipo: "FERIAS",
-                nome: user.nome,
-                matricula: user.mat,
-                dias: dias,
-                op1: fmt(op1),
-                op2: fmt(op2),
-                op3: fmt(op3)
-            })
-        });
+        try {
+            await fetch(URL_SCRIPT, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    tipo: "FERIAS",
+                    nome: user.nome,
+                    matricula: user.mat,
+                    dias: dias,
+                    op1: fmt(o1),
+                    op2: fmt(o2),
+                    op3: fmt(o3)
+                })
+            });
 
-        // Atualiza DB local para bloqueio imediato
-        db.ferias[user.mat] = { op1: fmt(op1), op2: fmt(op2), op3: fmt(op3), dias: dias };
-        goTo(5);
-        btn.disabled = false; btn.innerText = "Gravar Férias";
+            // Atualiza localmente para bloquear se ele tentar entrar de novo
+            if(!db.ferias) db.ferias = {};
+            db.ferias[user.mat] = { op1: fmt(o1), op2: fmt(o2), op3: fmt(o3), dias: dias };
+            
+            goTo(5);
+        } catch(e) {
+            alert("Erro ao salvar. Tente novamente.");
+        } finally {
+            btn.disabled = false; btn.innerText = "Gravar Escolhas";
+        }
     }
 
-    // Funções de EPI e Desvio mantidas iguais...
+    // --- FUNÇÕES DE APOIO (EPI E DESVIO) ---
     function updateFields() {
         const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
         const area = document.getElementById('dynamic-area');
@@ -249,7 +297,7 @@
 
     function renderCart() {
         document.getElementById('cart-area').style.display = cart.length ? "block" : "none";
-        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `<div class="cart-item"><span><b>${it.n}</b> - ${it.d}</span><span onclick="cart.splice(${i},1);renderCart()" style="color:red; cursor:pointer;">REMOVER</span></div>`).join('');
+        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `<div class="cart-item"><span><b>${it.n}</b> - ${it.d}</span><span onclick="cart.splice(${i},1);renderCart()" style="color:red; cursor:pointer; font-weight:bold;">X</span></div>`).join('');
     }
 
     async function sendEPI() {
@@ -274,28 +322,24 @@
         const desc = document.getElementById('desvio-desc').value;
         const local = document.getElementById('desvio-area').value;
         const btn = document.getElementById('btn-submit-desvio');
-        let dataEnvio, horaEnvio;
+        let dEnv, hEnv;
 
         if (useCurrentTime) {
-            const agora = new Date();
-            dataEnvio = agora.toLocaleDateString('pt-BR');
-            horaEnvio = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            const ag = new Date();
+            dEnv = ag.toLocaleDateString('pt-BR');
+            hEnv = ag.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
         } else {
-            const dManual = document.getElementById('desvio-data-manual').value;
-            const hManual = document.getElementById('desvio-hora-manual').value;
-            if (!dManual || !hManual) return alert("Preencha data e hora.");
-            const partes = dManual.split("-");
-            dataEnvio = `${partes[2]}/${partes[1]}/${partes[0]}`;
-            horaEnvio = hManual;
+            const dM = document.getElementById('desvio-data-manual').value;
+            const hM = document.getElementById('desvio-hora-manual').value;
+            if (!dM || !hM) return alert("Preencha data e hora.");
+            const p = dM.split("-");
+            dEnv = `${p[2]}/${p[1]}/${p[0]}`;
+            hEnv = hM;
         }
 
         if (!desc) return alert("Descreva o fato.");
         btn.disabled = true; btn.innerText = "REGISTRANDO...";
-
-        await fetch(URL_SCRIPT, { 
-            method: 'POST', mode: 'no-cors', 
-            body: JSON.stringify({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: local, descricao: desc, dataFato: dataEnvio, horaFato: horaEnvio })
-        });
+        await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: local, descricao: desc, dataFato: dEnv, horaFato: hEnv })});
         goTo(5);
         btn.disabled = false; btn.innerText = "Registrar Desvio";
     }
