@@ -59,6 +59,7 @@
         <div id="step2" class="step">
             <button class="btn btn-outline" onclick="goTo(3)">📦 SOLICITAR EPI</button>
             <button class="btn btn-outline" onclick="goTo(4)">⚠️ RELATAR DESVIO</button>
+            <button class="btn btn-outline" onclick="checkFerias()">📅 MARCAR FÉRIAS</button>
             <button class="btn" style="background:none; color:#ccc; font-size:11px;" onclick="location.reload()">Sair do Sistema</button>
         </div>
 
@@ -92,12 +93,39 @@
 
             <label>Localização</label>
             <select id="desvio-area">
-                <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option><option>Pátio Novo</option><option>Carvão</option><option>Pátio Novo</option>
+                <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option><option>Pátio Novo</option><option>Carvão</option>
             </select>
             <label>Descrição do Fato</label>
             <textarea id="desvio-desc" rows="4" placeholder="Descreva o desvio..."></textarea>
             <button class="btn btn-danger" id="btn-submit-desvio" onclick="sendDesvio()">Registrar Desvio</button>
             <button class="btn" style="background:#eee;" onclick="goTo(2)">Cancelar</button>
+        </div>
+
+        <!-- NOVO STEP: FÉRIAS -->
+        <div id="step6" class="step">
+            <h3>Marcação de Férias</h3>
+            <div id="ferias-info" style="display:none; background:#e8f4fd; padding:15px; border-radius:10px; border-left:5px solid var(--primary); margin-bottom:15px;">
+                <p style="font-size:13px; margin:0; color:#333;"><b>Opções já registradas:</b></p>
+                <p id="ferias-resumo" style="font-size:12px; margin:5px 0; color:#666;"></p>
+                <p style="font-size:11px; color:var(--danger); font-weight:bold; margin:0;">Para alterar, entre em contato com a SUPERVISÃO.</p>
+            </div>
+
+            <div id="ferias-form">
+                <label>Quantidade de dias</label>
+                <select id="f-dias">
+                    <option value="15">15 Dias</option>
+                    <option value="20">20 Dias</option>
+                    <option value="30">30 Dias</option>
+                </select>
+                <label>1ª Opção (Mês/Ano)</label>
+                <input type="month" id="f-op1">
+                <label>2ª Opção (Mês/Ano)</label>
+                <input type="month" id="f-op2">
+                <label>3ª Opção (Mês/Ano)</label>
+                <input type="month" id="f-op3">
+                <button class="btn btn-main" id="btn-ferias" onclick="sendFerias()">Gravar Férias</button>
+            </div>
+            <button class="btn" style="background:#eee;" onclick="goTo(2)">Voltar</button>
         </div>
 
         <div id="step5" class="step" style="text-align:center; padding:40px 0;">
@@ -111,8 +139,8 @@
 </div>
 
 <script>
-    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzbamCgk_vHeowMG2G0ZaPUjE6c5u56tPhcFNg9TIAQviTvAOgvBIQvSiOFA0D7CJT-Fg/exec'; // Lembre-se de atualizar a URL se mudar o script
-    let db = { funcionarios: {}, epis: [] };
+    const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbzbamCgk_vHeowMG2G0ZaPUjE6c5u56tPhcFNg9TIAQviTvAOgvBIQvSiOFA0D7CJT-Fg/exec';
+    let db = { funcionarios: {}, epis: [], ferias: {} };
     let cart = [];
     let user = { mat: "", nome: "" };
     let useCurrentTime = true;
@@ -124,7 +152,7 @@
     }
 
     async function initSystem() {
-        goTo(0);
+        goTo(1); // Vai direto para login (Otimização)
         try {
             const r = await fetch(URL_SCRIPT);
             const j = await r.json();
@@ -132,8 +160,7 @@
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            goTo(1);
-        } catch (e) { alert("Erro de conexão."); goTo('step-start'); }
+        } catch (e) { console.log("Erro ao carregar DB"); }
     }
 
     function handleLogin() {
@@ -146,6 +173,53 @@
         } else { alert("Matrícula não encontrada."); }
     }
 
+    function checkFerias() {
+        const jaTem = db.ferias[user.mat];
+        if (jaTem) {
+            document.getElementById('ferias-form').style.display = "none";
+            document.getElementById('ferias-info').style.display = "block";
+            document.getElementById('ferias-resumo').innerHTML = `1ª: ${jaTem.op1} | 2ª: ${jaTem.op2} | 3ª: ${jaTem.op3} | Dias: ${jaTem.dias}`;
+        } else {
+            document.getElementById('ferias-form').style.display = "block";
+            document.getElementById('ferias-info').style.display = "none";
+        }
+        goTo(6);
+    }
+
+    async function sendFerias() {
+        const op1 = document.getElementById('f-op1').value;
+        const op2 = document.getElementById('f-op2').value;
+        const op3 = document.getElementById('f-op3').value;
+        const dias = document.getElementById('f-dias').value;
+        
+        if(!op1 || !op2 || !op3) return alert("Preencha as 3 opções.");
+        
+        const btn = document.getElementById('btn-ferias');
+        btn.disabled = true; btn.innerText = "GRAVANDO...";
+
+        const fmt = (v) => v.split("-").reverse().join("/");
+
+        await fetch(URL_SCRIPT, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({
+                tipo: "FERIAS",
+                nome: user.nome,
+                matricula: user.mat,
+                dias: dias,
+                op1: fmt(op1),
+                op2: fmt(op2),
+                op3: fmt(op3)
+            })
+        });
+
+        // Atualiza DB local para bloqueio imediato
+        db.ferias[user.mat] = { op1: fmt(op1), op2: fmt(op2), op3: fmt(op3), dias: dias };
+        goTo(5);
+        btn.disabled = false; btn.innerText = "Gravar Férias";
+    }
+
+    // Funções de EPI e Desvio mantidas iguais...
     function updateFields() {
         const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
         const area = document.getElementById('dynamic-area');
@@ -199,7 +273,6 @@
         const desc = document.getElementById('desvio-desc').value;
         const local = document.getElementById('desvio-area').value;
         const btn = document.getElementById('btn-submit-desvio');
-        
         let dataEnvio, horaEnvio;
 
         if (useCurrentTime) {
@@ -209,9 +282,7 @@
         } else {
             const dManual = document.getElementById('desvio-data-manual').value;
             const hManual = document.getElementById('desvio-hora-manual').value;
-            if (!dManual || !hManual) return alert("Preencha data e hora do ocorrido.");
-            
-            // Formatando data de YYYY-MM-DD para DD/MM/YYYY
+            if (!dManual || !hManual) return alert("Preencha data e hora.");
             const partes = dManual.split("-");
             dataEnvio = `${partes[2]}/${partes[1]}/${partes[0]}`;
             horaEnvio = hManual;
@@ -221,19 +292,9 @@
         btn.disabled = true; btn.innerText = "REGISTRANDO...";
 
         await fetch(URL_SCRIPT, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            body: JSON.stringify({ 
-                tipo: "DESVIO", 
-                nome: user.nome, 
-                matricula: user.mat, 
-                local: local, 
-                descricao: desc, 
-                dataFato: dataEnvio, 
-                horaFato: horaEnvio 
-            })
+            method: 'POST', mode: 'no-cors', 
+            body: JSON.stringify({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: local, descricao: desc, dataFato: dataEnvio, horaFato: horaEnvio })
         });
-        
         goTo(5);
         btn.disabled = false; btn.innerText = "Registrar Desvio";
     }
