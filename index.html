@@ -9,32 +9,22 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg); margin: 0; display: flex; justify-content: center; color: #1a1a1a; }
         .container { width: 100%; max-width: 450px; background: var(--card); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-        
         .header { background: var(--vli-azul); padding: 30px 20px; text-align: center; color: white; border-radius: 0 0 30px 30px; }
         .logo { width: 120px; margin-bottom: 10px; }
-        
         .user-pill { background: #eef2f7; margin: -15px auto 15px; padding: 8px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; color: var(--vli-azul); display: none; border: 1px solid #dee2e6; text-align: center; width: 85%; align-self: center; }
-        
         .content { padding: 20px; flex-grow: 1; }
         .step { display: none; animation: fadeIn 0.4s ease forwards; }
         .step.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         label { display: block; font-weight: bold; margin: 15px 0 5px; font-size: 13px; color: #444; }
         input, select, textarea { width: 100%; padding: 14px; border: 2px solid #edf2f7; border-radius: 12px; font-size: 16px; background: #f8fafc; outline: none; }
-        input:focus, select:focus { border-color: var(--vli-azul); }
-        
         .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
         .btn-blue { background: var(--vli-azul); color: white; }
-        .btn-blue:active { transform: scale(0.98); filter: brightness(1.2); }
         .btn-back { background: #eee; color: #666; margin-top: 25px; }
-
-        .info-box { background: #e8f4fd; padding: 20px; border-radius: 12px; border-left: 6px solid var(--vli-azul); font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+        .info-box { background: #e8f4fd; padding: 20px; border-radius: 12px; border-left: 6px solid var(--vli-azul); font-size: 14px; margin-bottom: 15px; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 30px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .cart-item { background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00bcd4; }
-        .footer-tag { text-align:center; padding: 15px; font-size: 10px; color: #ccc; font-weight: bold; }
+        .cart-item { background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; border-left: 4px solid #00bcd4; }
     </style>
 </head>
 <body>
@@ -44,32 +34,23 @@
         <img src="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png" class="logo">
         <div style="letter-spacing: 2px; font-size: 18px; font-weight: 900;">PORTAL VIC</div>
     </div>
-    
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- TELA INICIAL -->
         <div id="step-start" class="step active" style="text-align: center; padding-top: 40px;">
             <h2 style="color: var(--vli-azul);">Bem-vindo</h2>
-            <p style="color:#666;">Controle de EPI e Operações</p>
             <button class="btn btn-blue" style="height: 70px; font-size: 18px;" onclick="initSystem()">ENTRAR NO PORTAL</button>
         </div>
 
-        <!-- CARREGANDO -->
-        <div id="step-load" class="step">
-            <div class="loader"></div>
-            <p style="text-align:center; color: #888;">Sincronizando dados VIC...</p>
-        </div>
+        <div id="step-load" class="step"><div class="loader"></div></div>
 
-        <!-- LOGIN -->
         <div id="step-login" class="step">
             <h3 style="text-align:center;">Identificação</h3>
             <label>Matrícula</label>
-            <input type="tel" id="input-mat" placeholder="Digite sua matrícula">
+            <input type="tel" id="input-mat" placeholder="Matrícula VLI">
             <button class="btn btn-blue" onclick="handleLogin()">Acessar</button>
         </div>
 
-        <!-- MENU PRINCIPAL -->
         <div id="step-menu" class="step">
             <button class="btn btn-blue" onclick="goTo('step-epi')">📦 SOLICITAR EPI</button>
             <button class="btn btn-blue" onclick="goTo('step-desvio')">⚠️ RELATAR DESVIO</button>
@@ -77,45 +58,7 @@
             <button class="btn btn-back" onclick="location.reload()">Sair</button>
         </div>
 
-        <!-- GESTÃO DE FÉRIAS -->
-        <div id="step-ferias" class="step">
-            <h3>Minhas Férias</h3>
-            <div id="ferias-bloqueio" style="display:none;" class="info-box">
-                <p><b>Registro encontrado:</b></p>
-                <div id="resumo-ferias" style="background: rgba(255,255,255,0.6); padding: 12px; border-radius: 8px;"></div>
-                <p style="color:#d90429; font-weight:bold; margin-top:15px; font-size: 11px;">PROCURE A SUPERVISÃO PARA ALTERAÇÕES.</p>
-            </div>
-            <div id="ferias-form">
-                <label>Duração</label>
-                <select id="f-dias">
-                    <option value="15">15 Dias</option>
-                    <option value="20">20 Dias</option>
-                    <option value="30">30 Dias</option>
-                </select>
-                <label>1ª Opção</label><input type="month" id="f-op1">
-                <label>2ª Opção</label><input type="month" id="f-op2">
-                <label>3ª Opção</label><input type="month" id="f-op3">
-                <button class="btn btn-blue" id="btn-save-ferias" onclick="sendFerias()">Gravar Férias</button>
-            </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
-        </div>
-
-        <!-- EPI -->
-        <div id="step-epi" class="step">
-            <h3>Solicitar EPI</h3>
-            <label>Equipamento</label>
-            <select id="select-epi" onchange="updateEpiFields()"></select>
-            <div id="epi-dinamico"></div>
-            <button class="btn btn-blue" style="background:#00bcd4;" onclick="addItem()">+ Adicionar</button>
-            <div id="cart-area" style="display:none; margin-top: 20px;">
-                <label>Itens no Pedido:</label>
-                <div id="cart-list"></div>
-                <button class="btn btn-blue" id="btn-envia-epi" onclick="sendEPI()">Finalizar Pedido</button>
-            </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
-        </div>
-
-        <!-- DESVIO -->
+        <!-- STEP DESVIO COM SELETOR DE DATA -->
         <div id="step-desvio" class="step">
             <h3>Relatar Desvio</h3>
             <label>Local</label>
@@ -124,35 +67,71 @@
                 <option>Oficina</option><option>Escritório</option>
                 <option>Pátio Novo</option><option>Carvão</option>
             </select>
+            
+            <label>Quando ocorreu?</label>
+            <select id="d-data-tipo" onchange="toggleDataCustom()">
+                <option value="hoje">Hoje</option>
+                <option value="outro">Outra Data</option>
+            </select>
+            
+            <div id="div-data-custom" style="display:none; margin-top:10px;">
+                <input type="date" id="d-data-valor">
+            </div>
+
             <label>Descrição</label>
-            <textarea id="d-desc" rows="5" placeholder="Relate o ocorrido..."></textarea>
-            <button class="btn btn-blue" style="background:#d90429;" id="btn-envia-desvio" onclick="sendDesvio()">Registrar</button>
+            <textarea id="d-desc" rows="5" placeholder="Relate o desvio observado..."></textarea>
+            
+            <button class="btn btn-blue" style="background:#d90429;" id="btn-envia-desvio" onclick="sendDesvio()">Registrar Desvio</button>
             <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
         </div>
 
-        <!-- SUCESSO -->
+        <div id="step-epi" class="step">
+            <h3>Solicitar EPI</h3>
+            <label>Equipamento</label><select id="select-epi" onchange="updateEpiFields()"></select>
+            <div id="epi-dinamico"></div>
+            <button class="btn btn-blue" style="background:#00bcd4;" onclick="addItem()">+ Adicionar ao Carrinho</button>
+            <div id="cart-area" style="display:none; margin-top: 20px;">
+                <div id="cart-list"></div>
+                <button class="btn btn-blue" id="btn-envia-epi" onclick="sendEPI()">Finalizar Pedido</button>
+            </div>
+            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
+        </div>
+
+        <div id="step-ferias" class="step">
+            <h3>Minhas Férias</h3>
+            <div id="ferias-bloqueio" style="display:none;" class="info-box"><div id="resumo-ferias"></div></div>
+            <div id="ferias-form">
+                <label>Duração</label><select id="f-dias"><option value="15">15 Dias</option><option value="20">20 Dias</option><option value="30">30 Dias</option></select>
+                <label>1ª Opção</label><input type="month" id="f-op1">
+                <label>2ª Opção</label><input type="month" id="f-op2">
+                <label>3ª Opção</label><input type="month" id="f-op3">
+                <button class="btn btn-blue" id="btn-save-ferias" onclick="sendFerias()">Gravar Opções</button>
+            </div>
+            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
+        </div>
+
         <div id="step-sucesso" class="step" style="text-align:center; padding-top: 50px;">
             <div style="font-size:70px; color:#4caf50;">✔</div>
-            <h2 style="color: #4caf50;">Sucesso!</h2>
-            <p>Dados enviados para a planilha.</p>
+            <h2>Sucesso!</h2>
             <button class="btn btn-blue" onclick="goTo('step-menu')">Voltar ao Menu</button>
         </div>
     </div>
-    <div class="footer-tag">PORTAL VIC - VLI LOGÍSTICA</div>
 </div>
 
 <script>
-    // SEU LINK NOVO JÁ AQUI
     const URL_API = 'https://script.google.com/macros/s/AKfycbzEHfApZFillRciRdPDm0plYUC5JpfN-BILjiKR2GeldKHU5_QAQwEEwnXM4_bbk_0ppQ/exec'; 
-    
-    let db = { Funcionarios: {}, EPIs: [], Ferias: {} };
+    let db = { funcionarios: {}, epis: [], ferias: {} };
     let user = { mat: "", nome: "" };
     let cart = [];
 
     function goTo(id) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
+    }
+
+    function toggleDataCustom() {
+        const tipo = document.getElementById('d-data-tipo').value;
+        document.getElementById('div-data-custom').style.display = (tipo === 'outro') ? 'block' : 'none';
     }
 
     async function initSystem() {
@@ -165,20 +144,78 @@
             sel.innerHTML = '<option value="">Escolha...</option>';
             if(db.epis) db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             goTo('step-login');
-        } catch (e) { alert("Erro de conexão. Verifique o Script."); goTo('step-start'); }
+        } catch (e) { alert("Erro de conexão."); goTo('step-start'); }
     }
 
     function handleLogin() {
         const m = document.getElementById('input-mat').value.trim();
-        // Garantindo que a matrícula seja tratada como string para comparação
         if (db.funcionarios && (db.funcionarios[m] || db.funcionarios[parseInt(m)])) {
             user = { mat: m, nome: db.funcionarios[m] || db.funcionarios[parseInt(m)] };
             document.getElementById('user-pill').innerText = "COLABORADOR: " + user.nome;
             document.getElementById('user-pill').style.display = "block";
             goTo('step-menu');
-        } else { alert("Matrícula não encontrada na aba 'FUNCIONARIOS'."); }
+        } else { alert("Matrícula não cadastrada."); }
     }
 
+    // --- LÓGICA DE ENVIO DO DESVIO ---
+    async function sendDesvio() {
+        const desc = document.getElementById('d-desc').value;
+        if(!desc) return alert("Por favor, descreva o desvio.");
+        
+        let dataFato = new Date().toLocaleDateString('pt-BR');
+        if(document.getElementById('d-data-tipo').value === 'outro') {
+            const dVal = document.getElementById('d-data-valor').value;
+            if(!dVal) return alert("Selecione a data!");
+            dataFato = dVal.split("-").reverse().join("/");
+        }
+
+        const btn = document.getElementById('btn-envia-desvio');
+        btn.disabled = true; btn.innerText = "GRAVANDO...";
+        
+        await fetch(URL_API, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            body: JSON.stringify({ 
+                tipo: "DESVIO", 
+                nome: user.nome, 
+                matricula: user.mat, 
+                local: document.getElementById('d-local').value, 
+                descricao: desc, 
+                dataFato: dataFato, 
+                horaFato: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) 
+            }) 
+        });
+        
+        goTo('step-sucesso');
+        btn.disabled = false; btn.innerText = "Registrar Desvio";
+    }
+
+    // --- RESTANTE DAS FUNÇÕES (EPI E FÉRIAS) ---
+    function updateEpiFields() {
+        const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
+        const area = document.getElementById('epi-dinamico'); area.innerHTML = "";
+        if (item && item.label) {
+            area.innerHTML += `<label>${item.label}</label><select id="o1">${item.opcoes.map(o => `<option>${o}</option>`).join('')}</select>`;
+            if(item.label2) area.innerHTML += `<label>${item.label2}</label><select id="o2">${item.opcoes2.map(o => `<option>${o}</option>`).join('')}</select>`;
+        }
+    }
+    function addItem() {
+        const n = document.getElementById('select-epi').value; if(!n) return;
+        const det = `${document.getElementById('o1')?.value || ""} ${document.getElementById('o2')?.value || ""}`.trim();
+        cart.push({ n, det }); renderCart();
+    }
+    function renderCart() {
+        document.getElementById('cart-area').style.display = cart.length ? 'block' : 'none';
+        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `<div class="cart-item"><span><b>${it.n}</b><br><small>${it.det}</small></span><button onclick="cart.splice(${i},1);renderCart()" style="color:red; background:none; border:none; font-weight:bold;">X</button></div>`).join('');
+    }
+    async function sendEPI() {
+        const btn = document.getElementById('btn-envia-epi'); btn.disabled = true;
+        const prot = "VIC-" + Date.now();
+        for (const it of cart) {
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: user.nome, epi: it.n, detalhes: it.det })});
+        }
+        cart = []; goTo('step-sucesso'); btn.disabled = false;
+    }
     function checkFerias() {
         const reg = (db.ferias && db.ferias[user.mat]) ? db.ferias[user.mat] : null;
         if (reg) {
@@ -191,56 +228,14 @@
         }
         goTo('step-ferias');
     }
-
     async function sendFerias() {
-        const o1 = document.getElementById('f-op1').value;
-        const o2 = document.getElementById('f-op2').value;
-        const o3 = document.getElementById('f-op3').value;
-        if(!o1 || !o2 || !o3) return alert("Preencha todos os campos.");
-        const btn = document.getElementById('btn-save-ferias');
-        btn.disabled = true; btn.innerText = "ENVIANDO...";
+        const o1 = document.getElementById('f-op1').value; const o2 = document.getElementById('f-op2').value; const o3 = document.getElementById('f-op3').value;
+        if(!o1 || !o2 || !o3) return alert("Preencha tudo.");
+        const btn = document.getElementById('btn-save-ferias'); btn.disabled = true;
         const fmt = (v) => v.split("-").reverse().join("/");
         const payload = { tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: fmt(o1), op2: fmt(o2), op3: fmt(o3) };
         await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-        if(!db.ferias) db.ferias = {}; db.ferias[user.mat] = payload;
-        goTo('step-sucesso');
-        btn.disabled = false; btn.innerText = "Gravar Férias";
-    }
-
-    function updateEpiFields() {
-        const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
-        const area = document.getElementById('epi-dinamico'); area.innerHTML = "";
-        if (item && item.label) {
-            area.innerHTML += `<label>${item.label}</label><select id="o1">${item.opcoes.map(o => `<option>${o}</option>`).join('')}</select>`;
-            if(item.label2) area.innerHTML += `<label>${item.label2}</label><select id="o2">${item.opcoes2.map(o => `<option>${o}</option>`).join('')}</select>`;
-        }
-    }
-
-    function addItem() {
-        const n = document.getElementById('select-epi').value; if(!n) return;
-        const det = `${document.getElementById('o1')?.value || ""} ${document.getElementById('o2')?.value || ""}`.trim();
-        cart.push({ n, det }); renderCart();
-    }
-
-    function renderCart() {
-        document.getElementById('cart-area').style.display = cart.length ? 'block' : 'none';
-        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `<div class="cart-item"><span><b>${it.n}</b><br><small>${it.det}</small></span><button onclick="cart.splice(${i},1);renderCart()" style="color:red; background:none; border:none; font-weight:bold;">X</button></div>`).join('');
-    }
-
-    async function sendEPI() {
-        const btn = document.getElementById('btn-envia-epi'); btn.disabled = true;
-        const prot = "VIC-" + Date.now();
-        for (const it of cart) {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "EPI", protocolo: prot, funcionario: user.nome, epi: it.n, detalhes: it.det })});
-        }
-        cart = []; goTo('step-sucesso'); btn.disabled = false;
-    }
-
-    async function sendDesvio() {
-        const desc = document.getElementById('d-desc').value; if(!desc) return alert("Descreva o desvio.");
-        const btn = document.getElementById('btn-envia-desvio'); btn.disabled = true;
-        await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: new Date().toLocaleDateString('pt-BR'), horaFato: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) })});
-        goTo('step-sucesso'); btn.disabled = false;
+        db.ferias[user.mat] = payload; goTo('step-sucesso'); btn.disabled = false;
     }
 </script>
 </body>
