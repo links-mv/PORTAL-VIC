@@ -217,7 +217,6 @@
     }
 
     function goToMenu() {
-        // Limpar todos os formulários ao voltar
         document.getElementById('d-desc').value = "";
         document.getElementById('d-local').selectedIndex = 0;
         document.getElementById('div-manual').style.display = "none";
@@ -334,9 +333,19 @@
         if (reg) {
             viewAgendada.style.display = 'block';
             formSugestao.style.display = 'none';
+            
+            // Lógica para formatar a data ISO (YYYY-MM-DD...) para MM/YYYY
+            let mesExibicao = reg.op1;
+            if (reg.op1 && typeof reg.op1 === "string") {
+                const partes = reg.op1.split('T')[0].split('-');
+                if (partes.length >= 2) {
+                    mesExibicao = partes[1] + "/" + partes[0];
+                }
+            }
+
             document.getElementById('detalhe-ferias').innerHTML = `
                 <b>Período Sugerido:</b> ${reg.dias} dias<br>
-                <b>Mês Preferencial:</b> ${reg.op1}
+                <b>Mês Preferencial:</b> ${mesExibicao}
             `;
         } else {
             viewAgendada.style.display = 'none';
