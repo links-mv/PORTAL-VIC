@@ -16,208 +16,158 @@
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        
         body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
 
         .container { 
-            width: 100%; 
-            max-width: 450px; 
-            background: #fff; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%; max-width: 450px; background: #fff; min-height: 100vh; 
+            display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        /* Header Moderno */
         .header { 
-            background: var(--vli-azul); 
-            padding: 40px 20px; 
-            text-align: center; 
-            color: white; 
-            border-radius: 0 0 40px 40px;
-            box-shadow: 0 4px 12px rgba(0,74,153,0.3);
+            background: var(--vli-azul); padding: 40px 20px; text-align: center; color: white; 
+            border-radius: 0 0 40px 40px; box-shadow: 0 4px 12px rgba(0,74,153,0.3);
         }
         
-        .logo { width: 100px; filter: brightness(0) invert(1); margin-bottom: 15px; }
+        /* Logo ajustada */
+        .logo { width: 120px; margin-bottom: 15px; }
         
         .user-pill { 
-            background: #fff; 
-            margin: -25px auto 10px; 
-            padding: 14px; 
-            border-radius: 50px; 
-            font-size: 13px; 
-            color: var(--vli-azul); 
-            width: 85%; 
-            text-align: center; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            z-index: 10; 
-            display: none;
-            border: 1px solid #eee;
+            background: #fff; margin: -25px auto 10px; padding: 14px; border-radius: 50px; 
+            font-size: 13px; color: var(--vli-azul); width: 85%; text-align: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10; display: none; border: 1px solid #eee;
         }
 
         .content { padding: 30px 24px; flex-grow: 1; }
-        
         .step { display: none; animation: fadeIn 0.4s ease-out; }
         .step.active { display: block; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Inputs Arredondados */
-        label { display: block; font-weight: 700; margin: 20px 0 8px 5px; font-size: 13px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        label { display: block; font-weight: 700; margin: 20px 0 8px 5px; font-size: 13px; color: #555; text-transform: uppercase; }
         
         input, select, textarea { 
             width: 100%; padding: 16px; border: 2px solid #edf2f7; border-radius: var(--radius); 
-            font-size: 16px; transition: all 0.3s; background: #fdfdfd; outline: none;
+            font-size: 16px; transition: all 0.3s; background: #fdfdfd; outline: none; -webkit-appearance: none;
         }
         
         input:focus, select:focus, textarea:focus { border-color: var(--vli-azul); box-shadow: 0 0 0 4px rgba(0,74,153,0.08); background: #fff; }
 
-        /* Botões Estilizados */
         .btn { 
             width: 100%; padding: 18px; border: none; border-radius: var(--radius); font-size: 15px; 
             font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 15px;
             transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;
         }
         .btn:active { transform: scale(0.97); }
-        
         .btn-blue { background: var(--vli-azul); color: white; }
-        .btn-blue:hover { background: var(--vli-azul-claro); }
-        
         .btn-orange { background: var(--vli-laranja); color: white; }
-        
-        .btn-back { background: transparent; color: #888; font-size: 13px; margin-top: 20px; text-decoration: underline; }
+        .btn-back { background: transparent; color: #888; font-size: 13px; margin-top: 20px; text-decoration: underline; border:none; width: 100%; cursor: pointer;}
 
-        /* Menu em Cards */
         .menu-grid { display: grid; gap: 15px; margin-top: 10px; }
         .menu-card { 
             background: #fff; border: 2px solid #f0f0f0; padding: 20px; border-radius: var(--radius);
             text-align: left; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px;
         }
         .menu-card:hover { border-color: var(--vli-azul); background: #fcfdff; }
-        .menu-card i { font-size: 24px; }
 
         .cart-item { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--vli-laranja); }
         
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 40px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .row-flex { display: flex; gap: 10px; }
+        .row-flex div { flex: 1; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <img src="https://www.vli-logistica.com.br/wp-content/themes/vli/assets/images/logo-vli.png" class="logo">
+        <img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo">
         <div style="font-weight: 900; letter-spacing: 3px; font-size: 16px; opacity: 0.9;">PORTAL VIC</div>
     </div>
     
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- Início -->
         <div id="step-start" class="step active" style="text-align: center; padding-top: 40px;">
-            <h2 style="color: var(--vli-azul); margin-bottom: 10px;">Olá!</h2>
-            <p style="color: #777; margin-bottom: 30px;">Acesse as ferramentas do <br>Portal do Colaborador VIC.</p>
+            <h2 style="color: var(--vli-azul);">Bem-vindo</h2>
+            <p style="color: #777;">Portal VIC - Colaborador</p>
             <button class="btn btn-blue" onclick="initSystem()">Acessar Sistema</button>
         </div>
 
-        <!-- Loader -->
         <div id="step-load" class="step">
             <div class="loader"></div>
-            <p style="text-align:center; color: #888; font-weight: 500;">Conectando ao banco de dados...</p>
+            <p style="text-align:center; color: #888;">Carregando dados...</p>
         </div>
 
-        <!-- Login -->
         <div id="step-login" class="step">
             <h3 style="color: var(--vli-azul);">Identificação</h3>
-            <p style="color: #777; font-size: 14px; margin-top: -10px;">Entre com sua matrícula VLI.</p>
             <label>Matrícula</label>
-            <input type="tel" id="input-mat" placeholder="00000000" maxlength="8">
+            <input type="tel" id="input-mat" placeholder="Sua matrícula" maxlength="8">
             <button class="btn btn-blue" id="btn-login" onclick="handleLogin()">Entrar</button>
         </div>
 
-        <!-- Menu Principal -->
         <div id="step-menu" class="step">
             <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-epi')">
-                    <span style="font-size: 25px;">📦</span>
-                    <div style="font-weight: 700; color: #444;">Solicitar EPI</div>
+                    <span>📦</span> <div style="font-weight: 700;">Solicitar EPI</div>
                 </div>
                 <div class="menu-card" onclick="goTo('step-desvio')">
-                    <span style="font-size: 25px;">⚠️</span>
-                    <div style="font-weight: 700; color: #444;">Relatar Desvio</div>
+                    <span>⚠️</span> <div style="font-weight: 700;">Relatar Desvio</div>
                 </div>
                 <div class="menu-card" onclick="checkFerias()">
-                    <span style="font-size: 25px;">📅</span>
-                    <div style="font-weight: 700; color: #444;">Minhas Férias</div>
+                    <span>📅</span> <div style="font-weight: 700;">Minhas Férias</div>
                 </div>
             </div>
             <button class="btn btn-back" onclick="location.reload()">Sair da Conta</button>
         </div>
 
-        <!-- Módulo EPI -->
         <div id="step-epi" class="step">
-            <h3 style="color: var(--vli-azul);">Solicitação de Material</h3>
+            <h3 style="color: var(--vli-azul);">Solicitação de EPI</h3>
             <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
+            
             <div id="epi-dinamico"></div>
+            
             <button class="btn btn-orange" style="margin-top:20px" onclick="addItem()">+ Adicionar à Lista</button>
             
             <div id="cart-area" style="display:none; margin-top: 30px; border-top: 2px dashed #eee; padding-top:20px;">
-                <label>Meus Pedidos:</label>
+                <label>Itens no Pedido:</label>
                 <div id="cart-list"></div>
                 <button class="btn btn-blue" id="btn-envia-epi" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar ao Menu</button>
+            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
         </div>
 
-        <!-- Módulo Desvio -->
         <div id="step-desvio" class="step">
-            <h3 style="color: var(--vli-azul);">Relatar Desvio</h3>
+            <h3 style="color: var(--vli-azul);">Registrar Desvio</h3>
             <label>Local</label>
             <select id="d-local">
                 <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option>
                 <option>Escritório</option><option>Pátio Novo</option><option>Carvão</option>
             </select>
             
-            <label>Quando ocorreu?</label>
-            <select id="d-data-tipo" onchange="toggleDataCustom(this.value)">
-                <option value="hoje">Hoje</option>
-                <option value="outro">Outra Data</option>
-            </select>
-            <div id="div-data-custom" style="display:none; margin-top:10px;"><input type="date" id="d-data-valor"></div>
+            <div class="row-flex">
+                <div>
+                    <label>Data</label>
+                    <input type="date" id="d-data-valor">
+                </div>
+                <div>
+                    <label>Horário</label>
+                    <input type="time" id="d-hora-valor">
+                </div>
+            </div>
             
-            <label>O que foi observado?</label>
-            <textarea id="d-desc" rows="4" placeholder="Descreva o desvio..."></textarea>
+            <label>Descrição</label>
+            <textarea id="d-desc" rows="4" placeholder="Descreva o que aconteceu..."></textarea>
             
             <button class="btn btn-blue" style="background: var(--vli-erro);" id="btn-envia-desvio" onclick="sendDesvio()">Registrar Ocorrência</button>
             <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
         </div>
 
-        <!-- Módulo Férias -->
-        <div id="step-ferias" class="step">
-            <h3 style="color: var(--vli-azul);">Minhas Férias</h3>
-            <div id="ferias-bloqueio" style="display:none; background: #fff9f0; padding: 20px; border-radius: var(--radius); border: 1px solid #ffe8cc;">
-                <p style="margin:0; font-size: 14px;"><b>Programação atual:</b></p>
-                <div id="resumo-ferias" style="margin: 15px 0;"></div>
-                <p style="color: var(--vli-laranja); font-size: 11px; font-weight: bold; text-align: center;">Para alterações, fale com seu gestor.</p>
-            </div>
-            <div id="ferias-form">
-                <label>Dias de Descanso</label>
-                <select id="f-dias"><option value="15">15 Dias</option><option value="20">20 Dias</option><option value="30">30 Dias</option></select>
-                <label>1ª Opção (Mês)</label><input type="month" id="f-op1">
-                <label>2ª Opção (Mês)</label><input type="month" id="f-op2">
-                <label>3ª Opção (Mês)</label><input type="month" id="f-op3">
-                <button class="btn btn-blue" id="btn-save-ferias" onclick="sendFerias()">Enviar Preferências</button>
-            </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
-        </div>
-
-        <!-- Sucesso -->
         <div id="step-sucesso" class="step" style="text-align:center; padding-top: 40px;">
             <div style="font-size:80px;">✅</div>
-            <h2 style="color: var(--vli-verde); margin-bottom: 10px;">Sucesso!</h2>
-            <p style="color: #666; margin-bottom: 40px;">Sua solicitação foi registrada <br>em nosso sistema.</p>
+            <h2 style="color: var(--vli-verde);">Enviado!</h2>
             <button class="btn btn-blue" onclick="goTo('step-menu')">Voltar ao Menu</button>
         </div>
     </div>
@@ -229,10 +179,17 @@
     let user = { mat: "", nome: "" };
     let cart = [];
 
+    // Preenche data e hora atual por padrão
+    function setDefaultDateTime() {
+        const agora = new Date();
+        document.getElementById('d-data-valor').value = agora.toISOString().split('T')[0];
+        document.getElementById('d-hora-valor').value = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+    }
+
     function goTo(id) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if(id === 'step-desvio') setDefaultDateTime();
     }
 
     async function initSystem() {
@@ -241,25 +198,21 @@
             const r = await fetch(URL_API);
             const json = await r.json();
             db = json.dados;
-            
             const sel = document.getElementById('select-epi');
-            sel.innerHTML = '<option value="">Toque para selecionar...</option>';
+            sel.innerHTML = '<option value="">Selecione o EPI...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            
             goTo('step-login');
         } catch (e) {
-            alert("Erro de rede. Verifique se o Script está publicado como 'Qualquer Pessoa'.");
+            alert("Erro de conexão.");
             goTo('step-start');
         }
     }
 
     function handleLogin() {
-        const input = document.getElementById('input-mat');
-        const m = input.value.trim();
-        const funcionario = db.funcionarios[m] || db.funcionarios[parseInt(m)];
-
-        if (funcionario) {
-            user = { mat: m, nome: funcionario };
+        const m = document.getElementById('input-mat').value.trim();
+        const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
+        if (func) {
+            user = { mat: m, nome: func };
             document.getElementById('user-pill').innerHTML = `👤 <b>${user.nome}</b> (${user.mat})`;
             document.getElementById('user-pill').style.display = "block";
             goTo('step-menu');
@@ -274,11 +227,13 @@
         area.innerHTML = "";
         
         if (item && item.label) {
+            // Variação 1
             let html = `<label>${item.label}</label><select id="o1">`;
             item.opcoes.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
             html += `</select>`;
             
-            if(item.label2) {
+            // Variação 2 (Se existir na planilha)
+            if(item.label2 && item.opcoes2 && item.opcoes2.length > 0) {
                 html += `<label>${item.label2}</label><select id="o2">`;
                 item.opcoes2.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
                 html += `</select>`;
@@ -290,10 +245,10 @@
     function addItem() {
         const sel = document.getElementById('select-epi');
         if(!sel.value) return alert("Selecione um item.");
-        
-        const det = `${document.getElementById('o1')?.value || ""} ${document.getElementById('o2')?.value || ""}`.trim();
+        const o1 = document.getElementById('o1');
+        const o2 = document.getElementById('o2');
+        const det = `${o1 ? o1.value : ""} ${o2 ? o2.value : ""}`.trim();
         cart.push({ n: sel.value, det });
-        
         sel.value = "";
         document.getElementById('epi-dinamico').innerHTML = "";
         renderCart();
@@ -305,55 +260,43 @@
         area.style.display = cart.length ? 'block' : 'none';
         list.innerHTML = cart.map((it, i) => `
             <div class="cart-item">
-                <div style="font-size: 14px; color: #444;"><b>${it.n}</b><br><small style="color:#888">${it.det}</small></div>
-                <button onclick="removeItem(${i})" style="color:var(--vli-erro); background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
+                <div style="font-size: 14px;"><b>${it.n}</b><br><small>${it.det}</small></div>
+                <button onclick="removeItem(${i})" style="color:var(--vli-erro); border:none; background:none; font-size:18px; cursor:pointer;">✕</button>
             </div>
         `).join('');
     }
 
-    function removeItem(index) {
-        cart.splice(index, 1);
-        renderCart();
-    }
-
-    async function apiPOST(payload) {
-        // Usando o modo 'no-cors' para evitar problemas de cross-origin com GAS
-        return fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-    }
+    function removeItem(i) { cart.splice(i, 1); renderCart(); }
 
     async function sendEPI() {
         const btn = document.getElementById('btn-envia-epi');
         btn.disabled = true; btn.innerText = "Enviando...";
-        const protocolo = "EPI-" + Date.now().toString().slice(-6);
-
+        const protocolo = "EPI-" + Date.now().toString().slice(-5);
         try {
             for (const it of cart) {
-                await apiPOST({ tipo: "EPI", protocolo, funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det });
+                await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                    tipo: "EPI", protocolo, funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det
+                })});
             }
             cart = []; renderCart(); goTo('step-sucesso');
         } catch (e) { alert("Erro ao enviar."); }
         finally { btn.disabled = false; btn.innerText = "Finalizar Pedido"; }
     }
 
-    function toggleDataCustom(val) { document.getElementById('div-data-custom').style.display = (val === 'outro' ? 'block' : 'none'); }
-
     async function sendDesvio() {
         const desc = document.getElementById('d-desc').value.trim();
-        if(desc.length < 5) return alert("Descreva melhor o ocorrido.");
+        const data = document.getElementById('d-data-valor').value;
+        const hora = document.getElementById('d-hora-valor').value;
+        if(desc.length < 5) return alert("Descreva o desvio.");
         
         const btn = document.getElementById('btn-envia-desvio');
         btn.disabled = true;
-        
-        let dataFato = new Date().toLocaleDateString('pt-BR');
-        if(document.getElementById('d-data-tipo').value === 'outro') {
-            const dVal = document.getElementById('d-data-valor').value;
-            if(!dVal) return alert("Selecione a data.");
-            dataFato = dVal.split("-").reverse().join("/");
-        }
-
         try {
-            await apiPOST({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dataFato, horaFato: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) });
-            document.getElementById('d-desc').value = ""; goTo('step-sucesso');
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value,
+                descricao: desc, dataFato: data.split("-").reverse().join("/"), horaFato: hora
+            })});
+            goTo('step-sucesso');
         } catch(e) { alert("Erro."); }
         finally { btn.disabled = false; }
     }
@@ -361,39 +304,10 @@
     function checkFerias() {
         const reg = db.ferias[user.mat];
         if (reg) {
-            document.getElementById('ferias-form').style.display = 'none';
-            document.getElementById('ferias-bloqueio').style.display = 'block';
-            document.getElementById('resumo-ferias').innerHTML = `
-                <div style="line-height:2; font-size:14px; color:#555">
-                    <b>Duração:</b> ${reg.dias} dias<br>
-                    <b>1ª Opção:</b> ${reg.op1}<br>
-                    <b>2ª Opção:</b> ${reg.op2}<br>
-                    <b>3ª Opção:</b> ${reg.op3}
-                </div>`;
+            alert(`Férias agendadas: ${reg.dias} dias iniciando em ${reg.op1}`);
         } else {
-            document.getElementById('ferias-form').style.display = 'block';
-            document.getElementById('ferias-bloqueio').style.display = 'none';
+            alert("Nenhuma programação de férias encontrada.");
         }
-        goTo('step-ferias');
-    }
-
-    async function sendFerias() {
-        const o1 = document.getElementById('f-op1').value;
-        const o2 = document.getElementById('f-op2').value;
-        const o3 = document.getElementById('f-op3').value;
-        if(!o1 || !o2 || !o3) return alert("Selecione as 3 opções.");
-        
-        const btn = document.getElementById('btn-save-ferias');
-        btn.disabled = true;
-        const fmt = (v) => v.split("-").reverse().join("/");
-        
-        try {
-            const payload = { tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: fmt(o1), op2: fmt(o2), op3: fmt(o3) };
-            await apiPOST(payload);
-            db.ferias[user.mat] = payload;
-            goTo('step-sucesso');
-        } catch(e) { alert("Erro."); }
-        finally { btn.disabled = false; }
     }
 </script>
 </body>
