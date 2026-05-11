@@ -5,50 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal VIC | VLI</title>
     <style>
-        :root { --vli-azul: #004a99; --vli-laranja: #f39200; --vli-verde: #4caf50; --vli-erro: #d90429; --bg: #f0f2f5; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background: var(--bg); margin: 0; display: flex; justify-content: center; overflow-x: hidden; }
+        :root { 
+            --vli-azul: #004a99; 
+            --vli-azul-claro: #0056b3;
+            --vli-laranja: #f39200; 
+            --vli-verde: #28a745; 
+            --vli-erro: #e63946; 
+            --bg: #f8f9fa;
+            --radius: 20px;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         
-        /* Container principal com leve melhoria no mobile */
-        .container { width: 100%; max-width: 480px; background: #fff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+
+        .container { 
+            width: 100%; 
+            max-width: 450px; 
+            background: #fff; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        /* Header Moderno */
+        .header { 
+            background: var(--vli-azul); 
+            padding: 40px 20px; 
+            text-align: center; 
+            color: white; 
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 4px 12px rgba(0,74,153,0.3);
+        }
         
-        .header { background: var(--vli-azul); padding: 30px 20px; text-align: center; color: white; border-radius: 0 0 30px 30px; position: relative; }
-        .logo { width: 110px; filter: brightness(0) invert(1); margin-bottom: 10px; }
+        .logo { width: 100px; filter: brightness(0) invert(1); margin-bottom: 15px; }
         
-        .user-pill { background: #eef2f7; margin: -20px auto 10px; padding: 12px; border-radius: 50px; font-size: 12px; font-weight: bold; color: var(--vli-azul); width: 90%; text-align: center; border: 1px solid #dee2e6; z-index: 2; display: none; }
+        .user-pill { 
+            background: #fff; 
+            margin: -25px auto 10px; 
+            padding: 14px; 
+            border-radius: 50px; 
+            font-size: 13px; 
+            color: var(--vli-azul); 
+            width: 85%; 
+            text-align: center; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 10; 
+            display: none;
+            border: 1px solid #eee;
+        }
+
+        .content { padding: 30px 24px; flex-grow: 1; }
         
-        .content { padding: 25px 20px; flex-grow: 1; }
-        .step { display: none; animation: slideUp 0.4s ease; }
+        .step { display: none; animation: fadeIn 0.4s ease-out; }
         .step.active { display: block; }
         
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        label { display: block; font-weight: 600; margin: 18px 0 6px; font-size: 14px; color: #444; }
+        /* Inputs Arredondados */
+        label { display: block; font-weight: 700; margin: 20px 0 8px 5px; font-size: 13px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+        
         input, select, textarea { 
-            width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 14px; 
-            font-size: 16px; transition: all 0.3s; background: #fdfdfd; -webkit-appearance: none;
+            width: 100%; padding: 16px; border: 2px solid #edf2f7; border-radius: var(--radius); 
+            font-size: 16px; transition: all 0.3s; background: #fdfdfd; outline: none;
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--vli-azul); background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(0,74,153,0.1); }
+        
+        input:focus, select:focus, textarea:focus { border-color: var(--vli-azul); box-shadow: 0 0 0 4px rgba(0,74,153,0.08); background: #fff; }
 
+        /* Botões Estilizados */
         .btn { 
-            width: 100%; padding: 18px; border: none; border-radius: 14px; font-size: 15px; 
-            font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 12px;
-            transition: transform 0.2s, opacity 0.2s; display: flex; justify-content: center; align-items: center;
+            width: 100%; padding: 18px; border: none; border-radius: var(--radius); font-size: 15px; 
+            font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 15px;
+            transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;
         }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn:active { transform: scale(0.97); }
         
         .btn-blue { background: var(--vli-azul); color: white; }
+        .btn-blue:hover { background: var(--vli-azul-claro); }
+        
         .btn-orange { background: var(--vli-laranja); color: white; }
-        .btn-back { background: #f1f5f9; color: #64748b; margin-top: 25px; }
         
-        /* Cards do Menu */
-        .menu-grid { display: grid; gap: 12px; margin-top: 10px; }
+        .btn-back { background: transparent; color: #888; font-size: 13px; margin-top: 20px; text-decoration: underline; }
+
+        /* Menu em Cards */
+        .menu-grid { display: grid; gap: 15px; margin-top: 10px; }
+        .menu-card { 
+            background: #fff; border: 2px solid #f0f0f0; padding: 20px; border-radius: var(--radius);
+            text-align: left; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px;
+        }
+        .menu-card:hover { border-color: var(--vli-azul); background: #fcfdff; }
+        .menu-card i { font-size: 24px; }
+
+        .cart-item { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--vli-laranja); }
         
-        .info-box { background: #f0f9ff; padding: 20px; border-radius: 14px; border-left: 6px solid var(--vli-azul); font-size: 15px; line-height: 1.5; }
-        .cart-item { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; border-left: 5px solid var(--vli-laranja); }
-        
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 30px auto; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 40px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -57,123 +108,133 @@
 <div class="container">
     <div class="header">
         <img src="https://www.vli-logistica.com.br/wp-content/themes/vli/assets/images/logo-vli.png" class="logo">
-        <div style="font-weight: 800; letter-spacing: 2px; font-size: 18px;">PORTAL VIC</div>
+        <div style="font-weight: 900; letter-spacing: 3px; font-size: 16px; opacity: 0.9;">PORTAL VIC</div>
     </div>
+    
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
         <!-- Início -->
-        <div id="step-start" class="step active" style="text-align: center; padding-top: 60px;">
-            <p style="color: #666;">Bem-vindo ao Portal do Colaborador VIC</p>
+        <div id="step-start" class="step active" style="text-align: center; padding-top: 40px;">
+            <h2 style="color: var(--vli-azul); margin-bottom: 10px;">Olá!</h2>
+            <p style="color: #777; margin-bottom: 30px;">Acesse as ferramentas do <br>Portal do Colaborador VIC.</p>
             <button class="btn btn-blue" onclick="initSystem()">Acessar Sistema</button>
         </div>
 
         <!-- Loader -->
-        <div id="step-load" class="step"><div class="loader"></div><p style="text-align:center; color: #666;">Sincronizando dados...</p></div>
+        <div id="step-load" class="step">
+            <div class="loader"></div>
+            <p style="text-align:center; color: #888; font-weight: 500;">Conectando ao banco de dados...</p>
+        </div>
 
         <!-- Login -->
         <div id="step-login" class="step">
-            <h3>Identificação</h3>
-            <label>Matrícula VLI</label>
-            <input type="tel" id="input-mat" placeholder="Digite sua matrícula" maxlength="8">
+            <h3 style="color: var(--vli-azul);">Identificação</h3>
+            <p style="color: #777; font-size: 14px; margin-top: -10px;">Entre com sua matrícula VLI.</p>
+            <label>Matrícula</label>
+            <input type="tel" id="input-mat" placeholder="00000000" maxlength="8">
             <button class="btn btn-blue" id="btn-login" onclick="handleLogin()">Entrar</button>
         </div>
 
         <!-- Menu Principal -->
         <div id="step-menu" class="step">
             <div class="menu-grid">
-                <button class="btn btn-blue" onclick="goTo('step-epi')">📦 Solicitar EPI</button>
-                <button class="btn btn-blue" onclick="goTo('step-desvio')">⚠️ Relatar Desvio</button>
-                <button class="btn btn-blue" onclick="checkFerias()">📅 Minhas Férias</button>
+                <div class="menu-card" onclick="goTo('step-epi')">
+                    <span style="font-size: 25px;">📦</span>
+                    <div style="font-weight: 700; color: #444;">Solicitar EPI</div>
+                </div>
+                <div class="menu-card" onclick="goTo('step-desvio')">
+                    <span style="font-size: 25px;">⚠️</span>
+                    <div style="font-weight: 700; color: #444;">Relatar Desvio</div>
+                </div>
+                <div class="menu-card" onclick="checkFerias()">
+                    <span style="font-size: 25px;">📅</span>
+                    <div style="font-weight: 700; color: #444;">Minhas Férias</div>
+                </div>
             </div>
             <button class="btn btn-back" onclick="location.reload()">Sair da Conta</button>
         </div>
 
         <!-- Módulo EPI -->
         <div id="step-epi" class="step">
-            <h3>Solicitação de Material</h3>
+            <h3 style="color: var(--vli-azul);">Solicitação de Material</h3>
             <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
             <div id="epi-dinamico"></div>
             <button class="btn btn-orange" style="margin-top:20px" onclick="addItem()">+ Adicionar à Lista</button>
             
-            <div id="cart-area" style="display:none; margin-top: 30px; border-top: 2px dashed #cbd5e1; padding-top:20px;">
-                <label>Itens selecionados:</label>
+            <div id="cart-area" style="display:none; margin-top: 30px; border-top: 2px dashed #eee; padding-top:20px;">
+                <label>Meus Pedidos:</label>
                 <div id="cart-list"></div>
                 <button class="btn btn-blue" id="btn-envia-epi" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
+            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar ao Menu</button>
         </div>
 
         <!-- Módulo Desvio -->
         <div id="step-desvio" class="step">
-            <h3>Relatar Desvio / Ocorrência</h3>
-            <label>Local da Ocorrência</label>
+            <h3 style="color: var(--vli-azul);">Relatar Desvio</h3>
+            <label>Local</label>
             <select id="d-local">
                 <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option>
                 <option>Escritório</option><option>Pátio Novo</option><option>Carvão</option>
             </select>
             
-            <label>Data do Evento</label>
+            <label>Quando ocorreu?</label>
             <select id="d-data-tipo" onchange="toggleDataCustom(this.value)">
-                <option value="hoje">Aconteceu Hoje</option>
+                <option value="hoje">Hoje</option>
                 <option value="outro">Outra Data</option>
             </select>
             <div id="div-data-custom" style="display:none; margin-top:10px;"><input type="date" id="d-data-valor"></div>
             
-            <label>Descrição Detalhada</label>
-            <textarea id="d-desc" rows="5" placeholder="Descreva o que foi observado..."></textarea>
+            <label>O que foi observado?</label>
+            <textarea id="d-desc" rows="4" placeholder="Descreva o desvio..."></textarea>
             
             <button class="btn btn-blue" style="background: var(--vli-erro);" id="btn-envia-desvio" onclick="sendDesvio()">Registrar Ocorrência</button>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Cancelar</button>
+            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
         </div>
 
         <!-- Módulo Férias -->
         <div id="step-ferias" class="step">
-            <h3>Programação de Férias</h3>
-            <div id="ferias-bloqueio" style="display:none;" class="info-box">
-                <p><b>Registro encontrado:</b></p>
-                <div id="resumo-ferias" style="background:#fff; padding:15px; border-radius:10px; margin: 10px 0;"></div>
-                <div style="color: var(--vli-erro); font-size: 12px; font-weight: bold; text-align: center;">
-                    Para alterações, procure seu gestor imediato.
-                </div>
+            <h3 style="color: var(--vli-azul);">Minhas Férias</h3>
+            <div id="ferias-bloqueio" style="display:none; background: #fff9f0; padding: 20px; border-radius: var(--radius); border: 1px solid #ffe8cc;">
+                <p style="margin:0; font-size: 14px;"><b>Programação atual:</b></p>
+                <div id="resumo-ferias" style="margin: 15px 0;"></div>
+                <p style="color: var(--vli-laranja); font-size: 11px; font-weight: bold; text-align: center;">Para alterações, fale com seu gestor.</p>
             </div>
             <div id="ferias-form">
-                <label>Tempo de Descanso</label>
+                <label>Dias de Descanso</label>
                 <select id="f-dias"><option value="15">15 Dias</option><option value="20">20 Dias</option><option value="30">30 Dias</option></select>
-                <label>1ª Opção de Início</label><input type="month" id="f-op1">
-                <label>2ª Opção de Início</label><input type="month" id="f-op2">
-                <label>3ª Opção de Início</label><input type="month" id="f-op3">
+                <label>1ª Opção (Mês)</label><input type="month" id="f-op1">
+                <label>2ª Opção (Mês)</label><input type="month" id="f-op2">
+                <label>3ª Opção (Mês)</label><input type="month" id="f-op3">
                 <button class="btn btn-blue" id="btn-save-ferias" onclick="sendFerias()">Enviar Preferências</button>
             </div>
             <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
         </div>
 
         <!-- Sucesso -->
-        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 50px;">
-            <div style="font-size:70px; color: var(--vli-verde);">✔</div>
-            <h2 style="color: var(--vli-verde); margin-bottom: 5px;">Enviado com Sucesso!</h2>
-            <p style="color: #666; margin-bottom: 30px;">As informações já estão no sistema.</p>
+        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 40px;">
+            <div style="font-size:80px;">✅</div>
+            <h2 style="color: var(--vli-verde); margin-bottom: 10px;">Sucesso!</h2>
+            <p style="color: #666; margin-bottom: 40px;">Sua solicitação foi registrada <br>em nosso sistema.</p>
             <button class="btn btn-blue" onclick="goTo('step-menu')">Voltar ao Menu</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Configurações e Estado
-    const URL_API = 'SUA_URL_DO_GAS_AQUI'; // Substitua pela URL do seu Script
+    const URL_API = 'https://script.google.com/macros/s/AKfycbzEHfApZFillRciRdPDm0plYUC5JpfN-BILjiKR2GeldKHU5_QAQwEEwnXM4_bbk_0ppQ/exec';
     let db = { funcionarios: {}, epis: [], ferias: {} };
     let user = { mat: "", nome: "" };
     let cart = [];
 
-    // Navegação
     function goTo(id) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Inicialização
     async function initSystem() {
         goTo('step-load');
         try {
@@ -182,18 +243,16 @@
             db = json.dados;
             
             const sel = document.getElementById('select-epi');
-            sel.innerHTML = '<option value="">Escolha um item...</option>';
+            sel.innerHTML = '<option value="">Toque para selecionar...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             
             goTo('step-login');
         } catch (e) {
-            console.error(e);
-            alert("Erro de conexão. Verifique sua internet.");
+            alert("Erro de rede. Verifique se o Script está publicado como 'Qualquer Pessoa'.");
             goTo('step-start');
         }
     }
 
-    // Login
     function handleLogin() {
         const input = document.getElementById('input-mat');
         const m = input.value.trim();
@@ -205,12 +264,10 @@
             document.getElementById('user-pill').style.display = "block";
             goTo('step-menu');
         } else {
-            alert("Matrícula não encontrada no sistema.");
-            input.focus();
+            alert("Matrícula não encontrada.");
         }
     }
 
-    // EPI Dinâmico
     function updateEpiFields() {
         const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
         const area = document.getElementById('epi-dinamico');
@@ -221,7 +278,7 @@
             item.opcoes.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
             html += `</select>`;
             
-            if(item.label2 && item.opcoes2 && item.opcoes2.length > 0) {
+            if(item.label2) {
                 html += `<label>${item.label2}</label><select id="o2">`;
                 item.opcoes2.forEach(opt => html += `<option value="${opt}">${opt}</option>`);
                 html += `</select>`;
@@ -230,10 +287,9 @@
         }
     }
 
-    // Carrinho
     function addItem() {
         const sel = document.getElementById('select-epi');
-        if(!sel.value) return alert("Selecione um EPI primeiro.");
+        if(!sel.value) return alert("Selecione um item.");
         
         const det = `${document.getElementById('o1')?.value || ""} ${document.getElementById('o2')?.value || ""}`.trim();
         cart.push({ n: sel.value, det });
@@ -247,11 +303,10 @@
         const area = document.getElementById('cart-area');
         const list = document.getElementById('cart-list');
         area.style.display = cart.length ? 'block' : 'none';
-        
         list.innerHTML = cart.map((it, i) => `
             <div class="cart-item">
-                <div style="font-size: 14px;"><b>${it.n}</b><br><span style="color:#666">${it.det}</span></div>
-                <button onclick="removeItem(${i})" style="color:var(--vli-erro); background:none; border:none; font-weight:bold; cursor:pointer; padding:5px;">✕</button>
+                <div style="font-size: 14px; color: #444;"><b>${it.n}</b><br><small style="color:#888">${it.det}</small></div>
+                <button onclick="removeItem(${i})" style="color:var(--vli-erro); background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
             </div>
         `).join('');
     }
@@ -261,92 +316,60 @@
         renderCart();
     }
 
-    // Envios (POST)
-    async function sendEPI() {
-        const btn = document.getElementById('btn-envia-epi');
-        if(btn.disabled) return;
-        
-        btn.disabled = true;
-        btn.innerText = "Processando...";
-        
-        const protocolo = "EPI-" + Math.floor(Date.now() / 1000);
-        try {
-            for (const it of cart) {
-                await fetch(URL_API, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify({ 
-                        tipo: "EPI", protocolo, funcionario: user.nome, 
-                        matricula: user.mat, epi: it.n, detalhes: it.det 
-                    })
-                });
-            }
-            cart = [];
-            renderCart();
-            goTo('step-sucesso');
-        } catch (e) {
-            alert("Erro ao enviar. Tente novamente.");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Finalizar Pedido";
-        }
+    async function apiPOST(payload) {
+        // Usando o modo 'no-cors' para evitar problemas de cross-origin com GAS
+        return fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
     }
 
-    function toggleDataCustom(val) {
-        document.getElementById('div-data-custom').style.display = (val === 'outro' ? 'block' : 'none');
+    async function sendEPI() {
+        const btn = document.getElementById('btn-envia-epi');
+        btn.disabled = true; btn.innerText = "Enviando...";
+        const protocolo = "EPI-" + Date.now().toString().slice(-6);
+
+        try {
+            for (const it of cart) {
+                await apiPOST({ tipo: "EPI", protocolo, funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det });
+            }
+            cart = []; renderCart(); goTo('step-sucesso');
+        } catch (e) { alert("Erro ao enviar."); }
+        finally { btn.disabled = false; btn.innerText = "Finalizar Pedido"; }
     }
+
+    function toggleDataCustom(val) { document.getElementById('div-data-custom').style.display = (val === 'outro' ? 'block' : 'none'); }
 
     async function sendDesvio() {
         const desc = document.getElementById('d-desc').value.trim();
-        const btn = document.getElementById('btn-envia-desvio');
+        if(desc.length < 5) return alert("Descreva melhor o ocorrido.");
         
-        if(desc.length < 10) return alert("Por favor, descreva o desvio com mais detalhes.");
+        const btn = document.getElementById('btn-envia-desvio');
+        btn.disabled = true;
         
         let dataFato = new Date().toLocaleDateString('pt-BR');
         if(document.getElementById('d-data-tipo').value === 'outro') {
             const dVal = document.getElementById('d-data-valor').value;
-            if(!dVal) return alert("Selecione a data da ocorrência.");
+            if(!dVal) return alert("Selecione a data.");
             dataFato = dVal.split("-").reverse().join("/");
         }
 
-        btn.disabled = true;
-        btn.innerText = "Registrando...";
-
         try {
-            await fetch(URL_API, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify({ 
-                    tipo: "DESVIO", nome: user.nome, matricula: user.mat, 
-                    local: document.getElementById('d-local').value, 
-                    descricao: desc, dataFato: dataFato, 
-                    horaFato: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) 
-                })
-            });
-            document.getElementById('d-desc').value = "";
-            goTo('step-sucesso');
-        } catch(e) {
-            alert("Erro ao registrar.");
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Registrar Ocorrência";
-        }
+            await apiPOST({ tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dataFato, horaFato: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) });
+            document.getElementById('d-desc').value = ""; goTo('step-sucesso');
+        } catch(e) { alert("Erro."); }
+        finally { btn.disabled = false; }
     }
 
-    // Férias
     function checkFerias() {
         const reg = db.ferias[user.mat];
         if (reg) {
             document.getElementById('ferias-form').style.display = 'none';
             document.getElementById('ferias-bloqueio').style.display = 'block';
             document.getElementById('resumo-ferias').innerHTML = `
-                <div style="line-height:1.8">
-                    📅 <b>Duração:</b> ${reg.dias} dias<br>
-                    1️⃣ <b>1ª Opção:</b> ${reg.op1}<br>
-                    2️⃣ <b>2ª Opção:</b> ${reg.op2}<br>
-                    3️⃣ <b>3ª Opção:</b> ${reg.op3}
-                </div>
-            `;
+                <div style="line-height:2; font-size:14px; color:#555">
+                    <b>Duração:</b> ${reg.dias} dias<br>
+                    <b>1ª Opção:</b> ${reg.op1}<br>
+                    <b>2ª Opção:</b> ${reg.op2}<br>
+                    <b>3ª Opção:</b> ${reg.op3}
+                </div>`;
         } else {
             document.getElementById('ferias-form').style.display = 'block';
             document.getElementById('ferias-bloqueio').style.display = 'none';
@@ -358,28 +381,19 @@
         const o1 = document.getElementById('f-op1').value;
         const o2 = document.getElementById('f-op2').value;
         const o3 = document.getElementById('f-op3').value;
-        
-        if(!o1 || !o2 || !o3) return alert("Selecione as 3 opções de meses.");
+        if(!o1 || !o2 || !o3) return alert("Selecione as 3 opções.");
         
         const btn = document.getElementById('btn-save-ferias');
         btn.disabled = true;
-        
         const fmt = (v) => v.split("-").reverse().join("/");
-        const payload = { 
-            tipo: "FERIAS", nome: user.nome, matricula: user.mat, 
-            dias: document.getElementById('f-dias').value, 
-            op1: fmt(o1), op2: fmt(o2), op3: fmt(o3) 
-        };
-
+        
         try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            const payload = { tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: fmt(o1), op2: fmt(o2), op3: fmt(o3) };
+            await apiPOST(payload);
             db.ferias[user.mat] = payload;
             goTo('step-sucesso');
-        } catch(e) {
-            alert("Erro ao salvar.");
-        } finally {
-            btn.disabled = false;
-        }
+        } catch(e) { alert("Erro."); }
+        finally { btn.disabled = false; }
     }
 </script>
 </body>
