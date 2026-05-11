@@ -74,7 +74,6 @@
 
         .cart-item { background: #fdfdfd; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--vli-laranja); }
         
-        /* Overlay de Carregamento/Registro */
         #loading-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.85); z-index: 9999; flex-direction: column;
@@ -82,6 +81,8 @@
         }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .info-box { background: #eef7ff; padding: 20px; border-radius: 15px; border: 1px solid #cfe2ff; color: #004a99; font-size: 14px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -125,7 +126,7 @@
         </div>
 
         <div id="step-epi" class="step">
-            <h3 style="color: var(--vli-azul);">EPI</h3>
+            <h3 style="color: var(--vli-azul);">Solicitação de EPI</h3>
             <label>Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
             <div id="epi-dinamico"></div>
@@ -139,7 +140,7 @@
         </div>
 
         <div id="step-desvio" class="step">
-            <h3 style="color: var(--vli-azul);">Desvio</h3>
+            <h3 style="color: var(--vli-azul);">Relatar Desvio</h3>
             <label>Local</label>
             <select id="d-local">
                 <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option>
@@ -153,14 +154,45 @@
                 <input type="time" id="d-hora-manual">
             </div>
             <label>Descrição</label>
-            <textarea id="d-desc" rows="4" style="width:100%; border-radius:15px; padding:12px; border:2px solid #e2e8f0;"></textarea>
+            <textarea id="d-desc" rows="4" placeholder="O que aconteceu?"></textarea>
             <button class="btn btn-blue" style="background:var(--vli-erro)" onclick="sendDesvio()">Registrar</button>
             <button class="btn btn-back" onclick="goToMenu()">Cancelar</button>
+        </div>
+
+        <div id="step-ferias" class="step">
+            <h3 style="color: var(--vli-azul);">Minhas Férias</h3>
+            
+            <div id="ferias-view-agendada" style="display:none;">
+                <div class="info-box">
+                    <b>Sugestão já registrada!</b><br><br>
+                    <div id="detalhe-ferias"></div>
+                    <p style="margin-top:15px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate sua supervisão direta.</p>
+                </div>
+            </div>
+
+            <div id="ferias-form-sugestao">
+                <p style="font-size:13px; color:#666; margin-bottom:20px;">Selecione suas opções preferenciais para as férias:</p>
+                <label>Quantidade de Dias</label>
+                <select id="f-dias">
+                    <option value="30">30 Dias</option>
+                    <option value="20">20 Dias</option>
+                    <option value="15">15 Dias</option>
+                </select>
+                <label>1ª Opção (Mês/Ano)</label>
+                <input type="month" id="f-op1">
+                <label>2ª Opção (Mês/Ano)</label>
+                <input type="month" id="f-op2">
+                <label>3ª Opção (Mês/Ano)</label>
+                <input type="month" id="f-op3">
+                <button class="btn btn-blue" onclick="sendFerias()">Enviar Sugestão</button>
+            </div>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-sucesso" class="step" style="text-align:center; padding-top: 40px;">
             <div style="font-size:60px;">✅</div>
             <h2 style="color: var(--vli-verde);">Registrado!</h2>
+            <p style="color:#666;">Dados enviados com sucesso.</p>
             <button class="btn btn-blue" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
     </div>
@@ -185,14 +217,15 @@
     }
 
     function goToMenu() {
-        // Limpa campos de desvio
+        // Limpar todos os formulários ao voltar
         document.getElementById('d-desc').value = "";
         document.getElementById('d-local').selectedIndex = 0;
-        document.getElementById('d-tempo-tipo').selectedIndex = 0;
         document.getElementById('div-manual').style.display = "none";
-        // Limpa EPIs
         document.getElementById('select-epi').selectedIndex = 0;
         document.getElementById('epi-dinamico').innerHTML = "";
+        document.getElementById('f-op1').value = "";
+        document.getElementById('f-op2').value = "";
+        document.getElementById('f-op3').value = "";
         cart = []; renderCart();
         goTo('step-menu');
     }
@@ -295,8 +328,36 @@
 
     function checkFerias() {
         const reg = db.ferias[user.mat];
-        if (reg) alert(`Férias para ${user.nome}:\n${reg.dias} dias em ${reg.op1}`);
-        else alert("Nenhuma programação encontrada.");
+        const viewAgendada = document.getElementById('ferias-view-agendada');
+        const formSugestao = document.getElementById('ferias-form-sugestao');
+        
+        if (reg) {
+            viewAgendada.style.display = 'block';
+            formSugestao.style.display = 'none';
+            document.getElementById('detalhe-ferias').innerHTML = `
+                <b>Período Sugerido:</b> ${reg.dias} dias<br>
+                <b>Mês Preferencial:</b> ${reg.op1}
+            `;
+        } else {
+            viewAgendada.style.display = 'none';
+            formSugestao.style.display = 'block';
+        }
+        goTo('step-ferias');
+    }
+
+    async function sendFerias() {
+        const op1 = document.getElementById('f-op1').value;
+        if(!op1) return alert("Selecione pelo menos a primeira opção de mês.");
+        
+        showLoad("Enviando Sugestão...");
+        try {
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "FERIAS", nome: user.nome, matricula: user.mat, 
+                dias: document.getElementById('f-dias').value,
+                op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
+            })});
+            hideLoad(); goTo('step-sucesso');
+        } catch(e) { hideLoad(); alert("Erro."); }
     }
 </script>
 </body>
