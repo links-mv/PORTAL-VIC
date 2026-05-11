@@ -6,7 +6,7 @@
     <title>Portal VIC | VLI</title>
     <style>
         :root { 
-            --vli-azul: #0077b6; /* Azul Oceano */
+            --vli-azul: #0077b6; 
             --vli-laranja: #f39200; 
             --vli-verde: #28a745; 
             --vli-erro: #e63946; 
@@ -14,8 +14,8 @@
             --radius: 20px;
         }
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
 
         .container { 
             width: 100%; max-width: 450px; background: #fff; min-height: 100vh; 
@@ -23,157 +23,145 @@
         }
 
         .header { 
-            background: var(--vli-azul); padding: 50px 20px 60px; text-align: center; color: white; 
+            background: var(--vli-azul); padding: 45px 20px 55px; text-align: center; color: white; 
             border-radius: 0 0 40px 40px; position: relative;
         }
 
-        /* Logo em Caixa Branca */
         .logo-box {
-            background: white; padding: 15px; border-radius: 18px;
+            background: white; padding: 12px; border-radius: 15px;
             display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.12);
             margin-bottom: 15px;
         }
-        .logo { width: 110px; display: block; }
+        .logo { width: 100px; display: block; }
         
         .user-pill { 
-            background: #fff; margin: -25px auto 10px; padding: 14px; border-radius: 50px; 
-            font-size: 13px; color: var(--vli-azul); width: 85%; text-align: center; 
+            background: #fff; margin: -25px auto 10px; padding: 12px; border-radius: 50px; 
+            font-size: 13px; color: var(--vli-azul); width: 80%; text-align: center; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.06); z-index: 10; display: none; border: 1px solid #eee;
         }
 
-        .content { padding: 30px 24px; flex-grow: 1; }
-        .step { display: none; animation: fadeIn 0.4s ease-out; }
+        .content { padding: 25px 20px; flex-grow: 1; }
+        .step { display: none; animation: fadeIn 0.3s ease-in-out; }
         .step.active { display: block; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        label { display: block; font-weight: 700; margin: 20px 0 8px 5px; font-size: 12px; color: #666; text-transform: uppercase; }
+        label { display: block; font-weight: 700; margin: 18px 0 6px 5px; font-size: 11px; color: #666; text-transform: uppercase; }
         
         input, select, textarea { 
-            width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: var(--radius); 
-            font-size: 16px; background: #fdfdfd; outline: none; -webkit-appearance: none;
+            width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: var(--radius); 
+            font-size: 16px; background: #fdfdfd; outline: none; transition: 0.2s;
         }
         
         input:focus, select:focus { border-color: var(--vli-azul); background: #fff; }
 
         .btn { 
-            width: 100%; padding: 18px; border: none; border-radius: var(--radius); font-size: 15px; 
-            font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 15px;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
+            width: 100%; padding: 16px; border: none; border-radius: var(--radius); font-size: 15px; 
+            font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 12px;
+            display: flex; justify-content: center; align-items: center; transition: 0.2s;
         }
+        .btn:active { transform: scale(0.98); }
         .btn-blue { background: var(--vli-azul); color: white; }
         .btn-orange { background: var(--vli-laranja); color: white; }
-        .btn-back { background: transparent; color: #999; font-size: 13px; margin-top: 20px; border:none; width: 100%; cursor: pointer; text-decoration: underline;}
+        .btn-back { background: transparent; color: #999; font-size: 13px; margin-top: 15px; border:none; width: 100%; text-decoration: underline;}
 
         .menu-card { 
-            background: #fff; border: 1px solid #eee; padding: 22px; border-radius: var(--radius);
-            margin-bottom: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: #fff; border: 1px solid #eee; padding: 20px; border-radius: var(--radius);
+            margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .menu-card:hover { border-color: var(--vli-azul); background: #f8fbff; }
 
-        .cart-item { background: #fdfdfd; padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--vli-laranja); }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 30px auto; }
+        .cart-item { background: #fdfdfd; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--vli-laranja); }
+        
+        /* Overlay de Carregamento/Registro */
+        #loading-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); z-index: 9999; flex-direction: column;
+            align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-text" style="margin-top:15px; font-weight:700; color:var(--vli-azul);">Processando...</p>
+</div>
+
 <div class="container">
     <div class="header">
-        <div class="logo-box">
-            <img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo">
-        </div>
-        <div style="font-weight: 900; letter-spacing: 3px; font-size: 14px; opacity: 0.9;">PORTAL VIC</div>
+        <div class="logo-box"><img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo"></div>
+        <div style="font-weight: 900; letter-spacing: 3px; font-size: 13px; opacity: 0.9;">PORTAL VIC</div>
     </div>
     
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <div id="step-start" class="step active" style="text-align: center; padding-top: 40px;">
-            <button class="btn btn-blue" onclick="initSystem()">Acessar Sistema</button>
-        </div>
-
-        <div id="step-load" class="step">
-            <div class="loader"></div>
-            <p style="text-align:center; color: #888;">Carregando...</p>
+        <div id="step-start" class="step active" style="text-align: center; padding-top: 30px;">
+            <button class="btn btn-blue" onclick="initSystem()">Acessar Portal</button>
         </div>
 
         <div id="step-login" class="step">
             <h3 style="color: var(--vli-azul); text-align: center;">Identificação</h3>
             <label>Matrícula</label>
-            <input type="tel" id="input-mat" placeholder="00000000" maxlength="8">
-            <button class="btn btn-blue" id="btn-login" onclick="handleLogin()">Entrar</button>
+            <input type="tel" id="input-mat" placeholder="Sua matrícula" maxlength="8">
+            <button class="btn btn-blue" onclick="handleLogin()">Entrar</button>
         </div>
 
         <div id="step-menu" class="step">
             <div class="menu-card" onclick="goTo('step-epi')">
-                <span style="font-size:24px">📦</span> <div style="font-weight: 700;">Solicitar EPI</div>
+                <span style="font-size:22px">📦</span> <div style="font-weight: 700;">Solicitar EPI</div>
             </div>
             <div class="menu-card" onclick="goTo('step-desvio')">
-                <span style="font-size:24px">⚠️</span> <div style="font-weight: 700;">Relatar Desvio</div>
+                <span style="font-size:22px">⚠️</span> <div style="font-weight: 700;">Relatar Desvio</div>
             </div>
             <div class="menu-card" onclick="checkFerias()">
-                <span style="font-size:24px">📅</span> <div style="font-weight: 700;">Minhas Férias</div>
+                <span style="font-size:22px">📅</span> <div style="font-weight: 700;">Minhas Férias</div>
             </div>
-            <button class="btn btn-back" onclick="location.reload()">Sair da Conta</button>
+            <button class="btn btn-back" onclick="location.reload()">Sair</button>
         </div>
 
         <div id="step-epi" class="step">
-            <h3 style="color: var(--vli-azul);">Solicitação de EPI</h3>
+            <h3 style="color: var(--vli-azul);">EPI</h3>
             <label>Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
             <div id="epi-dinamico"></div>
-            <button class="btn btn-orange" style="margin-top:20px" onclick="addItem()">+ Adicionar à Lista</button>
-            <div id="cart-area" style="display:none; margin-top:30px; border-top:1px solid #eee; padding-top:20px;">
-                <label>Itens no Pedido:</label>
+            <button class="btn btn-orange" onclick="addItem()">+ Adicionar</button>
+            <div id="cart-area" style="display:none; margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
+                <label>Lista Atual:</label>
                 <div id="cart-list"></div>
-                <button class="btn btn-blue" id="btn-envia-epi" onclick="sendEPI()">Finalizar Pedido</button>
+                <button class="btn btn-blue" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-desvio" class="step">
-            <h3 style="color: var(--vli-azul);">Relatar Desvio</h3>
+            <h3 style="color: var(--vli-azul);">Desvio</h3>
             <label>Local</label>
             <select id="d-local">
                 <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option>
             </select>
-            
             <label>Data e Hora</label>
             <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
-                <option value="agora">Agora</option>
-                <option value="manual">Selecionar Manulamente</option>
+                <option value="agora">Agora</option><option value="manual">Manual</option>
             </select>
             <div id="div-manual" style="display:none; gap:10px; margin-top:10px;">
                 <input type="date" id="d-data-manual">
                 <input type="time" id="d-hora-manual">
             </div>
-
             <label>Descrição</label>
-            <textarea id="d-desc" rows="4" style="width:100%; border-radius:15px; padding:15px; border:2px solid #e2e8f0;"></textarea>
-            
-            <button class="btn btn-blue" style="background:var(--vli-erro)" id="btn-envia-desvio" onclick="sendDesvio()">Registrar</button>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
-        </div>
-
-        <div id="step-ferias" class="step">
-            <h3 style="color: var(--vli-azul);">Minhas Férias</h3>
-            <div id="ferias-info" style="display:none; background:#f0f7ff; padding:20px; border-radius:15px; border:1px solid #cde4ff;"></div>
-            <div id="ferias-form">
-                <label>Dias</label>
-                <select id="f-dias"><option value="15">15 Dias</option><option value="20">20 Dias</option><option value="30">30 Dias</option></select>
-                <label>1ª Opção</label><input type="month" id="f-op1">
-                <label>2ª Opção</label><input type="month" id="f-op2">
-                <button class="btn btn-blue" id="btn-envia-ferias" onclick="sendFerias()">Salvar Preferências</button>
-            </div>
-            <button class="btn btn-back" onclick="goTo('step-menu')">Voltar</button>
+            <textarea id="d-desc" rows="4" style="width:100%; border-radius:15px; padding:12px; border:2px solid #e2e8f0;"></textarea>
+            <button class="btn btn-blue" style="background:var(--vli-erro)" onclick="sendDesvio()">Registrar</button>
+            <button class="btn btn-back" onclick="goToMenu()">Cancelar</button>
         </div>
 
         <div id="step-sucesso" class="step" style="text-align:center; padding-top: 40px;">
-            <div style="font-size:70px;">✅</div>
-            <h2 style="color: var(--vli-verde);">Sucesso!</h2>
-            <button class="btn btn-blue" onclick="goTo('step-menu')">Voltar ao Menu</button>
+            <div style="font-size:60px;">✅</div>
+            <h2 style="color: var(--vli-verde);">Registrado!</h2>
+            <button class="btn btn-blue" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
     </div>
 </div>
@@ -184,13 +172,33 @@
     let user = { mat: "", nome: "" };
     let cart = [];
 
+    function showLoad(text = "Carregando...") {
+        document.getElementById('loading-text').innerText = text;
+        document.getElementById('loading-overlay').style.display = 'flex';
+    }
+    function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
+
     function goTo(id) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function goToMenu() {
+        // Limpa campos de desvio
+        document.getElementById('d-desc').value = "";
+        document.getElementById('d-local').selectedIndex = 0;
+        document.getElementById('d-tempo-tipo').selectedIndex = 0;
+        document.getElementById('div-manual').style.display = "none";
+        // Limpa EPIs
+        document.getElementById('select-epi').selectedIndex = 0;
+        document.getElementById('epi-dinamico').innerHTML = "";
+        cart = []; renderCart();
+        goTo('step-menu');
     }
 
     async function initSystem() {
-        goTo('step-load');
+        showLoad("Sincronizando...");
         try {
             const r = await fetch(URL_API);
             const json = await r.json();
@@ -198,8 +206,9 @@
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+            hideLoad();
             goTo('step-login');
-        } catch (e) { alert("Erro de conexão."); goTo('step-start'); }
+        } catch (e) { alert("Erro de rede."); hideLoad(); }
     }
 
     function handleLogin() {
@@ -207,7 +216,7 @@
         const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
         if (func) {
             user = { mat: m, nome: func };
-            document.getElementById('user-pill').innerHTML = `👤 <b>${user.nome}</b> (${user.mat})`;
+            document.getElementById('user-pill').innerHTML = `👤 <b>${user.nome}</b>`;
             document.getElementById('user-pill').style.display = "block";
             goTo('step-menu');
         } else { alert("Matrícula não encontrada."); }
@@ -248,25 +257,27 @@
         area.style.display = cart.length ? 'block' : 'none';
         document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
             <div class="cart-item">
-                <div style="font-size:14px"><b>${it.n}</b><br><small>${it.det}</small></div>
-                <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:red;font-size:18px">✕</button>
+                <div style="font-size:13px"><b>${it.n}</b> - <small>${it.det}</small></div>
+                <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:red;font-size:16px">✕</button>
             </div>`).join('');
     }
 
     async function sendEPI() {
-        const btn = document.getElementById('btn-envia-epi'); btn.disabled = true;
+        showLoad("Registrando Pedido...");
         try {
             for (const it of cart) {
                 await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                     tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, protocolo: "EPI"+Date.now()
                 })});
             }
-            cart = []; renderCart(); goTo('step-sucesso');
-        } catch (e) { alert("Erro."); } finally { btn.disabled = false; }
+            hideLoad(); goTo('step-sucesso');
+        } catch (e) { hideLoad(); alert("Erro."); }
     }
 
     async function sendDesvio() {
-        const btn = document.getElementById('btn-envia-desvio'); btn.disabled = true;
+        const desc = document.getElementById('d-desc').value.trim();
+        if(!desc) return alert("Descreva o desvio.");
+        showLoad("Enviando Relato...");
         let dF = new Date().toLocaleDateString('pt-BR');
         let hF = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
         if(document.getElementById('d-tempo-tipo').value === 'manual') {
@@ -276,34 +287,16 @@
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                 tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value,
-                descricao: document.getElementById('d-desc').value, dataFato: dF, horaFato: hF
+                descricao: desc, dataFato: dF, horaFato: hF
             })});
-            goTo('step-sucesso');
-        } catch(e) { alert("Erro."); } finally { btn.disabled = false; }
+            hideLoad(); goTo('step-sucesso');
+        } catch(e) { hideLoad(); alert("Erro."); }
     }
 
     function checkFerias() {
         const reg = db.ferias[user.mat];
-        if (reg) {
-            document.getElementById('ferias-form').style.display = 'none';
-            document.getElementById('ferias-info').style.display = 'block';
-            document.getElementById('ferias-info').innerHTML = `<b>Programado:</b> ${reg.dias} dias.<br>Mês: ${reg.op1}`;
-        } else {
-            document.getElementById('ferias-form').style.display = 'block';
-            document.getElementById('ferias-info').style.display = 'none';
-        }
-        goTo('step-ferias');
-    }
-
-    async function sendFerias() {
-        const btn = document.getElementById('btn-envia-ferias'); btn.disabled = true;
-        try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value,
-                op1: document.getElementById('f-op1').value, op2: document.getElementById('f-op2').value
-            })});
-            goTo('step-sucesso');
-        } catch(e) { alert("Erro."); } finally { btn.disabled = false; }
+        if (reg) alert(`Férias para ${user.nome}:\n${reg.dias} dias em ${reg.op1}`);
+        else alert("Nenhuma programação encontrada.");
     }
 </script>
 </body>
