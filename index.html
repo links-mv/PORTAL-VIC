@@ -334,19 +334,26 @@
             viewAgendada.style.display = 'block';
             formSugestao.style.display = 'none';
             
-            // Lógica para formatar a data ISO (YYYY-MM-DD...) para MM/YYYY
-            let mesExibicao = reg.op1;
-            if (reg.op1 && typeof reg.op1 === "string") {
-                const partes = reg.op1.split('T')[0].split('-');
-                if (partes.length >= 2) {
-                    mesExibicao = partes[1] + "/" + partes[0];
-                }
-            }
+            // Função interna para formatar qualquer uma das opções
+            const formatar = (valor) => {
+                if (!valor || valor === "") return null;
+                const partes = valor.split('T')[0].split('-');
+                return partes.length >= 2 ? partes[1] + "/" + partes[0] : valor;
+            };
 
-            document.getElementById('detalhe-ferias').innerHTML = `
-                <b>Período Sugerido:</b> ${reg.dias} dias<br>
-                <b>Mês Preferencial:</b> ${mesExibicao}
-            `;
+            const op1 = formatar(reg.op1);
+            const op2 = formatar(reg.op2);
+            const op3 = formatar(reg.op3);
+
+            let htmlDetalhes = `<b>Período Sugerido:</b> ${reg.dias} dias<br><br>`;
+            htmlDetalhes += `<b>1ª Opção:</b> ${op1}`;
+            
+            // Só adiciona a 2ª e 3ª opção se elas não estiverem vazias
+            if (op2) htmlDetalhes += `<br><b>2ª Opção:</b> ${op2}`;
+            if (op3) htmlDetalhes += `<br><b>3ª Opção:</b> ${op3}`;
+
+            document.getElementById('detalhe-ferias').innerHTML = htmlDetalhes;
+            
         } else {
             viewAgendada.style.display = 'none';
             formSugestao.style.display = 'block';
