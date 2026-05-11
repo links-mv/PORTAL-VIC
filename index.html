@@ -141,22 +141,36 @@
 
         <div id="step-desvio" class="step">
             <h3 style="color: var(--vli-azul);">Relatar Desvio</h3>
-            <label>Local</label>
-            <select id="d-local">
-                <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option>
-            </select>
-            <label>Data e Hora</label>
-            <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
-                <option value="agora">Agora</option><option value="manual">Manual</option>
-            </select>
-            <div id="div-manual" style="display:none; gap:10px; margin-top:10px;">
-                <input type="date" id="d-data-manual">
-                <input type="time" id="d-hora-manual">
+            
+            <div id="desvio-escolha" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="btn btn-blue" style="font-size: 11px; padding: 10px;" onclick="mostrarNovoDesvio()">Novo Relato</button>
+                <button class="btn btn-orange" style="font-size: 11px; padding: 10px;" onclick="verMeusDesvios()">Meus Relatos</button>
             </div>
-            <label>Descrição</label>
-            <textarea id="d-desc" rows="4" placeholder="O que aconteceu?"></textarea>
-            <button class="btn btn-blue" style="background:var(--vli-erro)" onclick="sendDesvio()">Registrar</button>
-            <button class="btn btn-back" onclick="goToMenu()">Cancelar</button>
+
+            <div id="desvio-lista" style="display:none;">
+                <p style="font-size:12px; color:#666;">Seus últimos relatos registrados:</p>
+                <div id="container-historico-desvios"></div>
+            </div>
+
+            <div id="desvio-form">
+                <label>Local</label>
+                <select id="d-local">
+                    <option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option>
+                </select>
+                <label>Data e Hora</label>
+                <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
+                    <option value="agora">Agora</option><option value="manual">Manual</option>
+                </select>
+                <div id="div-manual" style="display:none; gap:10px; margin-top:10px;">
+                    <input type="date" id="d-data-manual">
+                    <input type="time" id="d-hora-manual">
+                </div>
+                <label>Descrição</label>
+                <textarea id="d-desc" rows="4" placeholder="O que aconteceu?"></textarea>
+                <button class="btn btn-blue" style="background:var(--vli-erro)" onclick="sendDesvio()">Registrar</button>
+            </div>
+            
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-ferias" class="step">
