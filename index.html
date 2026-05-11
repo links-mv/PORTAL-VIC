@@ -22,11 +22,13 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         label { display: block; font-weight: 700; margin: 18px 0 6px 5px; font-size: 11px; color: #666; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: var(--radius); font-size: 16px; background: #fdfdfd; outline: none; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 12px; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 12px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-blue { background: var(--vli-azul); color: white; }
         .btn-orange { background: var(--vli-laranja); color: white; }
-        .btn-back { background: transparent; color: #999; font-size: 13px; margin-top: 15px; text-decoration: underline; border:none; width:100%;}
-        .menu-card { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
+        .btn-back { background: transparent; color: #999; font-size: 13px; margin-top: 15px; text-decoration: underline; border:none; width:100%; cursor:pointer;}
+        .menu-card { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cart-item { background: #fdfdfd; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--vli-laranja); }
         .info-box { background: #eef7ff; padding: 20px; border-radius: 15px; border: 1px solid #cfe2ff; color: #004a99; font-size: 14px; }
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
@@ -40,7 +42,7 @@
 <div class="container">
     <div class="header">
         <div class="logo-box"><img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo"></div>
-        <div style="font-weight: 900; letter-spacing: 3px; font-size: 13px;">PORTAL VIC</div>
+        <div style="font-weight: 900; letter-spacing: 3px; font-size: 13px; opacity: 0.9;">PORTAL VIC</div>
     </div>
     <div id="user-pill" class="user-pill"></div>
 
@@ -59,6 +61,20 @@
             <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span> <b>Relatar Desvio</b></div>
             <div class="menu-card" onclick="checkFerias()"><span>📅</span> <b>Minhas Férias</b></div>
             <button class="btn btn-back" onclick="location.reload()">Sair</button>
+        </div>
+
+        <div id="step-epi" class="step">
+            <h3 style="color: var(--vli-azul);">Solicitação de EPI</h3>
+            <label>Item</label>
+            <select id="select-epi" onchange="updateEpiFields()"></select>
+            <div id="epi-dinamico"></div>
+            <button class="btn btn-orange" onclick="addItem()" style="margin-top:20px;">+ Adicionar</button>
+            <div id="cart-area" style="display:none; margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
+                <label>Lista Atual:</label>
+                <div id="cart-list"></div>
+                <button class="btn btn-blue" onclick="sendEPI()">Finalizar Pedido</button>
+            </div>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-desvio" class="step">
@@ -82,13 +98,33 @@
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <div id="step-ferias" class="step">
+            <h3 style="color: var(--vli-azul);">Minhas Férias</h3>
+            <div id="ferias-view-agendada" style="display:none;"><div class="info-box"><b>Sugestão já registrada!</b><br><br><div id="detalhe-ferias"></div><p style="margin-top:15px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate sua supervisão direta.</p></div></div>
+            <div id="ferias-form-sugestao">
+                <label>Quantidade de Dias</label><select id="f-dias"><option value="30">30 Dias</option><option value="20">20 Dias</option><option value="15">15 Dias</option></select>
+                <label>1ª Opção (Mês/Ano)</label><input type="month" id="f-op1">
+                <label>2ª Opção (Mês/Ano)</label><input type="month" id="f-op2">
+                <label>3ª Opção (Mês/Ano)</label><input type="month" id="f-op3">
+                <button class="btn btn-blue" onclick="sendFerias()">Enviar Sugestão</button>
+            </div>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
+
+        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 40px;">
+            <div style="font-size:60px;">✅</div>
+            <h2 style="color: var(--vli-verde);">Registrado!</h2>
+            <p style="color:#666;">Dados enviados com sucesso.</p>
+            <button class="btn btn-blue" onclick="goToMenu()">Voltar ao Menu</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    const URL_API = 'COLOQUE_SEU_LINK_AQUI'; 
+    const URL_API = 'https://script.google.com/macros/s/AKfycbzEHfApZFillRciRdPDm0plYUC5JpfN-BILjiKR2GeldKHU5_QAQwEEwnXM4_bbk_0ppQ/exec'; 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
+    let cart = [];
 
     async function initSystem() {
         showLoad("Sincronizando...");
@@ -96,8 +132,12 @@
             const r = await fetch(URL_API);
             const json = await r.json();
             db = json.dados;
+            if (!db.desvios) db.desvios = []; 
+            const sel = document.getElementById('select-epi');
+            sel.innerHTML = '<option value="">Selecione...</option>';
+            db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             hideLoad(); goTo('step-login');
-        } catch (e) { alert("Erro de rede."); hideLoad(); }
+        } catch (e) { alert("Erro de conexão."); hideLoad(); }
     }
 
     function handleLogin() {
@@ -109,6 +149,70 @@
             document.getElementById('user-pill').style.display = "block";
             goTo('step-menu');
         } else { alert("Matrícula não encontrada."); }
+    }
+
+    function updateEpiFields() {
+        const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
+        const area = document.getElementById('epi-dinamico');
+        area.innerHTML = "";
+        if (item && item.label) {
+            let html = `<label>${item.label}</label><select id="o1">`;
+            String(item.opcoes).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
+            html += `</select>`;
+            if(item.label2 && item.opcoes2) {
+                html += `<label>${item.label2}</label><select id="o2">`;
+                String(item.opcoes2).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
+                html += `</select>`;
+            }
+            area.innerHTML = html;
+        }
+    }
+
+    function addItem() {
+        const sel = document.getElementById('select-epi');
+        if(!sel.value) return;
+        const det = `${document.getElementById('o1')?.value || ""} ${document.getElementById('o2')?.value || ""}`.trim();
+        cart.push({ n: sel.value, det });
+        sel.value = ""; document.getElementById('epi-dinamico').innerHTML = "";
+        renderCart();
+    }
+
+    function renderCart() {
+        const area = document.getElementById('cart-area');
+        area.style.display = cart.length ? 'block' : 'none';
+        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
+            <div class="cart-item"><div><b>${it.n}</b> - <small>${it.det}</small></div>
+            <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:red;font-size:16px">✕</button></div>`).join('');
+    }
+
+    async function sendEPI() {
+        showLoad("Enviando Pedido...");
+        try {
+            for (const it of cart) {
+                await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, protocolo: "EPI"+Date.now()
+                })});
+            }
+            hideLoad(); goTo('step-sucesso');
+        } catch (e) { hideLoad(); alert("Erro."); }
+    }
+
+    async function sendDesvio() {
+        const desc = document.getElementById('d-desc').value.trim();
+        if(!desc) return alert("Descreva o desvio.");
+        showLoad("Enviando...");
+        let dF = new Date().toLocaleDateString('pt-BR');
+        let hF = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        if(document.getElementById('d-tempo-tipo').value === 'manual') {
+            dF = document.getElementById('d-data-manual').value.split('-').reverse().join('/');
+            hF = document.getElementById('d-hora-manual').value;
+        }
+        try {
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
+            })});
+            hideLoad(); goTo('step-sucesso');
+        } catch(e) { hideLoad(); alert("Erro."); }
     }
 
     function verMeusDesvios() {
@@ -124,11 +228,39 @@
         } else { container.innerHTML = "<p style='font-size:12px; color:#999; text-align:center;'>Nenhum registro.</p>"; }
     }
 
+    function checkFerias() {
+        const reg = db.ferias[user.mat];
+        if (reg) {
+            document.getElementById('ferias-view-agendada').style.display = 'block';
+            document.getElementById('ferias-form-sugestao').style.display = 'none';
+            const formatar = (v) => { if (!v) return ""; const p = v.split('T')[0].split('-'); return p.length >= 2 ? p[1] + "/" + p[0] : v; };
+            let h = `<b>Período:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
+            if (reg.op2) h += `<br><b>2ª Opção:</b> ${formatar(reg.op2)}`;
+            if (reg.op3) h += `<br><b>3ª Opção:</b> ${formatar(reg.op3)}`;
+            document.getElementById('detalhe-ferias').innerHTML = h;
+        } else {
+            document.getElementById('ferias-view-agendada').style.display = 'none';
+            document.getElementById('ferias-form-sugestao').style.display = 'block';
+        }
+        goTo('step-ferias');
+    }
+
+    async function sendFerias() {
+        const op1 = document.getElementById('f-op1').value;
+        if(!op1) return alert("Selecione a 1ª opção.");
+        showLoad("Enviando...");
+        try {
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
+            })});
+            hideLoad(); goTo('step-sucesso');
+        } catch(e) { hideLoad(); alert("Erro."); }
+    }
+
     function showLoad(t) { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; }
     function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
-    function goTo(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+    function goTo(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
     function goToMenu() { goTo('step-menu'); }
-    // As funções sendDesvio, sendEPI, checkFerias seguem a mesma lógica anterior...
 </script>
 </body>
 </html>
