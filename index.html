@@ -6,103 +6,189 @@
     <title>Portal VIC | VLI</title>
     <style>
         :root { 
-            --vli-azul: #0077b6; --vli-laranja: #f39200; --vli-verde: #28a745; 
-            --vli-erro: #e63946; --bg: #f4f7f9; --radius: 20px;
+            --vli-azul: #0085B2; /* Azul mais vivo e alegre */
+            --vli-azul-escuro: #005f83;
+            --vli-laranja: #F37021; /* Laranja vibrante corporativo */
+            --vli-verde: #28a745; 
+            --vli-erro: #dc3545; 
+            --bg: #F4F7F9; /* Fundo mais claro e limpo */
+            --radius: 12px; 
+            --text-color: #2c3e50;
         }
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 450px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .header { background: var(--vli-azul); padding: 45px 20px 55px; text-align: center; color: white; border-radius: 0 0 40px 40px; }
-        .logo-box { background: white; padding: 12px; border-radius: 15px; display: inline-block; margin-bottom: 15px; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; color: var(--text-color); }
+        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; position: relative; }
+        
+        /* Marca d'água oculta/discreta */
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.05);
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .container { width: 100%; max-width: 450px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 4px 25px rgba(0,0,0,0.08); z-index: 2; position: relative; }
+        
+        /* Header com gradiente mais iluminado */
+        .header { background: linear-gradient(135deg, var(--vli-azul) 0%, #009FE3 100%); padding: 40px 20px 45px; text-align: center; color: white; border-radius: 0 0 24px 24px; box-shadow: 0 6px 18px rgba(0,133,178,0.2); }
+        .logo-box { background: white; padding: 12px 15px; border-radius: 12px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .logo { width: 100px; display: block; }
-        .user-pill { background: #fff; margin: -25px auto 10px; padding: 12px; border-radius: 50px; font-size: 13px; color: var(--vli-azul); width: 80%; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); display: none; border: 1px solid #eee; z-index: 10;}
-        .content { padding: 25px 20px; flex-grow: 1; }
-        .step { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .header-title { font-weight: 700; letter-spacing: 2px; font-size: 12px; opacity: 0.95; text-transform: uppercase; color: #fff; }
+        
+        .user-pill { background: #fff; margin: -20px auto 10px; padding: 10px 20px; border-radius: 50px; font-size: 13px; color: var(--vli-azul); font-weight: 700; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: none; border: 1px solid #e2e8f0; z-index: 10; position: relative; max-width: 80%; }
+        
+        .content { padding: 25px 24px; flex-grow: 1; }
+        .step { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .step.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        label { display: block; font-weight: 700; margin: 18px 0 6px 5px; font-size: 11px; color: #666; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 15px; border: 2px solid #e2e8f0; border-radius: var(--radius); font-size: 16px; background: #fdfdfd; outline: none; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 12px; transition: 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h3 { color: var(--vli-azul); font-weight: 600; margin-bottom: 20px; }
+        
+        label { display: block; font-weight: 600; margin: 16px 0 6px 4px; font-size: 12px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select, textarea { width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: var(--radius); font-size: 15px; background: #f8fafc; outline: none; transition: all 0.2s; color: #334155; }
+        input:focus, select:focus, textarea:focus { border-color: var(--vli-azul); background: #fff; box-shadow: 0 0 0 3px rgba(0,133,178,0.15); }
+        
+        .btn { width: 100%; padding: 15px; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 15px; transition: all 0.2s; }
         .btn:active { transform: scale(0.98); }
-        .btn-blue { background: var(--vli-azul); color: white; }
-        .btn-orange { background: var(--vli-laranja); color: white; }
-        .btn-back { background: transparent; color: #999; font-size: 13px; margin-top: 15px; text-decoration: underline; border:none; width:100%; cursor:pointer;}
-        .menu-card { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .cart-item { background: #fdfdfd; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--vli-laranja); }
-        .info-box { background: #eef7ff; padding: 20px; border-radius: 15px; border: 1px solid #cfe2ff; color: #004a99; font-size: 14px; }
-        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--vli-azul); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
+        .btn-blue { background: var(--vli-azul); color: white; box-shadow: 0 4px 12px rgba(0,133,178,0.25); }
+        .btn-blue:hover { background: var(--vli-azul-escuro); }
+        .btn-orange { background: var(--vli-laranja); color: white; box-shadow: 0 4px 12px rgba(243,112,33,0.25); }
+        .btn-orange:hover { background: #d9611a; }
+        .btn-back { background: transparent; color: #64748b; font-size: 13px; text-decoration: none; border: 1px solid #e2e8f0; margin-top: 20px; }
+        .btn-back:hover { background: #f1f5f9; }
+        
+        /* Menu com Emojis Coloridos */
+        .menu-card { background: #fff; border: 1px solid #e2e8f0; padding: 18px 20px; border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.2s ease; }
+        .menu-card:hover, .menu-card:active { border-color: var(--vli-azul); box-shadow: 0 6px 15px rgba(0,133,178,0.1); transform: translateY(-2px); background: #fcfdfe; }
+        .menu-card span { font-size: 22px; transition: transform 0.3s; }
+        .menu-card:hover span, .menu-card:active span { transform: scale(1.15); }
+        .menu-card b { font-weight: 600; font-size: 15px; color: #1e293b; }
+        
+        .cart-item { background: #f8fafc; padding: 14px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); }
+        .info-box { background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd; color: #0369a1; font-size: 14px; line-height: 1.5; }
+        
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .spinner { border: 3px solid #e2e8f0; border-top: 3px solid var(--vli-azul); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="loading-overlay"><div class="spinner"></div><p id="loading-text" style="margin-top:15px; font-weight:700; color:var(--vli-azul);">Processando...</p></div>
+<div class="watermark">Desenvolvido por M.Custodio</div>
+
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-text" style="margin-top:15px; font-weight:600; color:var(--vli-azul); letter-spacing: 0.5px;">Processando...</p>
+</div>
 
 <div class="container">
     <div class="header">
-        <div class="logo-box"><img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo"></div>
-        <div style="font-weight: 900; letter-spacing: 3px; font-size: 13px; opacity: 0.9;">PORTAL VIC</div>
+        <div class="logo-box">
+            <img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo" alt="Logotipo VLI">
+        </div>
+        <div class="header-title">Portal VIC</div>
     </div>
+    
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <div id="step-start" class="step active" style="text-align:center; padding-top:30px;"><button class="btn btn-blue" onclick="initSystem()">Acessar Portal</button></div>
+        <!-- Tela Inicial -->
+        <div id="step-start" class="step active" style="text-align:center; padding-top:40px;">
+            <p style="color: #475569; font-size: 15px; margin-bottom: 25px;">Bem-vindo ao Portal VLI - VIC .</p>
+            <button class="btn btn-blue" onclick="initSystem()">Acessar Portal</button>
+        </div>
         
+        <!-- Login -->
         <div id="step-login" class="step">
-            <h3 style="color: var(--vli-azul); text-align: center;">Identificação</h3>
+            <h3 style="text-align: center;">Identificação</h3>
+            <p style="text-align: center; color: #64748b; font-size: 13px; margin-bottom: 25px;">Insira sua matrícula para continuar.</p>
             <label>Matrícula</label>
-            <input type="tel" id="input-mat" placeholder="Sua matrícula" maxlength="8">
-            <button class="btn btn-blue" onclick="handleLogin()">Entrar</button>
+            <input type="tel" id="input-mat" placeholder="Ex: 12345" maxlength="8">
+            <button class="btn btn-blue" onclick="handleLogin()">Entrar no Sistema</button>
         </div>
 
+        <!-- Menu Principal -->
         <div id="step-menu" class="step">
             <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span> <b>Solicitar EPI</b></div>
             <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span> <b>Relatar Desvio</b></div>
             <div class="menu-card" onclick="checkFerias()"><span>📅</span> <b>Minhas Férias</b></div>
-            <button class="btn btn-back" onclick="location.reload()">Sair</button>
+            <button class="btn btn-back" onclick="location.reload()" style="border:none; text-decoration: underline; background: transparent; box-shadow: none;">Sair da Conta</button>
         </div>
 
+        <!-- EPI -->
         <div id="step-epi" class="step">
-            <h3 style="color: var(--vli-azul);">Solicitação de EPI</h3>
-            <label>Item</label>
+            <h3>Solicitação de EPI</h3>
+            <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
             <div id="epi-dinamico"></div>
-            <button class="btn btn-orange" onclick="addItem()" style="margin-top:20px;">+ Adicionar</button>
-            <div id="cart-area" style="display:none; margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                <label>Lista Atual:</label>
+            <button class="btn btn-orange" onclick="addItem()">+ Adicionar à Lista</button>
+            
+            <div id="cart-area" style="display:none; margin-top:25px; border-top:1px solid #e2e8f0; padding-top:20px;">
+                <label>Itens Selecionados:</label>
                 <div id="cart-list"></div>
                 <button class="btn btn-blue" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- Relatar Desvio -->
         <div id="step-desvio" class="step">
-            <h3 style="color: var(--vli-azul);">Relatar Desvio</h3>
+            <h3>Relatar Desvio</h3>
             <div id="desvio-form">
-                <label>Local</label>
-                <select id="d-local"><option>Pátio de Cima</option><option>Pátio de Baixo</option><option>Oficina</option><option>Escritório</option></select>
-                <label>Data e Hora</label>
-                <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')"><option value="agora">Agora</option><option value="manual">Manual</option></select>
-                <div id="div-manual" style="display:none; gap:10px; margin-top:10px;"><input type="date" id="d-data-manual"><input type="time" id="d-hora-manual"></div>
-                <label>Descrição</label>
-                <textarea id="d-desc" rows="4" placeholder="O que aconteceu?"></textarea>
-                <button class="btn btn-blue" style="background:var(--vli-erro)" onclick="sendDesvio()">Registrar</button>
-                <button class="btn btn-orange" style="font-size: 11px; margin-top: 15px;" onclick="verMeusDesvios()">Consultar Meus Relatos</button>
+                <label>Local da Ocorrência</label>
+                <select id="d-local">
+                    <option>Pátio de Cima</option>
+                    <option>Pátio de Baixo</option>
+                    <option>Terminal do Carvão</option>
+                    <option>Oficina</option>
+                    <option>Estação</option>
+                </select>
+                
+                <label>Quando ocorreu ?</label>
+                <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
+                    <option value="agora">Agora</option>
+                    <option value="manual">Selecionar Horário</option>
+                </select>
+                <div id="div-manual" style="display:none; gap:10px; margin-top:10px;">
+                    <input type="date" id="d-data-manual">
+                    <input type="time" id="d-hora-manual">
+                </div>
+                
+                <label>Descrição do Evento</label>
+                <textarea id="d-desc" rows="4" placeholder="Descreva os detalhes do que aconteceu..."></textarea>
+                
+                <button class="btn btn-blue" style="background:var(--vli-erro); box-shadow: 0 4px 10px rgba(220,53,69,0.2);" onclick="sendDesvio()">Registrar Desvio</button>
+                <button class="btn btn-back" style="font-size: 12px; margin-top: 15px;" onclick="verMeusDesvios()">Consultar Meus Relatos</button>
             </div>
-            <div id="desvio-lista" style="display:none; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
-                <p style="font-size:12px; color:#666; font-weight: bold;">Seu Histórico:</p>
+            
+            <div id="desvio-lista" style="display:none; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <p style="font-size:12px; color:#64748b; font-weight: 600; text-transform: uppercase;">Seu Histórico:</p>
                 <div id="container-historico-desvios"></div>
-                <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Ocultar Consultas</button>
+                <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- Férias -->
         <div id="step-ferias" class="step">
-            <h3 style="color: var(--vli-azul);">Minhas Férias</h3>
-            <div id="ferias-view-agendada" style="display:none;"><div class="info-box"><b>Sugestão já registrada!</b><br><br><div id="detalhe-ferias"></div><p style="margin-top:15px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate sua supervisão direta.</p></div></div>
+            <h3>Minhas Férias 2027</h3>
+            <div id="ferias-view-agendada" style="display:none;">
+                <div class="info-box">
+                    <b style="color: #0c4a6e;">Sugestão já registrada!</b><br><br>
+                    <div id="detalhe-ferias" style="color: #0369a1;"></div>
+                    <p style="margin-top:15px; font-size: 12px; font-weight:600; color:var(--vli-erro)">* Para alterações, contate a supervisão.</p>
+                </div>
+            </div>
             <div id="ferias-form-sugestao">
-                <label>Quantidade de Dias</label><select id="f-dias"><option value="30">30 Dias</option><option value="20">20 Dias</option><option value="15">15 Dias</option></select>
+                <label>Quantidade de Dias</label>
+                <select id="f-dias">
+                    <option value="30">30 Dias</option>
+                    <option value="20">20 Dias</option>
+                </select>
                 <label>1ª Opção (Mês/Ano)</label><input type="month" id="f-op1">
                 <label>2ª Opção (Mês/Ano)</label><input type="month" id="f-op2">
                 <label>3ª Opção (Mês/Ano)</label><input type="month" id="f-op3">
@@ -111,11 +197,12 @@
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 40px;">
-            <div style="font-size:60px;">✅</div>
-            <h2 style="color: var(--vli-verde);">Registrado!</h2>
-            <p style="color:#666;">Dados enviados com sucesso.</p>
-            <button class="btn btn-blue" onclick="goToMenu()">Voltar ao Menu</button>
+        <!-- Sucesso -->
+        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 50px;">
+            <div style="font-size:55px;">✅</div>
+            <h2 style="color: var(--vli-verde); margin-top: 15px;">Registro Concluído!</h2>
+            <p style="color:#475569; font-size: 14px;">Seus dados foram processados com sucesso no sistema.</p>
+            <button class="btn btn-blue" style="margin-top: 30px;" onclick="goToMenu()">Retornar ao Menu</button>
         </div>
     </div>
 </div>
@@ -127,17 +214,17 @@
     let cart = [];
 
     async function initSystem() {
-        showLoad("Sincronizando...");
+        showLoad("Sincronizando Dados...");
         try {
             const r = await fetch(URL_API);
             const json = await r.json();
             db = json.dados;
             if (!db.desvios) db.desvios = []; 
             const sel = document.getElementById('select-epi');
-            sel.innerHTML = '<option value="">Selecione...</option>';
+            sel.innerHTML = '<option value="">Selecione o EPI...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             hideLoad(); goTo('step-login');
-        } catch (e) { alert("Erro de conexão."); hideLoad(); }
+        } catch (e) { alert("Erro de conexão com o servidor corporativo."); hideLoad(); }
     }
 
     function handleLogin() {
@@ -145,10 +232,10 @@
         const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
         if (func) {
             user = { mat: m, nome: func };
-            document.getElementById('user-pill').innerHTML = `👤 <b>${user.nome}</b>`;
+            document.getElementById('user-pill').innerHTML = `👤 Usuário: <b>${user.nome}</b>`;
             document.getElementById('user-pill').style.display = "block";
             goTo('step-menu');
-        } else { alert("Matrícula não encontrada."); }
+        } else { alert("Matrícula não localizada na base de dados."); }
     }
 
     function updateEpiFields() {
@@ -171,9 +258,16 @@
     function addItem() {
         const sel = document.getElementById('select-epi');
         if(!sel.value) return;
-        const det = `${document.getElementById('o1')?.value || ""} ${document.getElementById('o2')?.value || ""}`.trim();
-        cart.push({ n: sel.value, det });
-        sel.value = ""; document.getElementById('epi-dinamico').innerHTML = "";
+        
+        // CORREÇÃO: Capturando os valores individuais para envio detalhado
+        const val1 = document.getElementById('o1') ? document.getElementById('o1').value : "";
+        const val2 = document.getElementById('o2') ? document.getElementById('o2').value : "";
+        const detStr = `${val1} ${val2}`.trim();
+        
+        cart.push({ n: sel.value, det: detStr, o1: val1, o2: val2 });
+        
+        sel.value = ""; 
+        document.getElementById('epi-dinamico').innerHTML = "";
         renderCart();
     }
 
@@ -181,26 +275,33 @@
         const area = document.getElementById('cart-area');
         area.style.display = cart.length ? 'block' : 'none';
         document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
-            <div class="cart-item"><div><b>${it.n}</b> - <small>${it.det}</small></div>
-            <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:red;font-size:16px">✕</button></div>`).join('');
+            <div class="cart-item"><div><b style="color:var(--vli-azul);">${it.n}</b><br><small style="color:#64748b;">${it.det}</small></div>
+            <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;">✕</button></div>`).join('');
     }
 
     async function sendEPI() {
-        showLoad("Enviando Pedido...");
+        showLoad("Processando Pedido...");
         try {
             for (const it of cart) {
                 await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, protocolo: "EPI"+Date.now()
+                    tipo: "EPI", 
+                    funcionario: user.nome, 
+                    matricula: user.mat, 
+                    epi: it.n, 
+                    detalhes: it.det, // Envio concatenado (Novo App Script)
+                    opcao: it.o1,     // Envio isolado Opção 1 (Antigo App Script)
+                    opcao2: it.o2,    // Envio isolado Opção 2 (Antigo App Script)
+                    protocolo: "EPI"+Date.now()
                 })});
             }
             hideLoad(); goTo('step-sucesso');
-        } catch (e) { hideLoad(); alert("Erro."); }
+        } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
 
     async function sendDesvio() {
         const desc = document.getElementById('d-desc').value.trim();
-        if(!desc) return alert("Descreva o desvio.");
-        showLoad("Enviando...");
+        if(!desc) return alert("Por favor, descreva o desvio.");
+        showLoad("Registrando...");
         let dF = new Date().toLocaleDateString('pt-BR');
         let hF = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
         if(document.getElementById('d-tempo-tipo').value === 'manual') {
@@ -212,7 +313,7 @@
                 tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
             })});
             hideLoad(); goTo('step-sucesso');
-        } catch(e) { hideLoad(); alert("Erro."); }
+        } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
     }
 
     function verMeusDesvios() {
@@ -223,9 +324,9 @@
         const meusDesvios = (db.desvios || []).filter(d => String(d.matricula) === String(user.mat));
         if (meusDesvios.length > 0) {
             [...meusDesvios].reverse().forEach(d => {
-                container.innerHTML += `<div style="background:#f8f9fa; padding:10px; border-radius:10px; margin-bottom:8px; border-left:4px solid var(--vli-erro); font-size:13px;"><b>${d.dataFato} - ${d.local}</b><br>${d.descricao}</div>`;
+                container.innerHTML += `<div style="background:#f8fafc; padding:12px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--vli-erro); font-size:13px; color:#334155; border: 1px solid #e2e8f0; border-left: 4px solid var(--vli-erro);"><b>📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b><br><span style="color:#64748b; display:inline-block; margin-top:5px;">${d.descricao}</span></div>`;
             });
-        } else { container.innerHTML = "<p style='font-size:12px; color:#999; text-align:center;'>Nenhum registro.</p>"; }
+        } else { container.innerHTML = "<p style='font-size:13px; color:#94a3b8; text-align:center; padding: 20px 0;'>Nenhum registro encontrado no seu histórico.</p>"; }
     }
 
     function checkFerias() {
@@ -234,7 +335,7 @@
             document.getElementById('ferias-view-agendada').style.display = 'block';
             document.getElementById('ferias-form-sugestao').style.display = 'none';
             const formatar = (v) => { if (!v) return ""; const p = v.split('T')[0].split('-'); return p.length >= 2 ? p[1] + "/" + p[0] : v; };
-            let h = `<b>Período:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
+            let h = `<b>Período Solicitado:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
             if (reg.op2) h += `<br><b>2ª Opção:</b> ${formatar(reg.op2)}`;
             if (reg.op3) h += `<br><b>3ª Opção:</b> ${formatar(reg.op3)}`;
             document.getElementById('detalhe-ferias').innerHTML = h;
@@ -247,14 +348,14 @@
 
     async function sendFerias() {
         const op1 = document.getElementById('f-op1').value;
-        if(!op1) return alert("Selecione a 1ª opção.");
+        if(!op1) return alert("Selecione obrigatoriamente a 1ª opção de data.");
         showLoad("Enviando...");
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                 tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
             })});
             hideLoad(); goTo('step-sucesso');
-        } catch(e) { hideLoad(); alert("Erro."); }
+        } catch(e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
 
     function showLoad(t) { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; }
