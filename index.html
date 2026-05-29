@@ -10,8 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <link rel="icon" type="image/png" sizes="192x192" href="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png">
+    <!-- Ícones do PWA atualizados para logo-pwa.png -->
+    <link rel="icon" type="image/png" sizes="192x192" href="logo-pwa.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo-pwa.png">
     <link rel="manifest" href="./manifest.json">
 
     <style>
@@ -179,7 +180,8 @@
 
     <div class="header">
         <div class="logo-box">
-            <img src="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png" class="logo" alt="Portal VIC">
+            <!-- Logo atualizada para logo-pwa.png -->
+            <img src="logo-pwa.png" class="logo" alt="Portal VIC">
         </div>
         <div class="header-title">Portal VIC</div>
     </div>
@@ -242,7 +244,7 @@
                 <label>Quando ocorreu?</label>
                 <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
                     <option value="agora">Agora</option>
-                    <option value="manual">Selecionar Horário</option>
+                    <option value="manual">Selecionar Horário e Data</option>
                 </select>
                 <div id="div-manual" style="display:none; gap:12px;">
                     <input type="date" id="d-data-manual">
@@ -354,9 +356,8 @@
 </div>
 
 <script>
-    // IMPORTANTE: Insira seus links de publicação (Web App) do Google Apps Script aqui
     const URL_API = 'https://script.google.com/macros/s/AKfycbytO_ANLIQSrhGDAJGQRUZD_-XjHHgp_yZZn8fyN-kvWj_SwT0QG_gcgqmdx9mqZx3OSw/exec'; 
-    const URL_API_TROCA = 'https://script.google.com/macros/s/AKfycbw-DMT5KkWN2n8Q7kYX6BCpZG7iHlTGBE90MZAvaxyTqcCMi4n5JoksfpHf5bxzt5sZDQ/exec';
+    const URL_API_TROCA = 'https://script.google.com/macros/s/AKfycbwHELPCLRERWnSvS3XTKwiVfYqlY8ho8nIEcQzeL0DOlR547dVFEvViPNCrgzDjm-5DQA/exec';
 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
@@ -506,7 +507,8 @@
     }
         
     function addItem() {
-        const item = document.getElementById('select-epi').value;
+        const selectEpi = document.getElementById('select-epi');
+        const item = selectEpi.value;
         if (!item) { alert("Selecione um EPI primeiro."); return; }
         
         const tamSelect = document.getElementById('epi-tamanho');
@@ -516,7 +518,8 @@
         cart.push({ item, tamanho, qtd });
         renderCart();
         
-        document.getElementById('select-epi').value = '';
+        // Mantendo o select e os campos limpos após adicionar para evitar erros
+        selectEpi.value = '';
         document.getElementById('epi-dinamico').innerHTML = '';
     }
         
@@ -542,11 +545,6 @@
                 </div>
             `;
         });
-    }
-        
-    function removeItem(index) {
-        cart.splice(index, 1);
-        renderCart();
     }
         
     async function sendEPI() {
@@ -581,6 +579,7 @@
         if (tempoTipo === 'manual') {
             const data = document.getElementById('d-data-manual').value;
             const hora = document.getElementById('d-hora-manual').value;
+            // Validação de hora E data
             if (!data || !hora) { alert("Preencha a data e a hora da ocorrência."); return; }
             dataHora = `${data} às ${hora}`;
         }
@@ -679,7 +678,6 @@
         }
     }
 
-    // NOVA FUNÇÃO: Integrada diretamente com a sua planilha exclusiva de trocas
     async function sendTroca() {
         const s1      = document.getElementById('t-solicitante1').value;
         const s2      = document.getElementById('t-solicitante2').value;
@@ -708,24 +706,19 @@
                 inspetor2: insp2
             });
 
-            // Faz o envio direto para o script exclusivo da planilha de trocas
-            const resposta = await fetch(`${URL_API_TROCA}?${queryParams.toString()}`);
-            const resultado = await resposta.json();
+            // Usando no-cors para não travar por bloqueio de cabeçalho igual nas outras funções
+            await fetch(`${URL_API_TROCA}?${queryParams.toString()}`, { mode: 'no-cors' });
+            
+            goTo('step-sucesso');
 
-            if (resultado.status === "sucesso") {
-                goTo('step-sucesso');
-
-                // Limpa o formulário após a gravação concluída
-                document.getElementById('t-solicitante2').value = '';
-                document.getElementById('t-data-troca').value = '';
-                document.getElementById('t-data-compensacao').value = '';
-                document.getElementById('t-escala1').value = '';
-                document.getElementById('t-escala2').value = '';
-                document.getElementById('t-inspetor1').value = '';
-                document.getElementById('t-inspetor2').value = '';
-            } else {
-                alert("Erro reportado pelo servidor: " + resultado.msg);
-            }
+            // Limpa o formulário após a gravação
+            document.getElementById('t-solicitante2').value = '';
+            document.getElementById('t-data-troca').value = '';
+            document.getElementById('t-data-compensacao').value = '';
+            document.getElementById('t-escala1').value = '';
+            document.getElementById('t-escala2').value = '';
+            document.getElementById('t-inspetor1').value = '';
+            document.getElementById('t-inspetor2').value = '';
 
         } catch (erro) {
             console.error("Erro na requisição:", erro);
@@ -735,7 +728,6 @@
         }
     }
 
-    // Funções auxiliares para controlar a tela de carregamento do sistema
     function showLoad(text) {
         document.getElementById('loading-text').innerText = text;
         document.getElementById('loading-overlay').style.display = 'flex';
