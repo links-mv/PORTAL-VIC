@@ -354,10 +354,7 @@
 </div>
 
 <script>
-    // URL do Portal VIC Principal (EPI, Desvios, Férias)
     const URL_API = 'https://script.google.com/macros/s/AKfycbytO_ANLIQSrhGDAJGQRUZD_-XjHHgp_yZZn8fyN-kvWj_SwT0QG_gcgqmdx9mqZx3OSw/exec'; 
-    
-    // NOVA URL: Exclusiva para a Troca de Turno (Segunda Planilha)
     const URL_API_TROCA = 'https://script.google.com/macros/s/AKfycbwHELPCLRERWnSvS3XTKwiVfYqlY8ho8nIEcQzeL0DOlR547dVFEvViPNCrgzDjm-5DQA/exec';
 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
@@ -438,226 +435,310 @@
         let saudacao = "Boa noite";
         if (hr >= 5 && hr < 12) saudacao = "Bom dia";
         else if (hr >= 12 && hr < 18) saudacao = "Boa tarde";
-        
-        const primeiroNome = user.nome.split(' ')[0];
-        
-        document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
-        document.getElementById('user-pill').style.display = "block";
-
-        if (document.getElementById('t-solicitante1')) {
-            document.getElementById('t-solicitante1').value = user.nome;
+            
+            document.getElementById('user-pill').innerHTML = `👋 ${saudacao}, <b>${user.nome}</b> (Matrícula: ${user.mat})`;
+            document.getElementById('user-pill').style.display = 'block';
+            
+            if (document.getElementById('t-solicitante1')) {
+                document.getElementById('t-solicitante1').value = user.nome;
+            }
         }
-    }
-
-    function handleLogin() {
-        const m = document.getElementById('input-mat').value.trim();
-        const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
-        if (func) {
-            user = { mat: m, nome: func };
-            
-            localStorage.setItem('vic_user_mat', user.mat);
-            localStorage.setItem('vic_user_nome', user.nome);
-            
-            exibirSaudacao();
+        
+        function goTo(stepId) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+        
+        function goToMenu() {
             goTo('step-menu');
-        } else { alert("Matrícula não localizada na base de dados."); }
-    }
-    
-    function fazerLogout() {
-        localStorage.removeItem('vic_user_mat');
-        localStorage.removeItem('vic_user_nome');
-        location.reload();
-    }
-
-    function updateEpiFields() {
-        const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
-        const area = document.getElementById('epi-dinamico');
-        area.innerHTML = "";
-        if (item && item.label) {
-            let html = `<div><label>${item.label}</label><select id="o1" style="margin-top:16px;">`;
-            String(item.opcoes).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
-            html += `</select></div>`;
-            if(item.label2 && item.opcoes2) {
-                html += `<div><label>${item.label2}</label><select id="o2" style="margin-top:16px;">`;
-                String(item.opcoes2).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
-                html += `</select></div>`;
+        }
+        
+        function handleLogin() {
+            const mat = document.getElementById('input-mat').value.trim();
+            if (!mat) { alert("Por favor, digite sua matrícula."); return; }
+            
+            showLoad("Autenticando...");
+            const funcionario = db.funcionarios[mat];
+            
+            if (funcionario) {
+                user.mat = mat;
+                user.nome = funcionario.nome || funcionario;
+                localStorage.setItem('vic_user_mat', user.mat);
+                localStorage.setItem('vic_user_nome', user.nome);
+                exibirSaudacao();
+                hideLoad();
+                goTo('step-menu');
+            } else {
+                hideLoad();
+                alert("Matrícula não encontrada no banco do Portal VIC.");
             }
-            area.innerHTML = html;
         }
-    }
-
-    function addItem() {
-        const sel = document.getElementById('select-epi');
-        if(!sel.value) return;
-        const val1 = document.getElementById('o1') ? document.getElementById('o1').value : "";
-        const val2 = document.getElementById('o2') ? document.getElementById('o2').value : "";
-        const detStr = `${val1} ${val2}`.trim();
-        cart.push({ n: sel.value, det: detStr, o1: val1, o2: val2 });
-        sel.value = ""; 
-        document.getElementById('epi-dinamico').innerHTML = "";
-        renderCart();
-    }
-
-    function renderCart() {
-        const area = document.getElementById('cart-area');
-        if(cart.length) {
-            area.style.setProperty('display', 'flex', 'important');
-        } else {
-            area.style.display = 'none';
+        
+        function fazerLogout() {
+            localStorage.removeItem('vic_user_mat');
+            localStorage.removeItem('vic_user_nome');
+            user = { mat: "", nome: "" };
+            document.getElementById('user-pill').style.display = 'none';
+            document.getElementById('input-mat').value = '';
+            goTo('step-login');
         }
-        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
-            <div class="cart-item">
-                <div><b style="color:var(--vli-azul); font-size:15px;">${it.n}</b><br><small style="color:#64748B;">${it.det}</small></div>
-                <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;padding:4px;">✕</button>
-            </div>`).join('');
-    }
-
-    async function sendEPI() {
-        showLoad("Processando Pedido...");
-        try {
-            for (const it of cart) {
-                await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI"+Date.now()
-                }) });
+        
+        function updateEpiFields() {
+            const itemSelecionado = document.getElementById('select-epi').value;
+            const container = document.getElementById('epi-dinamico');
+            container.innerHTML = '';
+            if (!itemSelecionado) return;
+            
+            const epi = db.epis.find(e => e.nome === itemSelecionado);
+            if (epi && epi.tamanhos && epi.tamanhos.length > 0) {
+                container.innerHTML = `
+                    <label>Tamanho</label>
+                    <select id="epi-tamanho">
+                        ${epi.tamanhos.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                `;
             }
-            cart = []; 
-            hideLoad(); goTo('step-sucesso');
-        } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
-    }
-
-    async function sendDesvio() {
-        const desc = document.getElementById('d-desc').value.trim();
-        if(!desc) return alert("Por favor, descreva o desvio.");
-        showLoad("Registrando...");
-        let dF = new Date().toLocaleDateString('pt-BR');
-        let hF = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-        if(document.getElementById('d-tempo-tipo').value === 'manual') {
-            dF = document.getElementById('d-data-manual').value.split('-').reverse().join('/');
-            hF = document.getElementById('d-hora-manual').value;
+            container.innerHTML += `
+                <label>Quantidade</label>
+                <input type="number" id="epi-qtd" value="1" min="1" max="5">
+            `;
         }
-        try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
-            }) });
-            document.getElementById('d-desc').value = ""; 
-            hideLoad(); goTo('step-sucesso');
-        } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
-    }
-
-    // ENVIAR TROCA DE TURNO (Apontando para a Nova URL Isolada)
-    async function sendTroca() {
-        const colega = document.getElementById('t-solicitante2').value.trim();
-        const dataTroca = document.getElementById('t-data-troca').value;
-        const dataComp = document.getElementById('t-data-compensacao').value;
-        const escala1 = document.getElementById('t-escala1').value.trim();
-        const escala2 = document.getElementById('t-escala2').value.trim();
-        const inspetor1 = document.getElementById('t-inspetor1').value;
-        const inspetor2 = document.getElementById('t-inspetor2').value;
-
-        if (!colega || !dataTroca || !dataComp || !escala1 || !escala2 || !inspetor1) {
-            return alert("Por favor, preencha todos os campos obrigatórios (Colega, Datas, Escalas e o Inspetor 1).");
+        
+        function addItem() {
+            const item = document.getElementById('select-epi').value;
+            if (!item) { alert("Selecione um EPI primeiro."); return; }
+            
+            const tamSelect = document.getElementById('epi-tamanho');
+            const tamanho = tamSelect ? tamSelect.value : 'N/A';
+            const qtd = document.getElementById('epi-qtd').value;
+            
+            cart.push({ item, tamanho, qtd });
+            renderCart();
+            
+            // Garante que a lista de opções volte a ficar limpa após adicionar o item
+            document.getElementById('select-epi').value = '';
+            document.getElementById('epi-dinamico').innerHTML = '';
         }
-
-        showLoad("Registrando Troca...");
-
-        const dataTrocaFmt = dataTroca.split('-').reverse().join('/');
-        const dataCompFmt = dataComp.split('-').reverse().join('/');
-
-        try {
-            // Repare aqui: Usando URL_API_TROCA em vez da URL antiga
-            await fetch(URL_API_TROCA, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify({
+        
+        function renderCart() {
+            const cartArea = document.getElementById('cart-area');
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartArea.style.display = 'none';
+                return;
+            }
+            
+            cartArea.style.display = 'flex';
+            cart.forEach((elem, index) => {
+                cartList.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <b>${elem.item}</b><br>
+                            <span style="color:#64748B; font-size:12px;">Tam: ${elem.tamanho} | Qtd: ${elem.qtd}</span>
+                        </div>
+                        <button onclick="removeItem(${index})" style="background:none; border:none; color:var(--vli-erro); font-weight:bold; cursor:pointer; font-size:16px;">×</button>
+                    </div>
+                `;
+            });
+        }
+        
+        function removeItem(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+        
+        async function sendEPI() {
+            showLoad("Enviando Pedido...");
+            try {
+                const queryParams = new URLSearchParams({
+                    acao: 'solicitarEpi',
+                    matricula: user.mat,
+                    nome: user.nome,
+                    itens: JSON.stringify(cart)
+                });
+                
+                await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
+                cart = [];
+                renderCart();
+                goTo('step-sucesso');
+            } catch (e) {
+                alert("Erro ao enviar a solicitação.");
+            } finally {
+                hideLoad();
+            }
+        }
+        
+        async function sendDesvio() {
+            const local = document.getElementById('d-local').value;
+            const tempoTipo = document.getElementById('d-tempo-tipo').value;
+            const desc = document.getElementById('d-desc').value.trim();
+            
+            if (!desc) { alert("Por favor, descreva o desvio."); return; }
+            
+            let dataHora = new Date().toLocaleString('pt-BR');
+            if (tempoTipo === 'manual') {
+                const data = document.getElementById('d-data-manual').value;
+                const hora = document.getElementById('d-hora-manual').value;
+                if (!data || !hora) { alert("Preencha a data e a hora da ocorrência."); return; }
+                dataHora = `${data} às ${hora}`;
+            }
+            
+            showLoad("Registrando Desvio...");
+            try {
+                const queryParams = new URLSearchParams({
+                    acao: 'registrarDesvio',
+                    matricula: user.mat,
+                    nome: user.nome,
+                    local: local,
+                    dataHora: dataHora,
+                    descricao: desc
+                });
+                
+                await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
+                document.getElementById('d-desc').value = '';
+                goTo('step-sucesso');
+            } catch (e) {
+                alert("Erro ao registrar desvio.");
+            } finally {
+                hideLoad();
+            }
+        }
+        
+        function verMeusDesvios() {
+            document.getElementById('desvio-form').style.display = 'none';
+            const lista = document.getElementById('desvio-lista');
+            lista.style.display = 'flex';
+            
+            const container = document.getElementById('container-historico-desvios');
+            container.innerHTML = '';
+            
+            const meusDesvios = db.desvios ? Object.values(db.desvios).filter(d => d.matricula == user.mat) : [];
+            
+            if (meusDesvios.length === 0) {
+                container.innerHTML = '<p style="font-size:13px; text-align:center; opacity:0.7; color:#fff;">Nenhum registro encontrado.</p>';
+                return;
+            }
+            
+            meusDesvios.forEach(d => {
+                container.innerHTML += `
+                    <div class="info-box" style="margin-bottom:8px;">
+                        <b style="color:var(--vli-azul)">${d.local}</b> - <span style="font-size:11px; color:#64748B;">${d.dataHora || d.data}</span><br>
+                        <p style="margin:6px 0 0 0; color:#1E293B; font-size:13px;">${d.descricao}</p>
+                    </div>
+                `;
+            });
+        }
+        
+        function checkFerias() {
+            goTo('step-ferias');
+            const agendada = db.ferias ? db.ferias[user.mat] : null;
+            if (agendada) {
+                document.getElementById('ferias-form-sugestao').style.display = 'none';
+                document.getElementById('ferias-view-agendada').style.display = 'block';
+                document.getElementById('detalhe-ferias').innerHTML = `
+                    <b>Dias solicitados:</b> ${agendada.dias} dias<br>
+                    <b>Opções salvas:</b><br>
+                    1ª Opção: ${agendada.op1 || 'N/A'}<br>
+                    2ª Opção: ${agendada.op2 || 'N/A'}<br>
+                    3ª Opção: ${agendada.op3 || 'N/A'}
+                `;
+            } else {
+                document.getElementById('ferias-view-agendada').style.display = 'none';
+                document.getElementById('ferias-form-sugestao').style.display = 'flex';
+            }
+        }
+        
+        async function sendFerias() {
+            const dias = document.getElementById('f-dias').value;
+            const op1 = document.getElementById('f-op1').value;
+            const op2 = document.getElementById('f-op2').value;
+            const op3 = document.getElementById('f-op3').value;
+            
+            if (!op1) { alert("Defina pelo menos a primeira opção de mês."); return; }
+            
+            showLoad("Enviando...");
+            try {
+                const queryParams = new URLSearchParams({
+                    acao: 'sugerirFerias',
+                    matricula: user.mat,
+                    nome: user.nome,
+                    dias: dias,
+                    op1: op1,
+                    op2: op2,
+                    op3: op3
+                });
+                
+                await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
+                goTo('step-sucesso');
+            } catch (e) {
+                alert("Erro ao processar envio.");
+            } finally {
+                hideLoad();
+            }
+        }
+        
+        async function sendTroca() {
+            const colega = document.getElementById('t-solicitante2').value.trim();
+            const dataTroca = document.getElementById('t-data-troca').value;
+            const dataCompensacao = document.getElementById('t-data-compensacao').value;
+            const escala1 = document.getElementById('t-escala1').value.trim();
+            const escala2 = document.getElementById('t-escala2').value.trim();
+            const inspetor1 = document.getElementById('t-inspetor1').value;
+            const inspetor2 = document.getElementById('t-inspetor2').value;
+            
+            if (!colega || !dataTroca || !dataCompensacao || !escala1 || !escala2 || !inspetor1) {
+                alert("Preencha todos os campos obrigatórios para validar a troca de turno.");
+                return;
+            }
+            
+            showLoad("Registrando Troca...");
+            try {
+                // Conversão completa de parâmetros estruturados para envio via GET na URL_API_TROCA
+                const queryParams = new URLSearchParams({
                     solicitante1: user.nome,
+                    matricula1: user.mat,
                     solicitante2: colega,
-                    dataTroca: dataTrocaFmt,
-                    dataCompensacao: dataCompFmt,
+                    dataTroca: dataTroca,
+                    dataCompensacao: dataCompensacao,
                     escala1: escala1,
                     escala2: escala2,
                     inspetor1: inspetor1,
                     inspetor2: inspetor2
-                }) 
-            });
-
-            document.getElementById('t-solicitante2').value = "";
-            document.getElementById('t-data-troca').value = "";
-            document.getElementById('t-data-compensacao').value = "";
-            document.getElementById('t-escala1').value = "";
-            document.getElementById('t-escala2').value = "";
-            document.getElementById('t-inspetor1').value = "";
-            document.getElementById('t-inspetor2').value = "";
-
-            hideLoad(); 
-            goTo('step-sucesso');
-        } catch(e) { 
-            hideLoad(); 
-            alert("Erro ao registrar troca de turno."); 
+                });
+                
+                // Fetch configurado com os parâmetros anexados diretamente à rota de Trocas
+                await fetch(`${URL_API_TROCA}?${queryParams.toString()}`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                
+                // Limpeza e reset dos campos do formulário pós-envio bem-sucedido
+                document.getElementById('t-solicitante2').value = '';
+                document.getElementById('t-data-troca').value = '';
+                document.getElementById('t-data-compensacao').value = '';
+                document.getElementById('t-escala1').value = '';
+                document.getElementById('t-escala2').value = '';
+                document.getElementById('t-inspetor1').value = '';
+                document.getElementById('t-inspetor2').value = '';
+                
+                goTo('step-sucesso');
+            } catch (e) {
+                alert("Erro ao conectar à planilha de trocas de turno.");
+            } finally {
+                hideLoad();
+            }
         }
-    }
-
-    function verMeusDesvios() {
-        document.getElementById('desvio-form').style.display = 'none';
-        document.getElementById('desvio-lista').style.setProperty('display', 'flex', 'important');
-        const container = document.getElementById('container-historico-desvios');
-        container.innerHTML = "";
-        const meusDesvios = (db.desvios || []).filter(d => String(d.matricula) === String(user.mat));
-        if (meusDesvios.length > 0) {
-            [...meusDesvios].reverse().forEach(d => {
-                container.innerHTML += `<div style="background:#fff; padding:16px; border-radius:var(--radius-md); font-size:13px; box-shadow: var(--shadow-sm); display:flex; flex-direction:column; gap:6px;">
-                    <b style="color:#1E293B;">📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b>
-                    <span style="color:#64748B; line-height:1.4;">${d.descricao}</span>
-                </div>`;
-            });
-        } else { container.innerHTML = "<p style='font-size:13px; color:rgba(255,255,255,0.8); text-align:center; padding: 20px 0;'>Nenhum registro encontrado no seu histórico.</p>"; }
-    }
-
-    function checkFerias() {
-        const reg = db.ferias[user.mat];
-        if (reg) {
-            document.getElementById('ferias-view-agendada').style.display = 'block';
-            document.getElementById('ferias-form-sugestao').style.display = 'none';
-            const formatar = (v) => { if (!v) return ""; const p = v.split('T')[0].split('-'); return p.length >= 2 ? p[1] + "/" + p[0] : v; };
-            let h = `<b>Período Solicitado:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
-            if (reg.op2) h += `<br><b>2ª Opção:</b> ${formatar(reg.op2)}`;
-            if (reg.op3) h += `<br><b>3ª Opção:</b> ${formatar(reg.op3)}`;
-            document.getElementById('detalhe-ferias').innerHTML = h;
-        } else {
-            document.getElementById('ferias-view-agendada').style.display = 'none';
-            document.getElementById('ferias-form-sugestao').style.setProperty('display', 'flex', 'important');
+        
+        function showLoad(text) {
+            document.getElementById('loading-text').innerText = text || "Carregando...";
+            document.getElementById('loading-overlay').style.display = 'flex';
         }
-        goTo('step-ferias');
-    }
-
-    async function sendFerias() {
-        const op1 = document.getElementById('f-op1').value;
-        if(!op1) return alert("Selecione obrigatoriamente a 1ª opção de data.");
-        showLoad("Enviando...");
-        try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
-            }) });
-            hideLoad(); goTo('step-sucesso');
-        } catch(e) { hideLoad(); alert("Erro ao enviar solicitação."); }
-    }
-
-    function showLoad(t) { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; }
-    function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
-    
-    function goTo(id) { 
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); 
-        document.getElementById(id).classList.add('active'); 
-        window.scrollTo(0,0); 
-    }
-    function goToMenu() { goTo('step-menu'); }
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('PWA pronto.', reg))
-                .catch(err => console.error('Erro PWA:', err));
-        });
-    }
-</script>
+        
+        function hideLoad() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
