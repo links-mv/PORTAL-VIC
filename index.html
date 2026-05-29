@@ -4,91 +4,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal VIC | VLI</title>
+    
+    <meta name="theme-color" content="#0085B2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="icon" type="image/png" sizes="192x192" href="logo-pwa.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo-pwa.png">
+    <link rel="manifest" href="./manifest.json">
+
     <style>
         :root { 
-            --vli-azul: #0085B2; /* Azul mais vivo e alegre */
+            --vli-azul: #0085B2;
             --vli-azul-escuro: #005f83;
-            --vli-laranja: #F37021; /* Laranja vibrante corporativo */
-            --vli-verde: #28a745; 
-            --vli-erro: #dc3545; 
-            --bg: #F4F7F9; /* Fundo mais claro e limpo */
-            --radius: 12px; 
-            --text-color: #2c3e50;
-        }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; -webkit-tap-highlight-color: transparent; color: var(--text-color); }
-        body { background: var(--bg); margin: 0; display: flex; justify-content: center; min-height: 100vh; position: relative; }
-        
-        /* Marca d'água oculta/discreta */
-        .watermark {
-            position: fixed;
-            bottom: 10px;
-            right: 15px;
-            font-size: 10px;
-            font-weight: 600;
-            color: rgba(0, 0, 0, 0.05);
-            z-index: 1;
-            pointer-events: none;
-            user-select: none;
+            --vli-laranja: #F37021;
+            --vli-verde: #24b34b; 
+            --vli-erro: #e13d4b; 
+            --radius-lg: 20px;
+            --radius-md: 14px; 
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 10px 25px rgba(0,0,0,0.15);
         }
 
-        .container { width: 100%; max-width: 450px; background: #fff; min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 4px 25px rgba(0,0,0,0.08); z-index: 2; position: relative; }
+        * { 
+            box-sizing: border-box; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            color: #FFFFFF; 
+        }
+
+        body { 
+            background: var(--vli-azul-escuro); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 450px; 
+            background: var(--vli-azul); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.3); 
+            z-index: 2; 
+            position: relative; 
+        }
         
-        /* Header com gradiente mais iluminado */
-        .header { background: linear-gradient(135deg, var(--vli-azul) 0%, #009FE3 100%); padding: 40px 20px 45px; text-align: center; color: white; border-radius: 0 0 24px 24px; box-shadow: 0 6px 18px rgba(0,133,178,0.2); }
-        .logo-box { background: white; padding: 12px 15px; border-radius: 12px; display: inline-block; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .logo { width: 100px; display: block; }
-        .header-title { font-weight: 700; letter-spacing: 2px; font-size: 12px; opacity: 0.95; text-transform: uppercase; color: #fff; }
+        .pwa-banner {
+            display: none;
+            background: #ffffff;
+            padding: 16px;
+            margin: 20px 20px 0 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid var(--vli-laranja);
+            animation: fadeIn 0.5s ease;
+        }
+        .pwa-banner p { color: #1E293B; margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.5; }
+        .pwa-banner p span { color: #64748B; font-size: 12px; display: block; font-weight: 400; margin-top: 4px;}
+        .pwa-banner button { width: 100%; padding: 12px; border: none; background: var(--vli-laranja); color: white; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .header { 
+            padding: 60px 24px 20px; 
+            text-align: center; 
+        }
         
-        .user-pill { background: #fff; margin: -20px auto 10px; padding: 10px 20px; border-radius: 50px; font-size: 13px; color: var(--vli-azul); font-weight: 700; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: none; border: 1px solid #e2e8f0; z-index: 10; position: relative; max-width: 80%; }
+        .logo-box { 
+            background: white; 
+            padding: 14px 22px; 
+            border-radius: var(--radius-md); 
+            display: inline-block; 
+            margin-bottom: 24px; 
+            box-shadow: var(--shadow-sm); 
+        }
         
-        .content { padding: 25px 24px; flex-grow: 1; }
-        .step { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .step.active { display: block; }
+        .logo { width: 90px; display: block; }
+        
+        .header-title { 
+            font-weight: 800; 
+            letter-spacing: 1.5px; 
+            font-size: 20px; 
+            text-transform: uppercase; 
+            opacity: 0.95;
+        }
+        
+        .user-pill { 
+            background: rgba(255, 255, 255, 0.1); 
+            margin: 15px 28px 0; 
+            padding: 14px 20px; 
+            border-radius: var(--radius-md); 
+            font-size: 14px; 
+            text-align: center; 
+            display: none; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(4px);
+        }
+        
+        .content { 
+            padding: 32px 28px; 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
+        .step { 
+            display: none; 
+            width: 100%; 
+        }
+        .step.active { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        #step-start.active { margin-top: 35px; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        h3 { color: var(--vli-azul); font-weight: 600; margin-bottom: 20px; }
+        h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
         
-        label { display: block; font-weight: 600; margin: 16px 0 6px 4px; font-size: 12px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select, textarea { width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: var(--radius); font-size: 15px; background: #f8fafc; outline: none; transition: all 0.2s; color: #334155; }
-        input:focus, select:focus, textarea:focus { border-color: var(--vli-azul); background: #fff; box-shadow: 0 0 0 3px rgba(0,133,178,0.15); }
+        label { display: block; font-weight: 700; margin: 8px 0 -8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
         
-        .btn { width: 100%; padding: 15px; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 15px; transition: all 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-blue { background: var(--vli-azul); color: white; box-shadow: 0 4px 12px rgba(0,133,178,0.25); }
-        .btn-blue:hover { background: var(--vli-azul-escuro); }
-        .btn-orange { background: var(--vli-laranja); color: white; box-shadow: 0 4px 12px rgba(243,112,33,0.25); }
-        .btn-orange:hover { background: #d9611a; }
-        .btn-back { background: transparent; color: #64748b; font-size: 13px; text-decoration: none; border: 1px solid #e2e8f0; margin-top: 20px; }
-        .btn-back:hover { background: #f1f5f9; }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 16px; 
+            border: none; 
+            border-radius: var(--radius-md); 
+            font-size: 15px; 
+            background: #fff; 
+            color: #1E293B; 
+            outline: none; 
+            transition: all 0.25s ease; 
+        }
+        input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
         
-        /* Menu com Emojis Coloridos */
-        .menu-card { background: #fff; border: 1px solid #e2e8f0; padding: 18px 20px; border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.2s ease; }
-        .menu-card:hover, .menu-card:active { border-color: var(--vli-azul); box-shadow: 0 6px 15px rgba(0,133,178,0.1); transform: translateY(-2px); background: #fcfdfe; }
-        .menu-card span { font-size: 22px; transition: transform 0.3s; }
-        .menu-card:hover span, .menu-card:active span { transform: scale(1.15); }
-        .menu-card b { font-weight: 600; font-size: 15px; color: #1e293b; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; }
+        .btn:active { transform: scale(0.98); opacity: 0.95; }
         
-        .cart-item { background: #f8fafc; padding: 14px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); }
-        .info-box { background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #bae6fd; color: #0369a1; font-size: 14px; line-height: 1.5; }
+        .btn-orange { background: var(--vli-laranja); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 10px; }
         
-        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .spinner { border: 3px solid #e2e8f0; border-top: 3px solid var(--vli-azul); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; }
+        .btn-back { background: transparent; color: white; font-size: 12px; border: 1.5px solid rgba(255,255,255,0.3); margin-top: 15px; }
+        .btn-back:hover { background: rgba(255,255,255,0.1); }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .menu-card { background: #fff; border: none; padding: 26px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; transition: all 0.25s ease; box-shadow: var(--shadow-sm); }
+        .menu-card:active { transform: translateY(-2px); background: #f8fafc; }
+        .menu-card span { font-size: 32px; }
+        .menu-card b { font-weight: 700; font-size: 14px; color: #1E293B; }
+        
+        .cart-item { background: #fff; padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); box-shadow: var(--shadow-sm); }
+        .info-box { background: #fff; padding: 20px; border-radius: var(--radius-md); color: #1E293B; font-size: 14px; line-height: 1.6; }
+        
+        .watermark { text-align: center; padding: 20px 0 25px; font-size: 10px; font-weight: 600; color: rgba(255, 255, 255, 0.35); text-transform: uppercase; letter-spacing: 1px; pointer-events: none; margin-top: auto; }
+
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,133,178,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .spinner { border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #fff; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.7s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="watermark">Desenvolvido por M.Custodio</div>
-
-<div id="loading-overlay">
-    <div class="spinner"></div>
-    <p id="loading-text" style="margin-top:15px; font-weight:600; color:var(--vli-azul); letter-spacing: 0.5px;">Processando...</p>
-</div>
-
 <div class="container">
+    <div id="install-banner" class="pwa-banner">
+        <p id="install-text">Instale o Portal VIC no seu celular <span>Acesse rápido e economize dados do seu plano</span></p>
+        <button id="install-button" onclick="triggerPwaInstall()">Baixar Aplicativo</button>
+    </div>
+
     <div class="header">
         <div class="logo-box">
-            <img src="https://www.vli-logistica.com.br/wp-content/uploads/2023/09/cropped-logotipo-1-1-1.png" class="logo" alt="Logotipo VLI">
+            <img src="logo-pwa.png" class="logo" alt="Portal VIC">
         </div>
         <div class="header-title">Portal VIC</div>
     </div>
@@ -96,49 +186,50 @@
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- Tela Inicial -->
-        <div id="step-start" class="step active" style="text-align:center; padding-top:40px;">
-            <p style="color: #475569; font-size: 15px; margin-bottom: 25px;">Bem-vindo ao Portal VLI - VIC .</p>
-            <button class="btn btn-blue" onclick="initSystem()">Acessar Portal</button>
+        <div id="step-start" class="step active" style="text-align:center;">
+            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500; line-height: 1.5;">Bem-vindo ao Portal VLI - VIC.</p>
+            <button class="btn btn-orange" onclick="initSystem()">Acessar Portal</button>
         </div>
         
-        <!-- Login -->
         <div id="step-login" class="step">
-            <h3 style="text-align: center;">Identificação</h3>
-            <p style="text-align: center; color: #64748b; font-size: 13px; margin-bottom: 25px;">Insira sua matrícula para continuar.</p>
+            <h3>Identificação</h3>
+            <p style="text-align: center; color: rgba(255,255,255,0.8); font-size: 14px; margin: -10px 0 10px 0;">Insira sua matrícula para continuar.</p>
             <label>Matrícula</label>
             <input type="tel" id="input-mat" placeholder="Ex: 12345" maxlength="8">
-            <button class="btn btn-blue" onclick="handleLogin()">Entrar no Sistema</button>
+            <button class="btn btn-orange" onclick="handleLogin()">Entrar no Sistema</button>
         </div>
 
-        <!-- Menu Principal -->
         <div id="step-menu" class="step">
-            <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span> <b>Solicitar EPI</b></div>
-            <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span> <b>Relatar Desvio</b></div>
-            <div class="menu-card" onclick="checkFerias()"><span>📅</span> <b>Minhas Férias 2027</b></div>
-            <button class="btn btn-back" onclick="location.reload()" style="border:none; text-decoration: underline; background: transparent; box-shadow: none;">Sair da Conta</button>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
+                <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span><b>Relatar Desvio</b></div>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-card" onclick="checkFerias()" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
+                    <span>📅</span><b>Minhas Férias 2027</b>
+                </div>
+            </div>
+            <button class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 10px;">Sair da Conta</button>
         </div>
 
-        <!-- EPI -->
         <div id="step-epi" class="step">
             <h3>Solicitação de EPI</h3>
             <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
-            <div id="epi-dinamico"></div>
-            <button class="btn btn-orange" onclick="addItem()">+ Adicionar à Lista</button>
+            <div id="epi-dinamico" style="display: flex; flex-direction: column; gap: 20px;"></div>
+            <button class="btn btn-orange" style="background: white; color: var(--vli-laranja);" onclick="addItem()">+ Adicionar à Lista</button>
             
-            <div id="cart-area" style="display:none; margin-top:25px; border-top:1px solid #e2e8f0; padding-top:20px;">
+            <div id="cart-area" style="display:none; margin-top:15px; border-top:1.5px solid rgba(255,255,255,0.2); padding-top:20px; display: flex; flex-direction: column; gap: 16px;">
                 <label>Itens Selecionados:</label>
-                <div id="cart-list"></div>
-                <button class="btn btn-blue" onclick="sendEPI()">Finalizar Pedido</button>
+                <div id="cart-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                <button class="btn btn-orange" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <!-- Relatar Desvio -->
         <div id="step-desvio" class="step">
             <h3>Relatar Desvio</h3>
-            <div id="desvio-form">
+            <div id="desvio-form" style="display: flex; flex-direction: column; gap: 20px;">
                 <label>Local da Ocorrência</label>
                 <select id="d-local">
                     <option>Pátio de Cima</option>
@@ -148,12 +239,12 @@
                     <option>Estação</option>
                 </select>
                 
-                <label>Quando ocorreu ?</label>
+                <label>Quando ocorreu?</label>
                 <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
                     <option value="agora">Agora</option>
                     <option value="manual">Selecionar Horário</option>
                 </select>
-                <div id="div-manual" style="display:none; gap:10px; margin-top:10px;">
+                <div id="div-manual" style="display:none; gap:12px;">
                     <input type="date" id="d-data-manual">
                     <input type="time" id="d-hora-manual">
                 </div>
@@ -161,28 +252,28 @@
                 <label>Descrição do Evento</label>
                 <textarea id="d-desc" rows="4" placeholder="Descreva os detalhes do que aconteceu..."></textarea>
                 
-                <button class="btn btn-blue" style="background:var(--vli-erro); box-shadow: 0 4px 10px rgba(220,53,69,0.2);" onclick="sendDesvio()">Registrar Desvio</button>
+                <button class="btn btn-orange" onclick="sendDesvio()">Registrar Desvio</button>
+                <button class="btn btn-back" onclick="verMeusDesvios()">🔍 Ver Meu Histórico</button>
             </div>
             
-            <div id="desvio-lista" style="display:none; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                <p style="font-size:12px; color:#64748b; font-weight: 600; text-transform: uppercase;">Seu Histórico:</p>
-                <div id="container-historico-desvios"></div>
+            <div id="desvio-lista" style="display:none; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 15px; display: flex; flex-direction: column; gap: 16px;">
+                <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Seu Histórico:</p>
+                <div id="container-historico-desvios" style="display: flex; flex-direction: column; gap: 12px;"></div>
                 <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <!-- Férias -->
         <div id="step-ferias" class="step">
             <h3>Minhas Férias 2027</h3>
             <div id="ferias-view-agendada" style="display:none;">
                 <div class="info-box">
-                    <b style="color: #0c4a6e;">Sugestão já registrada!</b><br><br>
-                    <div id="detalhe-ferias" style="color: #0369a1;"></div>
-                    <p style="margin-top:15px; font-size: 12px; font-weight:600; color:var(--vli-erro)">* Para alterações, contate a supervisão.</p>
+                    <b style="color: var(--vli-azul); font-size: 15px;">Sugestão já registrada!</b><br><br>
+                    <div id="detalhe-ferias" style="color: #1E293B;"></div>
+                    <p style="margin-top:15px; font-size: 12px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate a supervisão.</p>
                 </div>
             </div>
-            <div id="ferias-form-sugestao">
+            <div id="ferias-form-sugestao" style="display: flex; flex-direction: column; gap: 20px;">
                 <label>Quantidade de Dias</label>
                 <select id="f-dias">
                     <option value="30">30 Dias</option>
@@ -191,19 +282,25 @@
                 <label>1ª Opção (Mês/Ano)</label><input type="month" id="f-op1">
                 <label>2ª Opção (Mês/Ano)</label><input type="month" id="f-op2">
                 <label>3ª Opção (Mês/Ano)</label><input type="month" id="f-op3">
-                <button class="btn btn-blue" onclick="sendFerias()">Enviar Sugestão</button>
+                <button class="btn btn-orange" onclick="sendFerias()">Enviar Sugestão</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <!-- Sucesso -->
-        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 50px;">
-            <div style="font-size:55px;">✅</div>
-            <h2 style="color: var(--vli-verde); margin-top: 15px;">Registro Concluído!</h2>
-            <p style="color:#475569; font-size: 14px;">Seus dados foram processados com sucesso no sistema.</p>
-            <button class="btn btn-blue" style="margin-top: 30px;" onclick="goToMenu()">Retornar ao Menu</button>
+        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 20px;">
+            <div style="font-size:60px;">✅</div>
+            <h2 style="color: #fff; margin-top: 16px; font-weight: 800;">Registro Concluído!</h2>
+            <p style="color:rgba(255,255,255,0.8); font-size: 15px; max-width: 85%; margin: 10px auto 0; line-height: 1.5;">Seus dados foram processados com sucesso no sistema.</p>
+            <button class="btn btn-orange" style="margin-top: 20px;" onclick="goToMenu()">Retornar ao Menu</button>
         </div>
+        
+        <div class="watermark">Desenvolvido por M.Custodio</div>
     </div>
+</div>
+
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text" style="color: #ffffff; margin-top: 16px; font-weight: 600; font-size: 14px;">Carregando...</div>
 </div>
 
 <script>
@@ -211,6 +308,49 @@
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
     let cart = [];
+    let deferredPrompt;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        const banner = document.getElementById('install-banner');
+        
+        if (!isStandalone) {
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIos) {
+                document.getElementById('install-text').innerHTML = 'Adicione o Portal VIC à tela inicial <span>Toque no botão de Compartilhar <b style="font-size:15px; color:var(--vli-laranja);">⎋</b> do Safari e escolha "Adicionar à Tela de Início"</span>';
+                document.getElementById('install-button').style.display = 'none';
+                banner.style.display = 'block';
+            } else {
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    banner.style.display = 'block';
+                });
+
+                setTimeout(() => {
+                    if (!deferredPrompt && banner.style.display !== 'block') {
+                        document.getElementById('install-text').innerHTML = 'Instale o Portal VIC no seu Android <span>Toque nos 3 pontinhos <b style="font-size:16px; color:var(--vli-laranja);">⋮</b> do navegador e selecione "Instalar aplicativo" ou "Adicionar à tela inicial"</span>';
+                        document.getElementById('install-button').style.display = 'none';
+                        banner.style.display = 'block';
+                    }
+                }, 2000);
+            }
+        }
+    });
+
+    function triggerPwaInstall() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação.');
+                }
+                document.getElementById('install-banner').style.display = 'none';
+                deferredPrompt = null;
+            });
+        }
+    }
 
     async function initSystem() {
         showLoad("Sincronizando Dados...");
@@ -222,8 +362,35 @@
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            hideLoad(); goTo('step-login');
+            
+            // Verifica se o usuário já tem um login salvo no localStorage
+            const savedMat = localStorage.getItem('vic_user_mat');
+            const savedNome = localStorage.getItem('vic_user_nome');
+            
+            if (savedMat && savedNome) {
+                user = { mat: savedMat, nome: savedNome };
+                exibirSaudacao();
+                hideLoad();
+                goTo('step-menu');
+            } else {
+                hideLoad(); 
+                goTo('step-login');
+            }
         } catch (e) { alert("Erro de conexão com o servidor corporativo."); hideLoad(); }
+    }
+    
+    // Função separada para lidar com a saudação de forma limpa
+    function exibirSaudacao() {
+        const hr = new Date().getHours();
+        let saudacao = "Boa noite";
+        if (hr >= 5 && hr < 12) saudacao = "Bom dia";
+        else if (hr >= 12 && hr < 18) saudacao = "Boa tarde";
+        
+        // Separa o nome completo pelos espaços e pega apenas a primeira parte
+        const primeiroNome = user.nome.split(' ')[0];
+        
+        document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
+        document.getElementById('user-pill').style.display = "block";
     }
 
     function handleLogin() {
@@ -231,10 +398,21 @@
         const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
         if (func) {
             user = { mat: m, nome: func };
-            document.getElementById('user-pill').innerHTML = `👤 Usuário: <b>${user.nome}</b>`;
-            document.getElementById('user-pill').style.display = "block";
+            
+            // Salva as credenciais no armazenamento do navegador
+            localStorage.setItem('vic_user_mat', user.mat);
+            localStorage.setItem('vic_user_nome', user.nome);
+            
+            exibirSaudacao();
             goTo('step-menu');
         } else { alert("Matrícula não localizada na base de dados."); }
+    }
+    
+    // Função para limpar o acesso do usuário
+    function fazerLogout() {
+        localStorage.removeItem('vic_user_mat');
+        localStorage.removeItem('vic_user_nome');
+        location.reload();
     }
 
     function updateEpiFields() {
@@ -242,13 +420,13 @@
         const area = document.getElementById('epi-dinamico');
         area.innerHTML = "";
         if (item && item.label) {
-            let html = `<label>${item.label}</label><select id="o1">`;
+            let html = `<div><label>${item.label}</label><select id="o1" style="margin-top:16px;">`;
             String(item.opcoes).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
-            html += `</select>`;
+            html += `</select></div>`;
             if(item.label2 && item.opcoes2) {
-                html += `<label>${item.label2}</label><select id="o2">`;
+                html += `<div><label>${item.label2}</label><select id="o2" style="margin-top:16px;">`;
                 String(item.opcoes2).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
-                html += `</select>`;
+                html += `</select></div>`;
             }
             area.innerHTML = html;
         }
@@ -257,14 +435,10 @@
     function addItem() {
         const sel = document.getElementById('select-epi');
         if(!sel.value) return;
-        
-        // CORREÇÃO: Capturando os valores individuais para envio detalhado
         const val1 = document.getElementById('o1') ? document.getElementById('o1').value : "";
         const val2 = document.getElementById('o2') ? document.getElementById('o2').value : "";
         const detStr = `${val1} ${val2}`.trim();
-        
         cart.push({ n: sel.value, det: detStr, o1: val1, o2: val2 });
-        
         sel.value = ""; 
         document.getElementById('epi-dinamico').innerHTML = "";
         renderCart();
@@ -272,10 +446,16 @@
 
     function renderCart() {
         const area = document.getElementById('cart-area');
-        area.style.display = cart.length ? 'block' : 'none';
+        if(cart.length) {
+            area.style.setProperty('display', 'flex', 'important');
+        } else {
+            area.style.display = 'none';
+        }
         document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
-            <div class="cart-item"><div><b style="color:var(--vli-azul);">${it.n}</b><br><small style="color:#64748b;">${it.det}</small></div>
-            <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;">✕</button></div>`).join('');
+            <div class="cart-item">
+                <div><b style="color:var(--vli-azul); font-size:15px;">${it.n}</b><br><small style="color:#64748B;">${it.det}</small></div>
+                <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;padding:4px;">✕</button>
+            </div>`).join('');
     }
 
     async function sendEPI() {
@@ -283,16 +463,10 @@
         try {
             for (const it of cart) {
                 await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                    tipo: "EPI", 
-                    funcionario: user.nome, 
-                    matricula: user.mat, 
-                    epi: it.n, 
-                    detalhes: it.det, // Envio concatenado (Novo App Script)
-                    opcao: it.o1,     // Envio isolado Opção 1 (Antigo App Script)
-                    opcao2: it.o2,    // Envio isolado Opção 2 (Antigo App Script)
-                    protocolo: "EPI"+Date.now()
-                })});
+                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI"+Date.now()
+                }) });
             }
+            cart = []; 
             hideLoad(); goTo('step-sucesso');
         } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
@@ -310,22 +484,26 @@
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                 tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
-            })});
+            }) });
+            document.getElementById('d-desc').value = ""; 
             hideLoad(); goTo('step-sucesso');
         } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
     }
 
     function verMeusDesvios() {
         document.getElementById('desvio-form').style.display = 'none';
-        document.getElementById('desvio-lista').style.display = 'block';
+        document.getElementById('desvio-lista').style.setProperty('display', 'flex', 'important');
         const container = document.getElementById('container-historico-desvios');
         container.innerHTML = "";
         const meusDesvios = (db.desvios || []).filter(d => String(d.matricula) === String(user.mat));
         if (meusDesvios.length > 0) {
             [...meusDesvios].reverse().forEach(d => {
-                container.innerHTML += `<div style="background:#f8fafc; padding:12px; border-radius:8px; margin-bottom:10px; border-left:4px solid var(--vli-erro); font-size:13px; color:#334155; border: 1px solid #e2e8f0; border-left: 4px solid var(--vli-erro);"><b>📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b><br><span style="color:#64748b; display:inline-block; margin-top:5px;">${d.descricao}</span></div>`;
+                container.innerHTML += `<div style="background:#fff; padding:16px; border-radius:var(--radius-md); font-size:13px; box-shadow: var(--shadow-sm); display:flex; flex-direction:column; gap:6px;">
+                    <b style="color:#1E293B;">📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b>
+                    <span style="color:#64748B; line-height:1.4;">${d.descricao}</span>
+                </div>`;
             });
-        } else { container.innerHTML = "<p style='font-size:13px; color:#94a3b8; text-align:center; padding: 20px 0;'>Nenhum registro encontrado no seu histórico.</p>"; }
+        } else { container.innerHTML = "<p style='font-size:13px; color:rgba(255,255,255,0.8); text-align:center; padding: 20px 0;'>Nenhum registro encontrado no seu histórico.</p>"; }
     }
 
     function checkFerias() {
@@ -340,7 +518,7 @@
             document.getElementById('detalhe-ferias').innerHTML = h;
         } else {
             document.getElementById('ferias-view-agendada').style.display = 'none';
-            document.getElementById('ferias-form-sugestao').style.display = 'block';
+            document.getElementById('ferias-form-sugestao').style.setProperty('display', 'flex', 'important');
         }
         goTo('step-ferias');
     }
@@ -352,15 +530,28 @@
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                 tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
-            })});
+            }) });
             hideLoad(); goTo('step-sucesso');
         } catch(e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
 
     function showLoad(t) { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; }
     function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
-    function goTo(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+    
+    function goTo(id) { 
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
+        window.scrollTo(0,0); 
+    }
     function goToMenu() { goTo('step-menu'); }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('PWA pronto.', reg))
+                .catch(err => console.error('Erro PWA:', err));
+        });
+    }
 </script>
 </body>
 </html>
