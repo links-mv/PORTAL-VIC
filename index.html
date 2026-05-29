@@ -143,6 +143,7 @@
             transition: all 0.25s ease; 
         }
         input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
+        input:disabled { background: rgba(255, 255, 255, 0.25); color: #ffffff; cursor: not-allowed; font-weight: 600; }
         
         .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; }
         .btn:active { transform: scale(0.98); opacity: 0.95; }
@@ -204,10 +205,9 @@
                 <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
                 <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span><b>Relatar Desvio</b></div>
             </div>
-            <div class="menu-grid">
-                <div class="menu-card" onclick="checkFerias()" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
-                    <span>📅</span><b>Minhas Férias 2027</b>
-                </div>
+            <div class="menu-grid" style="margin-top: 16px;">
+                <div class="menu-card" onclick="goTo('step-troca')"><span>🔄</span><b>Trocar Turno</b></div>
+                <div class="menu-card" onclick="checkFerias()"><span>📅</span><b>Minhas Férias</b></div>
             </div>
             <button class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 10px;">Sair da Conta</button>
         </div>
@@ -260,6 +260,56 @@
                 <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Seu Histórico:</p>
                 <div id="container-historico-desvios" style="display: flex; flex-direction: column; gap: 12px;"></div>
                 <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
+            </div>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
+        </div>
+
+        <div id="step-troca" class="step">
+            <h3>Troca de Turno</h3>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <label>Solicitante 1</label>
+                <input type="text" id="t-solicitante1" disabled>
+                
+                <label>Colega (Solicitante 2)</label>
+                <input type="text" id="t-solicitante2" placeholder="Nome ou Matrícula do colega">
+                
+                <label>Data da Troca</label>
+                <input type="date" id="t-data-troca">
+                
+                <label>Data da Compensação</label>
+                <input type="date" id="t-data-compensacao">
+
+                <label>Sua Escala (Escala 1)</label>
+                <input type="text" id="t-escala1" placeholder="Ex: Letra A, Turno C">
+
+                <label>Escala do Colega (Escala 2)</label>
+                <input type="text" id="t-escala2" placeholder="Ex: Letra B, Turno D">
+
+                <label>Inspetor 1</label>
+                <select id="t-inspetor1">
+                    <option value="">Selecione o Inspetor principal...</option>
+                    <option value="Herques">Herques</option>
+                    <option value="Gilberto">Gilberto</option>
+                    <option value="Yuri">Yuri</option>
+                    <option value="Geomar">Geomar</option>
+                    <option value="Cátia">Cátia</option>
+                    <option value="Rafael">Rafael</option>
+                    <option value="Felipe">Felipe</option>
+                </select>
+
+                <label>Inspetor 2 (Opcional)</label>
+                <select id="t-inspetor2">
+                    <option value="">Selecione se houver outro inspetor...</option>
+                    <option value="Herques">Herques</option>
+                    <option value="Gilberto">Gilberto</option>
+                    <option value="Yuri">Yuri</option>
+                    <option value="Geomar">Geomar</option>
+                    <option value="Cátia">Cátia</option>
+                    <option value="Rafael">Rafael</option>
+                    <option value="Felipe">Felipe</option>
+                </select>
+                
+                <button class="btn btn-orange" onclick="sendTroca()">Registrar Troca</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
@@ -363,7 +413,6 @@
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             
-            // Verifica se o usuário já tem um login salvo no localStorage
             const savedMat = localStorage.getItem('vic_user_mat');
             const savedNome = localStorage.getItem('vic_user_nome');
             
@@ -379,18 +428,21 @@
         } catch (e) { alert("Erro de conexão com o servidor corporativo."); hideLoad(); }
     }
     
-    // Função separada para lidar com a saudação de forma limpa
     function exibirSaudacao() {
         const hr = new Date().getHours();
         let saudacao = "Boa noite";
         if (hr >= 5 && hr < 12) saudacao = "Bom dia";
         else if (hr >= 12 && hr < 18) saudacao = "Boa tarde";
         
-        // Separa o nome completo pelos espaços e pega apenas a primeira parte
         const primeiroNome = user.nome.split(' ')[0];
         
         document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
         document.getElementById('user-pill').style.display = "block";
+
+        // Preenche o Solicitante 1 automaticamente com o Usuário Logado
+        if (document.getElementById('t-solicitante1')) {
+            document.getElementById('t-solicitante1').value = user.nome;
+        }
     }
 
     function handleLogin() {
@@ -399,7 +451,6 @@
         if (func) {
             user = { mat: m, nome: func };
             
-            // Salva as credenciais no armazenamento do navegador
             localStorage.setItem('vic_user_mat', user.mat);
             localStorage.setItem('vic_user_nome', user.nome);
             
@@ -408,7 +459,6 @@
         } else { alert("Matrícula não localizada na base de dados."); }
     }
     
-    // Função para limpar o acesso do usuário
     function fazerLogout() {
         localStorage.removeItem('vic_user_mat');
         localStorage.removeItem('vic_user_nome');
@@ -488,6 +538,60 @@
             document.getElementById('d-desc').value = ""; 
             hideLoad(); goTo('step-sucesso');
         } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
+    }
+
+    // NOVA FUNÇÃO: ENVIAR TROCA DE TURNO
+    async function sendTroca() {
+        const colega = document.getElementById('t-solicitante2').value.trim();
+        const dataTroca = document.getElementById('t-data-troca').value;
+        const dataComp = document.getElementById('t-data-compensacao').value;
+        const escala1 = document.getElementById('t-escala1').value.trim();
+        const escala2 = document.getElementById('t-escala2').value.trim();
+        const inspetor1 = document.getElementById('t-inspetor1').value;
+        const inspetor2 = document.getElementById('t-inspetor2').value;
+
+        if (!colega || !dataTroca || !dataComp || !escala1 || !escala2 || !inspetor1) {
+            return alert("Por favor, preencha todos os campos obrigatórios (Colega, Datas, Escalas e o Inspetor 1).");
+        }
+
+        showLoad("Registrando Troca...");
+
+        // Conversão de data AAAA-MM-DD para DD/MM/AAAA
+        const dataTrocaFmt = dataTroca.split('-').reverse().join('/');
+        const dataCompFmt = dataComp.split('-').reverse().join('/');
+
+        try {
+            await fetch(URL_API, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({
+                    tipo: "TROCA",
+                    solicitante1: user.nome,
+                    solicitante2: colega,
+                    dataTroca: dataTrocaFmt,
+                    dataCompensacao: dataCompFmt,
+                    escala1: escala1,
+                    escala2: escala2,
+                    inspetor1: inspetor1,
+                    inspetor2: inspetor2
+                }) 
+            });
+
+            // Limpa o formulário
+            document.getElementById('t-solicitante2').value = "";
+            document.getElementById('t-data-troca').value = "";
+            document.getElementById('t-data-compensacao').value = "";
+            document.getElementById('t-escala1').value = "";
+            document.getElementById('t-escala2').value = "";
+            document.getElementById('t-inspetor1').value = "";
+            document.getElementById('t-inspetor2').value = "";
+
+            hideLoad(); 
+            goTo('step-sucesso');
+        } catch(e) { 
+            hideLoad(); 
+            alert("Erro ao registrar troca de turno."); 
+        }
     }
 
     function verMeusDesvios() {
