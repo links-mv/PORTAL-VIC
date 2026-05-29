@@ -10,8 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <link rel="icon" type="image/png" sizes="192x192" href="logo-pwa.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="logo-pwa.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png">
     <link rel="manifest" href="./manifest.json">
 
     <style>
@@ -179,7 +179,7 @@
 
     <div class="header">
         <div class="logo-box">
-            <img src="logo-pwa.png" class="logo" alt="Portal VIC">
+            <img src="https://www.fratar.com.br/wp-content/uploads/2022/03/vli-logistica-logo-5.png" class="logo" alt="Portal VIC">
         </div>
         <div class="header-title">Portal VIC</div>
     </div>
@@ -354,7 +354,12 @@
 </div>
 
 <script>
+    // URL do Portal VIC Principal (EPI, Desvios, Férias)
     const URL_API = 'https://script.google.com/macros/s/AKfycbytO_ANLIQSrhGDAJGQRUZD_-XjHHgp_yZZn8fyN-kvWj_SwT0QG_gcgqmdx9mqZx3OSw/exec'; 
+    
+    // NOVA URL: Exclusiva para a Troca de Turno (Segunda Planilha)
+    const URL_API_TROCA = 'https://script.google.com/macros/s/AKfycbwHELPCLRERWnSvS3XTKwiVfYqlY8ho8nIEcQzeL0DOlR547dVFEvViPNCrgzDjm-5DQA/exec';
+
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
     let cart = [];
@@ -439,7 +444,6 @@
         document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
         document.getElementById('user-pill').style.display = "block";
 
-        // Preenche o Solicitante 1 automaticamente com o Usuário Logado
         if (document.getElementById('t-solicitante1')) {
             document.getElementById('t-solicitante1').value = user.nome;
         }
@@ -540,7 +544,7 @@
         } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
     }
 
-    // NOVA FUNÇÃO: ENVIAR TROCA DE TURNO
+    // ENVIAR TROCA DE TURNO (Apontando para a Nova URL Isolada)
     async function sendTroca() {
         const colega = document.getElementById('t-solicitante2').value.trim();
         const dataTroca = document.getElementById('t-data-troca').value;
@@ -556,16 +560,15 @@
 
         showLoad("Registrando Troca...");
 
-        // Conversão de data AAAA-MM-DD para DD/MM/AAAA
         const dataTrocaFmt = dataTroca.split('-').reverse().join('/');
         const dataCompFmt = dataComp.split('-').reverse().join('/');
 
         try {
-            await fetch(URL_API, { 
+            // Repare aqui: Usando URL_API_TROCA em vez da URL antiga
+            await fetch(URL_API_TROCA, { 
                 method: 'POST', 
                 mode: 'no-cors', 
                 body: JSON.stringify({
-                    tipo: "TROCA",
                     solicitante1: user.nome,
                     solicitante2: colega,
                     dataTroca: dataTrocaFmt,
@@ -577,7 +580,6 @@
                 }) 
             });
 
-            // Limpa o formulário
             document.getElementById('t-solicitante2').value = "";
             document.getElementById('t-data-troca').value = "";
             document.getElementById('t-data-compensacao').value = "";
