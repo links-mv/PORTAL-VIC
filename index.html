@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal VIC</title>
+    <title>Portal VIC | VLI</title>
     
+    <meta name="theme-color" content="#0085B2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="icon" type="image/png" sizes="192x192" href="logo-pwa.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo-pwa.png">
+    <link rel="manifest" href="./manifest.json">
+
     <style>
         :root { 
             --vli-azul: #0085B2;
@@ -12,117 +21,217 @@
             --vli-laranja: #F37021;
             --vli-verde: #24b34b; 
             --vli-erro: #e13d4b; 
+            --radius-lg: 20px;
             --radius-md: 14px; 
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 10px 25px rgba(0,0,0,0.15);
         }
 
         * { 
             box-sizing: border-box; 
-            font-family: system-ui, -apple-system, sans-serif; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             -webkit-tap-highlight-color: transparent; 
             color: #FFFFFF; 
         }
 
-        body { background: var(--vli-azul-escuro); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
-        .container { width: 100%; max-width: 450px; background: var(--vli-azul); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.3); }
-        
-        /* RESTAURAÇÃO COMPLETA DA LOGO PWA */
-        .header { padding: 40px 24px 10px; text-align: center; }
-        .logo-box { background: white; padding: 10px 20px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 15px; }
-        .logo-pwa { width: 90px; height: auto; display: block; }
-        
-        /* SAUDAÇÃO / PILULA DE USUÁRIO */
-        .user-pill { background: rgba(255, 255, 255, 0.15); margin: 10px 28px 0; padding: 14px; border-radius: var(--radius-md); font-size: 14px; text-align: center; display: none; border: 1px solid rgba(255, 255, 255, 0.25); }
-        .content { padding: 20px 28px; flex-grow: 1; display: flex; flex-direction: column; }
-        
-        .step { display: none; width: 100%; }
-        .step.active { display: flex; flex-direction: column; gap: 18px; }
-        
-        h3 { font-size: 20px; margin: 0; text-align: center; }
-        label { display: block; font-weight: 700; margin-bottom: -10px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; }
-        
-        input, select, textarea { width: 100%; padding: 15px; border: none; border-radius: var(--radius-md); font-size: 15px; background: #fff; color: #1E293B; outline: none; }
-        input:disabled { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
-        
-        /* CORREÇÃO DO TEXTO INVISÍVEL NO MOBILE */
-        select option { 
-            color: #1E293B !important; 
-            background-color: #FFFFFF !important; 
+        body { 
+            background: var(--vli-azul-escuro); 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
         }
 
-        .btn { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 700; cursor: pointer; text-transform: uppercase; display: inline-flex; justify-content: center; align-items: center; }
-        .btn-orange { background: var(--vli-laranja); color: white; }
-        .btn-back { background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.3); margin-top: 10px; }
+        .container { 
+            width: 100%; 
+            max-width: 450px; 
+            background: var(--vli-azul); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.3); 
+            z-index: 2; 
+            position: relative; 
+        }
         
-        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-        .menu-card { background: #fff; padding: 20px 10px; border-radius: var(--radius-md); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;}
-        .menu-card b { color: #1E293B; font-size: 13px; }
-        .menu-card span { font-size: 28px; }
-        
-        .cart-item { background: #fff; padding: 12px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); }
-        .info-box { background: #fff; padding: 15px; border-radius: var(--radius-md); color: #1E293B; font-size: 13px; line-height: 1.5; }
-        .watermark { text-align: center; padding: 15px; font-size: 10px; color: rgba(255, 255, 255, 0.3); margin-top: auto; }
+        .pwa-banner {
+            display: none;
+            background: #ffffff;
+            padding: 16px;
+            margin: 20px 20px 0 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid var(--vli-laranja);
+            animation: fadeIn 0.5s ease;
+        }
+        .pwa-banner p { color: #1E293B; margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.5; }
+        .pwa-banner p span { color: #64748B; font-size: 12px; display: block; font-weight: 400; margin-top: 4px;}
+        .pwa-banner button { width: 100%; padding: 12px; border: none; background: var(--vli-laranja); color: white; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,133,178,0.95); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #fff; border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; }
+        .header { 
+            padding: 60px 24px 20px; 
+            text-align: center; 
+        }
+        
+        .logo-box { 
+            background: white; 
+            padding: 14px 22px; 
+            border-radius: var(--radius-md); 
+            display: inline-block; 
+            margin-bottom: 24px; 
+            box-shadow: var(--shadow-sm); 
+        }
+        
+        .logo { width: 90px; display: block; }
+        
+        .header-title { 
+            font-weight: 800; 
+            letter-spacing: 1.5px; 
+            font-size: 20px; 
+            text-transform: uppercase; 
+            opacity: 0.95;
+        }
+        
+        .user-pill { 
+            background: rgba(255, 255, 255, 0.1); 
+            margin: 15px 28px 0; 
+            padding: 14px 20px; 
+            border-radius: var(--radius-md); 
+            font-size: 14px; 
+            text-align: center; 
+            display: none; 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(4px);
+        }
+        
+        .content { 
+            padding: 32px 28px; 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
+        .step { 
+            display: none; 
+            width: 100%; 
+        }
+        .step.active { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        #step-start.active { margin-top: 35px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
+        
+        label { display: block; font-weight: 700; margin: 8px 0 -8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
+        
+        input, select, textarea { 
+            width: 100%; 
+            padding: 16px; 
+            border: none; 
+            border-radius: var(--radius-md); 
+            font-size: 15px; 
+            background: #fff; 
+            color: #1E293B; 
+            outline: none; 
+            transition: all 0.25s ease; 
+        }
+        input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
+        
+        .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; }
+        .btn:active { transform: scale(0.98); opacity: 0.95; }
+        
+        .btn-orange { background: var(--vli-laranja); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 10px; }
+        
+        .btn-back { background: transparent; color: white; font-size: 12px; border: 1.5px solid rgba(255,255,255,0.3); margin-top: 15px; }
+        .btn-back:hover { background: rgba(255,255,255,0.1); }
+        
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .menu-card { background: #fff; border: none; padding: 26px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; transition: all 0.25s ease; box-shadow: var(--shadow-sm); }
+        .menu-card:active { transform: translateY(-2px); background: #f8fafc; }
+        .menu-card span { font-size: 32px; }
+        .menu-card b { font-weight: 700; font-size: 14px; color: #1E293B; }
+        
+        .cart-item { background: #fff; padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); box-shadow: var(--shadow-sm); }
+        .info-box { background: #fff; padding: 20px; border-radius: var(--radius-md); color: #1E293B; font-size: 14px; line-height: 1.6; }
+        
+        .watermark { text-align: center; padding: 20px 0 25px; font-size: 10px; font-weight: 600; color: rgba(255, 255, 255, 0.35); text-transform: uppercase; letter-spacing: 1px; pointer-events: none; margin-top: auto; }
+
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,133,178,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .spinner { border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #fff; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.7s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div id="install-banner" class="pwa-banner">
+        <p id="install-text">Instale o Portal VIC no seu celular <span>Acesse rápido e economize dados do seu plano</span></p>
+        <button id="install-button" onclick="triggerPwaInstall()">Baixar Aplicativo</button>
+    </div>
+
     <div class="header">
         <div class="logo-box">
-            <img src="https://upload.wikimedia.org/wikipedia/pt/e/e9/Logotipo_VLI.png" class="logo-pwa" alt="Logo VLI">
+            <img src="logo-pwa.png" class="logo" alt="Portal VIC">
         </div>
+        <div class="header-title">Portal VIC</div>
     </div>
     
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <div id="step-start" class="step active">
-            <button type="button" class="btn btn-orange" onclick="initSystem()">Entrar no Portal VIC</button>
+        <div id="step-start" class="step active" style="text-align:center;">
+            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500; line-height: 1.5;">Bem-vindo ao Portal VLI - VIC.</p>
+            <button class="btn btn-orange" onclick="initSystem()">Acessar Portal</button>
         </div>
         
         <div id="step-login" class="step">
-            <h3>Login</h3>
+            <h3>Identificação</h3>
+            <p style="text-align: center; color: rgba(255,255,255,0.8); font-size: 14px; margin: -10px 0 10px 0;">Insira sua matrícula para continuar.</p>
             <label>Matrícula</label>
-            <input type="tel" id="input-mat" placeholder="Digite sua matrícula">
-            <button type="button" class="btn btn-orange" onclick="handleLogin()">Acessar</button>
+            <input type="tel" id="input-mat" placeholder="Ex: 12345" maxlength="8">
+            <button class="btn btn-orange" onclick="handleLogin()">Entrar no Sistema</button>
         </div>
 
         <div id="step-menu" class="step">
             <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
                 <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span><b>Relatar Desvio</b></div>
-            </div>
-            <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-troca')"><span>🔄</span><b>Trocar Turno</b></div>
-                <div class="menu-card" onclick="checkFerias()"><span>📅</span><b>Minhas Férias</b></div>
             </div>
-            <button type="button" class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration:underline;">Sair / Trocar Usuário</button>
+            <div class="menu-grid" style="margin-top: 16px;">
+                <div class="menu-card" onclick="checkFerias()" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
+                    <span>📅</span><b>Minhas Férias 2027</b>
+                </div>
+            </div>
+            <button class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 10px;">Sair da Conta</button>
         </div>
 
         <div id="step-epi" class="step">
-            <h3>Pedido de EPI</h3>
-            <label>Escolha o Item</label>
+            <h3>Solicitação de EPI</h3>
+            <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
+            <div id="epi-dinamico" style="display: flex; flex-direction: column; gap: 20px;"></div>
+            <button class="btn btn-orange" style="background: white; color: var(--vli-laranja);" onclick="addItem()">+ Adicionar à Lista</button>
             
-            <div id="epi-dinamico" style="display: flex; flex-direction: column; gap: 15px;"></div>
-            
-            <button type="button" class="btn btn-orange" style="background:#fff; color:var(--vli-laranja);" onclick="addItem()">+ Adicionar Item</button>
-            
-            <div id="cart-area" style="display:none; flex-direction: column; gap: 12px; margin-top:10px; border-top:1px solid rgba(255,255,255,0.2); padding-top:10px;">
-                <label>Lista de Pedidos:</label>
-                <div id="cart-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                <button type="button" class="btn btn-orange" onclick="sendEPI()">Finalizar Pedido</button>
+            <div id="cart-area" style="display:none; margin-top:15px; border-top:1.5px solid rgba(255,255,255,0.2); padding-top:20px; display: flex; flex-direction: column; gap: 16px;">
+                <label>Itens Selecionados:</label>
+                <div id="cart-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                <button class="btn btn-orange" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
-            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar</button>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-desvio" class="step">
             <h3>Relatar Desvio</h3>
-            <div id="desvio-form" style="display: flex; flex-direction: column; gap: 15px;">
-                <label>Local</label>
+            <div id="desvio-form" style="display: flex; flex-direction: column; gap: 20px;">
+                <label>Local da Ocorrência</label>
                 <select id="d-local">
                     <option>Pátio de Cima</option>
                     <option>Pátio de Baixo</option>
@@ -130,359 +239,417 @@
                     <option>Oficina</option>
                     <option>Estação</option>
                 </select>
-                <label>Ocorrência</label>
+                
+                <label>Quando ocorreu?</label>
                 <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
-                    <option value="agora">Agora mesmo</option>
-                    <option value="manual">Definir Data/Hora Retroativa</option>
+                    <option value="agora">Agora</option>
+                    <option value="manual">Selecionar Horário</option>
                 </select>
-                <div id="div-manual" style="display:none; gap:10px;">
+                <div id="div-manual" style="display:none; gap:12px;">
                     <input type="date" id="d-data-manual">
                     <input type="time" id="d-hora-manual">
                 </div>
-                <label>Descrição</label>
-                <textarea id="d-desc" rows="3" placeholder="Relate o desvio de segurança encontrado..."></textarea>
-                <button type="button" class="btn btn-orange" onclick="sendDesvio()">Registrar</button>
-                <button type="button" class="btn btn-back" onclick="verMeusDesvios()">🔍 Ver Histórico</button>
+                
+                <label>Descrição do Evento</label>
+                <textarea id="d-desc" rows="4" placeholder="Descreva os detalhes do que aconteceu..."></textarea>
+                
+                <button class="btn btn-orange" onclick="sendDesvio()">Registrar Desvio</button>
+                <button class="btn btn-back" onclick="verMeusDesvios()">🔍 Ver Meu Histórico</button>
             </div>
-            <div id="desvio-lista" style="display:none; flex-direction: column; gap: 12px;">
-                <div id="container-historico-desvios" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                <button type="button" class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='flex';">Voltar ao Formulário</button>
+            
+            <div id="desvio-lista" style="display:none; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 15px; display: flex; flex-direction: column; gap: 16px;">
+                <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Seu Histórico:</p>
+                <div id="container-historico-desvios" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
             </div>
-            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- NOVA TELA: TROCA DE TURNO -->
         <div id="step-troca" class="step">
             <h3>Troca de Turno</h3>
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <label>Solicitante 1</label><input type="text" id="t-solicitante1" disabled>
-                <label>Colega (Solicitante 2)</label><input type="text" id="t-solicitante2" placeholder="Nome Completo do Colega">
-                <label>Data da Troca</label><input type="date" id="t-data-troca">
-                <label>Data da Compensação</label><input type="date" id="t-data-compensacao">
-                <label>Sua Escala</label><input type="text" id="t-escala1" placeholder="Ex: Letra A">
-                <label>Escala do Colega</label><input type="text" id="t-escala2" placeholder="Ex: Letra B">
-                <label>Inspetor Responsável</label>
-                <select id="t-inspetor1">
-                    <option value="">Selecione...</option>
-                    <option value="Herques">Herques</option>
-                    <option value="Gilberto">Gilberto</option>
-                    <option value="Yuri">Yuri</option>
-                    <option value="Geomar">Geomar</option>
-                    <option value="Cátia">Cátia</option>
-                    <option value="Rafael">Rafael</option>
-                    <option value="Felipe">Felipe</option>
-                </select>
-                <label>Inspetor 2 (Opcional)</label>
-                <select id="t-inspetor2">
-                    <option value="">Selecione se houver...</option>
-                    <option value="Herques">Herques</option>
-                    <option value="Gilberto">Gilberto</option>
-                    <option value="Yuri">Yuri</option>
-                    <option value="Geomar">Geomar</option>
-                    <option value="Cátia">Cátia</option>
-                    <option value="Rafael">Rafael</option>
-                    <option value="Felipe">Felipe</option>
-                </select>
-                <button type="button" class="btn btn-orange" onclick="sendTroca()">Cadastrar Troca</button>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <div class="info-box" style="padding: 12px 20px;">
+                    <b style="color: var(--vli-azul); font-size: 13px;">Seu Nome (Solicitante 1):</b><br>
+                    <span id="t-nome1" style="color: #1E293B; font-weight: 600;"></span>
+                </div>
+                
+                <div>
+                    <label>Nome do Colega (Solicitante 2)</label>
+                    <input type="text" id="t-nome2" placeholder="Com quem vai trocar?">
+                </div>
+                
+                <div style="display:flex; gap:12px;">
+                    <div style="flex:1;">
+                        <label>Data da Troca</label>
+                        <input type="date" id="t-dt1">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Compensação</label>
+                        <input type="date" id="t-dt2">
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:12px;">
+                    <div style="flex:1;">
+                        <label>Sua Escala</label>
+                        <input type="text" id="t-esc1" placeholder="Ex: A" maxlength="2">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Escala Dele</label>
+                        <input type="text" id="t-esc2" placeholder="Ex: B" maxlength="2">
+                    </div>
+                </div>
+
+                <div>
+                    <label>Inspetor Responsável</label>
+                    <input type="text" id="t-insp1" placeholder="Nome do Inspetor">
+                </div>
+
+                <button class="btn btn-orange" onclick="sendTroca()">Registrar Troca</button>
             </div>
-            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar</button>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-ferias" class="step">
-            <h3>Programação de Férias</h3>
+            <h3>Minhas Férias 2027</h3>
             <div id="ferias-view-agendada" style="display:none;">
                 <div class="info-box">
-                    <b style="color: var(--vli-azul);">Agendamento Registrado:</b><br><br>
-                    <div id="detalhe-ferias"></div>
+                    <b style="color: var(--vli-azul); font-size: 15px;">Sugestão já registrada!</b><br><br>
+                    <div id="detalhe-ferias" style="color: #1E293B;"></div>
+                    <p style="margin-top:15px; font-size: 12px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate a supervisão.</p>
                 </div>
             </div>
-            <div id="ferias-form-sugestao" style="display: flex; flex-direction: column; gap: 15px;">
-                <label>Dias</label>
-                <select id="f-dias"><option value="30">30 Dias</option><option value="20">20 Dias</option></select>
-                <label>1ª Opção</label><input type="month" id="f-op1">
-                <label>2ª Opção</label><input type="month" id="f-op2">
-                <label>3ª Opção</label><input type="month" id="f-op3">
-                <button type="button" class="btn btn-orange" onclick="sendFerias()">Salvar Opções</button>
+            <div id="ferias-form-sugestao" style="display: flex; flex-direction: column; gap: 20px;">
+                <label>Quantidade de Dias</label>
+                <select id="f-dias">
+                    <option value="30">30 Dias</option>
+                    <option value="20">20 Dias</option>
+                </select>
+                <label>1ª Opção (Mês/Ano)</label><input type="month" id="f-op1">
+                <label>2ª Opção (Mês/Ano)</label><input type="month" id="f-op2">
+                <label>3ª Opção (Mês/Ano)</label><input type="month" id="f-op3">
+                <button class="btn btn-orange" onclick="sendFerias()">Enviar Sugestão</button>
             </div>
-            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar</button>
+            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <div id="step-sucesso" class="step" style="text-align:center;">
-            <div style="font-size:50px; margin-top:20px;">✅</div>
-            <h2>Salvo com Sucesso!</h2>
-            <p style="font-size:14px; opacity:0.8;">Os dados foram inseridos na Planilha Integrada.</p>
-            <button type="button" class="btn btn-orange" onclick="goToMenu()">Voltar ao Menu</button>
+        <div id="step-sucesso" class="step" style="text-align:center; padding-top: 20px;">
+            <div style="font-size:60px;">✅</div>
+            <h2 style="color: #fff; margin-top: 16px; font-weight: 800;">Registro Concluído!</h2>
+            <p style="color:rgba(255,255,255,0.8); font-size: 15px; max-width: 85%; margin: 10px auto 0; line-height: 1.5;">Seus dados foram processados com sucesso no sistema.</p>
+            <button class="btn btn-orange" style="margin-top: 20px;" onclick="goToMenu()">Retornar ao Menu</button>
         </div>
+        
+        <div class="watermark">Desenvolvido por M.Custodio</div>
     </div>
-    <div class="watermark">Portal VIC v2.2</div>
 </div>
 
-<div id="loading-overlay"><div class="spinner"></div><div id="loading-text" style="margin-top:15px; font-weight:600;">Sincronizando...</div></div>
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text" style="color: #ffffff; margin-top: 16px; font-weight: 600; font-size: 14px;">Carregando...</div>
+</div>
 
 <script>
-    // RECOPIE SUA URL ATUALIZADA DO EXECUTÁVEL DO GOOGLE APPS SCRIPT AQUI:
     const URL_API = 'https://script.google.com/macros/s/AKfycby7q7409A00TNwUpNn3v1SfuOfCKX56V290pztFS4BoFTPl95sUMhVvbE2J_epjKu4/exec'; 
-
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
     let cart = [];
+    let deferredPrompt;
 
-    // Carrega o usuário local imediatamente para não perder a saudação em telas lentas
-    function checarUsuarioLocal() {
-        const savedMat = localStorage.getItem('vic_user_mat');
-        const savedNome = localStorage.getItem('vic_user_nome');
-        if (savedMat && savedNome && savedNome !== "undefined") {
-            user.mat = savedMat;
-            user.nome = savedNome;
-            exibirSaudacao();
-            return true;
+    window.addEventListener('DOMContentLoaded', () => {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        const banner = document.getElementById('install-banner');
+        
+        if (!isStandalone) {
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIos) {
+                document.getElementById('install-text').innerHTML = 'Adicione o Portal VIC à tela inicial <span>Toque no botão de Compartilhar <b style="font-size:15px; color:var(--vli-laranja);">⎋</b> do Safari e escolha "Adicionar à Tela de Início"</span>';
+                document.getElementById('install-button').style.display = 'none';
+                banner.style.display = 'block';
+            } else {
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    banner.style.display = 'block';
+                });
+
+                setTimeout(() => {
+                    if (!deferredPrompt && banner.style.display !== 'block') {
+                        document.getElementById('install-text').innerHTML = 'Instale o Portal VIC no seu Android <span>Toque nos 3 pontinhos <b style="font-size:16px; color:var(--vli-laranja);">⋮</b> do navegador e selecione "Instalar aplicativo" ou "Adicionar à tela inicial"</span>';
+                        document.getElementById('install-button').style.display = 'none';
+                        banner.style.display = 'block';
+                    }
+                }, 2000);
+            }
         }
-        return false;
+    });
+
+    function triggerPwaInstall() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação.');
+                }
+                document.getElementById('install-banner').style.display = 'none';
+                deferredPrompt = null;
+            });
+        }
     }
 
     async function initSystem() {
-        showLoad("Buscando dados da nuvem...");
-        
-        // Garante a exibição imediata se já houver login ativo localmente
-        const logado = checarUsuarioLocal();
-
+        showLoad("Sincronizando Dados...");
         try {
             const r = await fetch(URL_API);
             const json = await r.json();
             db = json.dados;
-            
-            // Popula o select principal de EPIs com os dados brutos recebidos
+            if (!db.desvios) db.desvios = []; 
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
-            if (db.epis && db.epis.length > 0) {
-                db.epis.forEach(e => {
-                    sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`;
-                });
-            }
+            db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             
-            if (logado) {
+            // Verifica se o usuário já tem um login salvo no localStorage
+            const savedMat = localStorage.getItem('vic_user_mat');
+            const savedNome = localStorage.getItem('vic_user_nome');
+            
+            if (savedMat && savedNome) {
+                user = { mat: savedMat, nome: savedNome };
+                exibirSaudacao();
                 hideLoad();
                 goTo('step-menu');
             } else {
-                hideLoad();
+                hideLoad(); 
                 goTo('step-login');
             }
-        } catch (e) { 
-            console.error(e);
-            hideLoad();
-            // Se falhar a rede mas estiver logado localmente, deixa o usuário navegar no menu offline
-            if (logado) {
-                goTo('step-menu');
-            } else {
-                goTo('step-login');
-            }
-        }
+        } catch (e) { alert("Erro de conexão com o servidor corporativo."); hideLoad(); }
     }
     
+    // Função separada para lidar com a saudação de forma limpa
     function exibirSaudacao() {
-        if (user.nome) {
-            document.getElementById('user-pill').innerHTML = `👤 Nome: <b>${user.nome}</b><br><small>Matrícula: ${user.mat}</small>`;
-            document.getElementById('user-pill').style.display = 'block';
-            if (document.getElementById('t-solicitante1')) document.getElementById('t-solicitante1').value = user.nome;
+        const hr = new Date().getHours();
+        let saudacao = "Boa noite";
+        if (hr >= 5 && hr < 12) saudacao = "Bom dia";
+        else if (hr >= 12 && hr < 18) saudacao = "Boa tarde";
+        
+        // Separa o nome completo pelos espaços e pega apenas a primeira parte
+        const primeiroNome = user.nome.split(' ')[0];
+        
+        document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
+        document.getElementById('user-pill').style.display = "block";
+        
+        // Atualiza o nome na tela de troca
+        if(document.getElementById('t-nome1')) {
+            document.getElementById('t-nome1').innerText = user.nome;
         }
     }
-    
-    function goTo(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function goToMenu() { goTo('step-menu'); }
-        
+
     function handleLogin() {
-        const mat = document.getElementById('input-mat').value.trim();
-        if (!mat) { alert("Por favor, digite sua matrícula."); return; }
-        
-        if (db.funcionarios && db.funcionarios[mat]) {
-            user.mat = mat; 
-            user.nome = db.funcionarios[mat].nome; // Captura o nome completo exato da planilha
+        const m = document.getElementById('input-mat').value.trim();
+        const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
+        if (func) {
+            user = { mat: m, nome: func };
+            
+            // Salva as credenciais no armazenamento do navegador
             localStorage.setItem('vic_user_mat', user.mat);
             localStorage.setItem('vic_user_nome', user.nome);
-            exibirSaudacao(); 
+            
+            exibirSaudacao();
             goTo('step-menu');
-        } else { 
-            alert("Matrícula não localizada na planilha. Tente digitar novamente."); 
-        }
+        } else { alert("Matrícula não localizada na base de dados."); }
     }
     
-    function fazerLogout() { 
-        localStorage.clear(); 
-        user = { mat: "", nome: "" };
-        document.getElementById('input-mat').value = '';
-        document.getElementById('user-pill').style.display='none'; 
-        goTo('step-login');
+    // Função para limpar o acesso do usuário
+    function fazerLogout() {
+        localStorage.removeItem('vic_user_mat');
+        localStorage.removeItem('vic_user_nome');
+        location.reload();
     }
-        
+
     function updateEpiFields() {
-        const item = document.getElementById('select-epi').value;
-        const container = document.getElementById('epi-dinamico');
-        container.innerHTML = '';
-        if (!item || !db.epis) return;
-        
-        const epi = db.epis.find(e => e.nome === item);
-        if (!epi) return;
-
-        // Renderiza Variação 1
-        if (epi.v1_nome && epi.v1_itens && epi.v1_itens.length > 0) {
-            let html = `<label>${epi.v1_nome}</label><select id="epi-var1">`;
-            epi.v1_itens.forEach(v => { html += `<option value="${v}">${v}</option>`; });
-            html += `</select>`;
-            container.innerHTML += html;
-        } else {
-            container.innerHTML += `<input type="hidden" id="epi-var1" value="-">`;
+        const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
+        const area = document.getElementById('epi-dinamico');
+        area.innerHTML = "";
+        if (item && item.label) {
+            let html = `<div><label>${item.label}</label><select id="o1" style="margin-top:16px;">`;
+            String(item.opcoes).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
+            html += `</select></div>`;
+            if(item.label2 && item.opcoes2) {
+                html += `<div><label>${item.label2}</label><select id="o2" style="margin-top:16px;">`;
+                String(item.opcoes2).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
+                html += `</select></div>`;
+            }
+            area.innerHTML = html;
         }
-
-        // Renderiza Variação 2
-        if (epi.v2_nome && epi.v2_itens && epi.v2_itens.length > 0) {
-            let html = `<label>${epi.v2_nome}</label><select id="epi-var2">`;
-            epi.v2_itens.forEach(v => { html += `<option value="${v}">${v}</option>`; });
-            html += `</select>`;
-            container.innerHTML += html;
-        } else {
-            container.innerHTML += `<input type="hidden" id="epi-var2" value="-">`;
-        }
-        
-        container.innerHTML += `<label>Quantidade</label><input type="number" id="epi-qtd" value="1" min="1" max="10">`;
     }
-        
+
     function addItem() {
         const sel = document.getElementById('select-epi');
-        if (!sel.value) return;
-        
-        const item = sel.value;
-        const var1 = document.getElementById('epi-var1').value;
-        const var2 = document.getElementById('epi-var2').value;
-        const qtd  = document.getElementById('epi-qtd').value;
-        
-        cart.push({ item, var1, var2, qtd });
+        if(!sel.value) return;
+        const val1 = document.getElementById('o1') ? document.getElementById('o1').value : "";
+        const val2 = document.getElementById('o2') ? document.getElementById('o2').value : "";
+        const detStr = `${val1} ${val2}`.trim();
+        cart.push({ n: sel.value, det: detStr, o1: val1, o2: val2 });
+        sel.value = ""; 
+        document.getElementById('epi-dinamico').innerHTML = "";
         renderCart();
-        
-        sel.value = '';
-        document.getElementById('epi-dinamico').innerHTML = '';
     }
-    
-    function removeItem(i) { cart.splice(i, 1); renderCart(); }
-        
+
     function renderCart() {
         const area = document.getElementById('cart-area');
-        const list = document.getElementById('cart-list');
-        list.innerHTML = '';
-        if (cart.length === 0) { area.style.display = 'none'; return; }
-        area.style.display = 'flex';
-        cart.forEach((c, idx) => {
-            list.innerHTML += `
-                <div class="cart-item">
-                    <div style="color:#1E293B">
-                        <b style="color:#1E293B">${c.item}</b><br>
-                        <span style="color:#64748B; font-size:12px;">V1: ${c.var1} | V2: ${c.var2} | Qtd: ${c.qtd}</span>
-                    </div>
-                    <button type="button" onclick="removeItem(${idx})" style="background:none; border:none; color:var(--vli-erro); font-weight:bold; font-size:18px;">×</button>
-                </div>`;
-        });
-    }
-        
-    // AGRAVAMENTO DE SEGURANÇA NA SOLICITAÇÃO (Envia por POST para evitar estouro de URL ou falhas de gravação)
-    async function sendEPI() {
-        showLoad("Gravando pedido...");
-        try {
-            const corpo = { acao: 'solicitarEpi', matricula: user.mat, nome: user.nome, itens: JSON.stringify(cart) };
-            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
-            cart = []; renderCart(); goTo('step-sucesso');
-        } catch (e) { alert("Erro de envio."); } finally { hideLoad(); }
-    }
-        
-    async function sendDesvio() {
-        const local = document.getElementById('d-local').value;
-        const tipo = document.getElementById('d-tempo-tipo').value;
-        const desc = document.getElementById('d-desc').value.trim();
-        if (!desc) { alert("Insira a descrição."); return; }
-        
-        let dataHora = new Date().toLocaleString('pt-BR');
-        if (tipo === 'manual') {
-            const d = document.getElementById('d-data-manual').value;
-            const h = document.getElementById('d-hora-manual').value;
-            if (!d || !h) { alert("Insira data e hora."); return; }
-            dataHora = `${d} ${h}`;
+        if(cart.length) {
+            area.style.setProperty('display', 'flex', 'important');
+        } else {
+            area.style.display = 'none';
         }
-        
-        showLoad("Gravando desvio...");
-        try {
-            const corpo = { acao: 'registrarDesvio', matricula: user.mat, nome: user.nome, local: local, dataHora: dataHora, descricao: desc };
-            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
-            document.getElementById('d-desc').value = '';
-            goTo('step-sucesso');
-        } catch (e) { alert("Erro."); } finally { hideLoad(); }
+        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
+            <div class="cart-item">
+                <div><b style="color:var(--vli-azul); font-size:15px;">${it.n}</b><br><small style="color:#64748B;">${it.det}</small></div>
+                <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;padding:4px;">✕</button>
+            </div>`).join('');
     }
+
+    async function sendEPI() {
+        showLoad("Processando Pedido...");
+        try {
+            for (const it of cart) {
+                await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI"+Date.now()
+                }) });
+            }
+            cart = []; 
+            hideLoad(); goTo('step-sucesso');
+        } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
+    }
+
+    async function sendDesvio() {
+        const desc = document.getElementById('d-desc').value.trim();
+        if(!desc) return alert("Por favor, descreva o desvio.");
+        showLoad("Registrando...");
+        let dF = new Date().toLocaleDateString('pt-BR');
+        let hF = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+        if(document.getElementById('d-tempo-tipo').value === 'manual') {
+            dF = document.getElementById('d-data-manual').value.split('-').reverse().join('/');
+            hF = document.getElementById('d-hora-manual').value;
+        }
+        try {
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
+            }) });
+            document.getElementById('d-desc').value = ""; 
+            hideLoad(); goTo('step-sucesso');
+        } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
+    }
+
+    // NOVA FUNÇÃO: ENVIO DA TROCA DE TURNO
+    async function sendTroca() {
+        const nome2 = document.getElementById('t-nome2').value.trim();
+        const dt1 = document.getElementById('t-dt1').value;
+        const dt2 = document.getElementById('t-dt2').value;
+        const esc1 = document.getElementById('t-esc1').value.trim();
+        const esc2 = document.getElementById('t-esc2').value.trim();
+        const insp1 = document.getElementById('t-insp1').value.trim();
+
+        if(!nome2 || !dt1 || !dt2) return alert("Por favor, preencha o nome do colega e as datas da troca.");
+
+        showLoad("Registrando Troca...");
         
+        let d1F = dt1.split('-').reverse().join('/');
+        let d2F = dt2.split('-').reverse().join('/');
+
+        try {
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "TROCA", 
+                matricula: user.mat,
+                solicitante1: user.nome,
+                solicitante2: nome2,
+                dataTroca: d1F,
+                dataCompensacao: d2F,
+                escala1: esc1,
+                escala2: esc2,
+                inspetor1: insp1
+            }) });
+            
+            // Limpa os campos após o envio
+            document.getElementById('t-nome2').value = "";
+            document.getElementById('t-dt1').value = "";
+            document.getElementById('t-dt2').value = "";
+            document.getElementById('t-esc1').value = "";
+            document.getElementById('t-esc2').value = "";
+            document.getElementById('t-insp1').value = "";
+
+            hideLoad(); 
+            goTo('step-sucesso');
+        } catch(e) { 
+            hideLoad(); 
+            alert("Erro ao registrar a troca de turno."); 
+        }
+    }
+
     function verMeusDesvios() {
         document.getElementById('desvio-form').style.display = 'none';
-        const lista = document.getElementById('desvio-lista');
-        lista.style.display = 'flex';
-        const cont = document.getElementById('container-historico-desvios');
-        cont.innerHTML = '';
-        
-        const filtrados = db.desvios ? db.desvios.filter(d => d.matricula == user.mat) : [];
-        if (filtrados.length === 0) { cont.innerHTML = '<p style="text-align:center; color:#fff; font-size:12px;">Sem registros.</p>'; return; }
-        
-        filtrados.forEach(d => {
-            cont.innerHTML += `<div class="info-box"><b>${d.local}</b> - <small>${d.dataHora}</small><br>${d.descricao}</div>`;
-        });
+        document.getElementById('desvio-lista').style.setProperty('display', 'flex', 'important');
+        const container = document.getElementById('container-historico-desvios');
+        container.innerHTML = "";
+        const meusDesvios = (db.desvios || []).filter(d => String(d.matricula) === String(user.mat));
+        if (meusDesvios.length > 0) {
+            [...meusDesvios].reverse().forEach(d => {
+                container.innerHTML += `<div style="background:#fff; padding:16px; border-radius:var(--radius-md); font-size:13px; box-shadow: var(--shadow-sm); display:flex; flex-direction:column; gap:6px;">
+                    <b style="color:#1E293B;">📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b>
+                    <span style="color:#64748B; line-height:1.4;">${d.descricao}</span>
+                </div>`;
+            });
+        } else { container.innerHTML = "<p style='font-size:13px; color:rgba(255,255,255,0.8); text-align:center; padding: 20px 0;'>Nenhum registro encontrado no seu histórico.</p>"; }
     }
-        
+
     function checkFerias() {
-        goTo('step-ferias');
-        const f = db.ferias ? db.ferias[user.mat] : null;
-        if (f) {
-            document.getElementById('ferias-form-sugestao').style.display = 'none';
+        const reg = db.ferias[user.mat];
+        if (reg) {
             document.getElementById('ferias-view-agendada').style.display = 'block';
-            document.getElementById('detalhe-ferias').innerHTML = `Dias: ${f.dias}<br>Opções: 1ª: ${f.op1} | 2ª: ${f.op2} | 3ª: ${f.op3}`;
+            document.getElementById('ferias-form-sugestao').style.display = 'none';
+            const formatar = (v) => { if (!v) return ""; const p = v.split('T')[0].split('-'); return p.length >= 2 ? p[1] + "/" + p[0] : v; };
+            let h = `<b>Período Solicitado:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
+            if (reg.op2) h += `<br><b>2ª Opção:</b> ${formatar(reg.op2)}`;
+            if (reg.op3) h += `<br><b>3ª Opção:</b> ${formatar(reg.op3)}`;
+            document.getElementById('detalhe-ferias').innerHTML = h;
         } else {
             document.getElementById('ferias-view-agendada').style.display = 'none';
-            document.getElementById('ferias-form-sugestao').style.display = 'flex';
+            document.getElementById('ferias-form-sugestao').style.setProperty('display', 'flex', 'important');
         }
+        goTo('step-ferias');
     }
-        
+
     async function sendFerias() {
-        showLoad("Gravando férias...");
+        const op1 = document.getElementById('f-op1').value;
+        if(!op1) return alert("Selecione obrigatoriamente a 1ª opção de data.");
+        showLoad("Enviando...");
         try {
-            const corpo = {
-                acao: 'sugerirFerias', matricula: user.mat, nome: user.nome,
-                dias: document.getElementById('f-dias').value,
-                op1: document.getElementById('f-op1').value, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
-            };
-            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
-            goTo('step-sucesso');
-        } catch(e){} finally { hideLoad(); }
+            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
+            }) });
+            hideLoad(); goTo('step-sucesso');
+        } catch(e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
 
-    async function sendTroca() {
-        showLoad("Gravando troca...");
-        try { 
-            const corpo = {
-                acao: 'registrarTroca', matricula: user.mat,
-                solicitante1: document.getElementById('t-solicitante1').value,
-                solicitante2: document.getElementById('t-solicitante2').value,
-                dataTroca: document.getElementById('t-data-troca').value,
-                dataCompensacao: document.getElementById('t-data-compensacao').value,
-                escala1: document.getElementById('t-escala1').value,
-                escala2: document.getElementById('t-escala2').value,
-                inspetor1: document.getElementById('t-inspetor1').value,
-                inspetor2: document.getElementById('t-inspetor2').value
-            };
-            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
-            document.getElementById('t-solicitante2').value = '';
-            goTo('step-sucesso'); 
-        } catch(e){} finally { hideLoad(); }
-    }
-
-    function showLoad(t) { document.getElementById('loading-overlay').style.display = 'flex'; document.getElementById('loading-text').innerText = t; }
+    function showLoad(t) { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; }
     function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
     
-    // Execução inicial limpa
-    window.onload = () => {
-        checarUsuarioLocal();
-        initSystem();
-    };
+    function goTo(id) { 
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
+        window.scrollTo(0,0); 
+    }
+    function goToMenu() { goTo('step-menu'); }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('PWA pronto.', reg))
+                .catch(err => console.error('Erro PWA:', err));
+        });
+    }
 </script>
 </body>
 </html>
