@@ -27,8 +27,8 @@
         .container { width: 100%; max-width: 450px; background: var(--vli-azul); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.3); }
         
         .header { padding: 40px 24px 10px; text-align: center; }
-        .logo-box { background: white; padding: 10px 20px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 15px; }
-        .logo { width: 80px; display: block; }
+        .logo-box { background: white; padding: 12px 24px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 15px; }
+        .logo-text { color: var(--vli-azul); font-weight: 800; font-size: 18px; letter-spacing: 1px; }
         
         .user-pill { background: rgba(255, 255, 255, 0.1); margin: 10px 28px 0; padding: 12px; border-radius: var(--radius-md); font-size: 13px; text-align: center; display: none; border: 1px solid rgba(255, 255, 255, 0.2); }
         .content { padding: 20px 28px; flex-grow: 1; display: flex; flex-direction: column; }
@@ -42,7 +42,6 @@
         input, select, textarea { width: 100%; padding: 15px; border: none; border-radius: var(--radius-md); font-size: 15px; background: #fff; color: #1E293B; outline: none; }
         input:disabled { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
         
-        /* SOLUÇÃO DO TEXTO TRANSPARENTE (FUNDO BRANCO / TEXTO ESCURO) */
         select option { 
             color: #1E293B !important; 
             background-color: #FFFFFF !important; 
@@ -70,12 +69,15 @@
 
 <div class="container">
     <div class="header">
-        <div class="logo-box"><img src="https://upload.wikimedia.org/wikipedia/pt/e/e9/Logotipo_VLI.png" class="logo" alt="VLI"></div>
+        <div class="logo-box">
+            <!-- Caso queira usar imagem futuramente, substitua a div abaixo por: <img src="SUA_URL" style="width:80px;"> -->
+            <div class="logo-text">VLI LOGÍSTICA</div>
+        </div>
     </div>
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- INÍCIO -->
+        <!-- TELA INICIAL (FORÇA O BOTÃO ADAPTATIVO CASO DE ERRO) -->
         <div id="step-start" class="step active">
             <button type="button" class="btn btn-orange" onclick="initSystem()">Entrar no Portal VIC</button>
         </div>
@@ -98,7 +100,7 @@
                 <div class="menu-card" onclick="goTo('step-troca')"><span>🔄</span><b>Trocar Turno</b></div>
                 <div class="menu-card" onclick="checkFerias()"><span>📅</span><b>Minhas Férias</b></div>
             </div>
-            <button type="button" class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration:underline;">Sair</button>
+            <button type="button" class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration:underline;">Sair / Trocar Usuário</button>
         </div>
 
         <!-- EPI -->
@@ -107,7 +109,6 @@
             <label>Escolha o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
             
-            <!-- ÁREA DINÂMICA DAS DUPLAS VARIÁVEIS -->
             <div id="epi-dinamico" style="display: flex; flex-direction: column; gap: 15px;"></div>
             
             <button type="button" class="btn btn-orange" style="background:#fff; color:var(--vli-laranja);" onclick="addItem()">+ Adicionar Item</button>
@@ -218,13 +219,13 @@
             <button type="button" class="btn btn-orange" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
     </div>
-    <div class="watermark">Portal VIC v2.0</div>
+    <div class="watermark">Portal VIC v2.1</div>
 </div>
 
 <div id="loading-overlay"><div class="spinner"></div><div id="loading-text" style="margin-top:15px; font-weight:600;">Processando...</div></div>
 
 <script>
-    // COLE SUA NOVA URL DE IMPLANTAÇÃO EXATAMENTE AQUI:
+    // CERTIFIQUE-SE DE MANTER SUA URL EXATA DE IMPLANTAÇÃO DA VERSÃO ATUALIZADA DO SCRIPT AQUI:
     const URL_API = 'https://script.google.com/macros/s/AKfycbzIsW1W6jjHe9B3Z890xytMIf-bbCjtAXeFmUDfpsx9iCyYtA7P0XdHZARFt_sBXIFg/exec'; 
 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
@@ -232,49 +233,85 @@
     let cart = [];
 
     async function initSystem() {
-        showLoad("Carregando Sistema...");
+        showLoad("Buscando dados da Planilha...");
         try {
             const r = await fetch(URL_API);
+            if (!r.ok) throw new Error("Erro na requisição externa");
+            
             const json = await r.json();
             db = json.dados;
             
+            // Popula os Itens de EPI de forma limpa
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
-            db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+            if(db.epis && db.epis.length > 0) {
+                db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+            }
             
+            // FILTRO SEGURO CONTRA CACHE CORROMPIDO (Resgata o 'undefined' físico e mata o processo antigo)
             const savedMat = localStorage.getItem('vic_user_mat');
-            const savedNome = localStorage.getItem('vic_user_nome');
-            if (savedMat && savedNome) {
-                user = { mat: savedMat, nome: savedNome };
+            
+            if (savedMat && db.funcionarios && db.funcionarios[savedMat]) {
+                user.mat = savedMat;
+                user.nome = db.funcionarios[savedMat].nome; // Puxa o nome atualizado e limpo vindo direto da planilha
+                localStorage.setItem('vic_user_nome', user.nome);
                 exibirSaudacao();
                 hideLoad();
                 goTo('step-menu');
-            } else { hideLoad(); goTo('step-login'); }
-        } catch (e) { alert("Erro ao conectar no banco de dados."); hideLoad(); }
+            } else {
+                fazerLogout(); // Limpa as variáveis corrompidas locais e força o login limpo
+                hideLoad();
+                goTo('step-login');
+            }
+        } catch (e) { 
+            console.error(e);
+            alert("Erro crítico de sincronização. O cache local foi resetado por segurança. Tente logar novamente."); 
+            fazerLogout();
+            hideLoad(); 
+            goTo('step-login');
+        }
     }
     
     function exibirSaudacao() {
+        if (!user.nome || user.nome === "undefined") {
+            fazerLogout();
+            return;
+        }
         document.getElementById('user-pill').innerHTML = `👤 <b>${user.nome}</b> (${user.mat})`;
         document.getElementById('user-pill').style.display = 'block';
         if (document.getElementById('t-solicitante1')) document.getElementById('t-solicitante1').value = user.nome;
     }
+    
     function goTo(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
     function goToMenu() { goTo('step-menu'); }
         
     function handleLogin() {
         const mat = document.getElementById('input-mat').value.trim();
-        if (!mat) return;
-        showLoad("Validando...");
-        if (db.funcionarios[mat]) {
-            user.mat = mat; user.nome = db.funcionarios[mat].nome;
+        if (!mat) { alert("Por favor, digite sua matrícula."); return; }
+        
+        showLoad("Verificando Matrícula...");
+        if (db.funcionarios && db.funcionarios[mat]) {
+            user.mat = mat; 
+            user.nome = db.funcionarios[mat].nome;
             localStorage.setItem('vic_user_mat', user.mat);
             localStorage.setItem('vic_user_nome', user.nome);
-            exibirSaudacao(); hideLoad(); goTo('step-menu');
-        } else { hideLoad(); alert("Matrícula inválida."); }
+            exibirSaudacao(); 
+            hideLoad(); 
+            goTo('step-menu');
+        } else { 
+            hideLoad(); 
+            alert("Matrícula não localizada na aba Funcionarios. Verifique o número digitado."); 
+        }
     }
-    function fazerLogout() { localStorage.clear(); goTo('step-login'); document.getElementById('user-pill').style.display='none'; }
+    
+    function fazerLogout() { 
+        localStorage.clear(); 
+        user = { mat: "", nome: "" };
+        document.getElementById('input-mat').value = '';
+        document.getElementById('user-pill').style.display='none'; 
+        goTo('step-login');
+    }
         
-    // MONTAGEM DAS DUPLAS VARIÁVEIS CONFORME A MATRIZ DE EPIS
     function updateEpiFields() {
         const item = document.getElementById('select-epi').value;
         const container = document.getElementById('epi-dinamico');
@@ -284,7 +321,6 @@
         const epi = db.epis.find(e => e.nome === item);
         if (!epi) return;
 
-        // Se houver a Variação 1 preenchida (ex: Tamanho ou Sexo)
         if (epi.v1_nome && epi.v1_itens.length > 0) {
             let html = `<label>${epi.v1_nome}</label><select id="epi-var1">`;
             epi.v1_itens.forEach(v => { html += `<option value="${v}">${v}</option>`; });
@@ -294,7 +330,6 @@
             container.innerHTML += `<input type="hidden" id="epi-var1" value="-">`;
         }
 
-        // Se houver a Variação 2 preenchida (ex: Tamanho na Calça)
         if (epi.v2_nome && epi.v2_itens.length > 0) {
             let html = `<label>${epi.v2_nome}</label><select id="epi-var2">`;
             epi.v2_itens.forEach(v => { html += `<option value="${v}">${v}</option>`; });
@@ -319,10 +354,10 @@
         cart.push({ item, var1, var2, qtd });
         renderCart();
         
-        // Regra do Ledger: Limpa as opções para evitar acúmulo visual
         sel.value = '';
         document.getElementById('epi-dinamico').innerHTML = '';
     }
+    
     function removeItem(i) { cart.splice(i, 1); renderCart(); }
         
     function renderCart() {
