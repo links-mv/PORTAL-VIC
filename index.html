@@ -62,35 +62,15 @@
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-md);
             border-left: 5px solid var(--vli-laranja);
-            animation: fadeIn 0.5s ease;
         }
         .pwa-banner p { color: #1E293B; margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.5; }
         .pwa-banner p span { color: #64748B; font-size: 12px; display: block; font-weight: 400; margin-top: 4px;}
-        .pwa-banner button { width: 100%; padding: 12px; border: none; background: var(--vli-laranja); color: white; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pwa-banner button { width: 100%; padding: 12px; border: none; background: var(--vli-laranja); color: white; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; }
 
-        .header { 
-            padding: 60px 24px 20px; 
-            text-align: center; 
-        }
-        
-        .logo-box { 
-            background: white; 
-            padding: 14px 22px; 
-            border-radius: var(--radius-md); 
-            display: inline-block; 
-            margin-bottom: 24px; 
-            box-shadow: var(--shadow-sm); 
-        }
-        
+        .header { padding: 60px 24px 20px; text-align: center; }
+        .logo-box { background: white; padding: 14px 22px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
         .logo { width: 90px; display: block; }
-        
-        .header-title { 
-            font-weight: 800; 
-            letter-spacing: 1.5px; 
-            font-size: 20px; 
-            text-transform: uppercase; 
-            opacity: 0.95;
-        }
+        .header-title { font-weight: 800; letter-spacing: 1.5px; font-size: 20px; text-transform: uppercase; opacity: 0.95;}
         
         .user-pill { 
             background: rgba(255, 255, 255, 0.1); 
@@ -101,34 +81,16 @@
             text-align: center; 
             display: none; 
             border: 1px solid rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(4px);
         }
         
-        .content { 
-            padding: 32px 28px; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-        
-        .step { 
-            display: none; 
-            width: 100%; 
-        }
-        .step.active { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 20px;
-            animation: fadeIn 0.4s ease-out;
-        }
-        
+        .content { padding: 32px 28px; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+        .step { display: none; width: 100%; }
+        .step.active { display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.4s ease-out; }
         #step-start.active { margin-top: 35px; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
-        
         label { display: block; font-weight: 700; margin: 8px 0 -8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
         
         input, select, textarea { 
@@ -140,29 +102,22 @@
             background: #fff; 
             color: #1E293B; 
             outline: none; 
-            transition: all 0.25s ease; 
         }
-        input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
         input:disabled { background: rgba(255, 255, 255, 0.25); color: #ffffff; cursor: not-allowed; font-weight: 600; }
         
-        .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; }
-        .btn:active { transform: scale(0.98); opacity: 0.95; }
-        
+        .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; justify-content: center; align-items: center; }
+        .btn:active { transform: scale(0.98); }
         .btn-orange { background: var(--vli-laranja); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 10px; }
-        
         .btn-back { background: transparent; color: white; font-size: 12px; border: 1.5px solid rgba(255,255,255,0.3); margin-top: 15px; }
-        .btn-back:hover { background: rgba(255,255,255,0.1); }
         
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .menu-card { background: #fff; border: none; padding: 26px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; transition: all 0.25s ease; box-shadow: var(--shadow-sm); }
-        .menu-card:active { transform: translateY(-2px); background: #f8fafc; }
-        .menu-card span { font-size: 32px; }
+        .menu-card { background: #fff; border: none; padding: 26px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; box-shadow: var(--shadow-sm); }
         .menu-card b { font-weight: 700; font-size: 14px; color: #1E293B; }
+        .menu-card span { font-size: 32px; }
         
         .cart-item { background: #fff; padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); box-shadow: var(--shadow-sm); }
         .info-box { background: #fff; padding: 20px; border-radius: var(--radius-md); color: #1E293B; font-size: 14px; line-height: 1.6; }
-        
-        .watermark { text-align: center; padding: 20px 0 25px; font-size: 10px; font-weight: 600; color: rgba(255, 255, 255, 0.35); text-transform: uppercase; letter-spacing: 1px; pointer-events: none; margin-top: auto; }
+        .watermark { text-align: center; padding: 20px 0 25px; font-size: 10px; font-weight: 600; color: rgba(255, 255, 255, 0.35); text-transform: uppercase; letter-spacing: 1px; margin-top: auto; }
 
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,133,178,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .spinner { border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #fff; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.7s linear infinite; }
@@ -174,32 +129,33 @@
 <div class="container">
     <div id="install-banner" class="pwa-banner">
         <p id="install-text">Instale o Portal VIC no seu celular <span>Acesse rápido e economize dados do seu plano</span></p>
-        <button id="install-button" onclick="triggerPwaInstall()">Baixar Aplicativo</button>
+        <button type="button" id="install-button" onclick="triggerPwaInstall()">Baixar Aplicativo</button>
     </div>
 
     <div class="header">
-        <div class="logo-box">
-            <img src="logo-pwa.png" class="logo" alt="Portal VIC">
-        </div>
+        <div class="logo-box"><img src="logo-pwa.png" class="logo" alt="Portal VIC"></div>
         <div class="header-title">Portal VIC</div>
     </div>
     
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
+        <!-- START -->
         <div id="step-start" class="step active" style="text-align:center;">
-            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500; line-height: 1.5;">Bem-vindo ao Portal VIC.</p>
-            <button class="btn btn-orange" onclick="initSystem()">Acessar Portal</button>
+            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500;">Bem-vindo ao Portal VIC.</p>
+            <button type="button" class="btn btn-orange" onclick="initSystem()">Acessar Portal</button>
         </div>
         
+        <!-- LOGIN -->
         <div id="step-login" class="step">
             <h3>Identificação</h3>
             <p style="text-align: center; color: rgba(255,255,255,0.8); font-size: 14px; margin: -10px 0 10px 0;">Insira sua matrícula para continuar.</p>
             <label>Matrícula</label>
             <input type="tel" id="input-mat" placeholder="Ex: 12345" maxlength="8">
-            <button class="btn btn-orange" onclick="handleLogin()">Entrar no Sistema</button>
+            <button type="button" class="btn btn-orange" onclick="handleLogin()">Entrar no Sistema</button>
         </div>
 
+        <!-- MENU -->
         <div id="step-menu" class="step">
             <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
@@ -209,24 +165,28 @@
                 <div class="menu-card" onclick="goTo('step-troca')"><span>🔄</span><b>Trocar Turno</b></div>
                 <div class="menu-card" onclick="checkFerias()"><span>📅</span><b>Minhas Férias</b></div>
             </div>
-            <button class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 10px;">Sair da Conta</button>
+            <button type="button" class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 10px;">Sair da Conta</button>
         </div>
 
+        <!-- EPI -->
         <div id="step-epi" class="step">
             <h3>Solicitação de EPI</h3>
             <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
+            
             <div id="epi-dinamico" style="display: flex; flex-direction: column; gap: 20px;"></div>
-            <button class="btn btn-orange" style="background: white; color: var(--vli-laranja);" onclick="addItem()">+ Adicionar à Lista</button>
+            
+            <button type="button" class="btn btn-orange" style="background: white; color: var(--vli-laranja);" onclick="addItem()">+ Adicionar à Lista</button>
             
             <div id="cart-area" style="display:none; margin-top:15px; border-top:1.5px solid rgba(255,255,255,0.2); padding-top:20px; display: flex; flex-direction: column; gap: 16px;">
                 <label>Itens Selecionados:</label>
                 <div id="cart-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
                 <button type="button" class="btn btn-orange" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
-            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
+            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- DESVIO -->
         <div id="step-desvio" class="step">
             <h3>Relatar Desvio</h3>
             <div id="desvio-form" style="display: flex; flex-direction: column; gap: 20px;">
@@ -252,18 +212,19 @@
                 <label>Descrição do Evento</label>
                 <textarea id="d-desc" rows="4" placeholder="Descreva os detalhes do que aconteceu..."></textarea>
                 
-                <button class="btn btn-orange" onclick="sendDesvio()">Registrar Desvio</button>
-                <button class="btn btn-back" onclick="verMeusDesvios()">🔍 Ver Meu Histórico</button>
+                <button type="button" class="btn btn-orange" onclick="sendDesvio()">Registrar Desvio</button>
+                <button type="button" class="btn btn-back" onclick="verMeusDesvios()">🔍 Ver Meu Histórico</button>
             </div>
             
             <div id="desvio-lista" style="display:none; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 15px; display: flex; flex-direction: column; gap: 16px;">
-                <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Seu Histórico:</p>
+                <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; margin: 0;">Seu Histórico:</p>
                 <div id="container-historico-desvios" style="display: flex; flex-direction: column; gap: 12px;"></div>
-                <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
+                <button type="button" class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
             </div>
-            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
+            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- TROCA -->
         <div id="step-troca" class="step">
             <h3>Troca de Turno</h3>
             <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -309,17 +270,18 @@
                     <option value="Felipe">Felipe</option>
                 </select>
                 
-                <button class="btn btn-orange" onclick="sendTroca()">Registrar Troca</button>
+                <button type="button" class="btn btn-orange" onclick="sendTroca()">Registrar Troca</button>
             </div>
-            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
+            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- FÉRIAS -->
         <div id="step-ferias" class="step">
             <h3>Minhas Férias 2027</h3>
             <div id="ferias-view-agendada" style="display:none;">
                 <div class="info-box">
                     <b style="color: var(--vli-azul); font-size: 15px;">Sugestão já registrada!</b><br><br>
-                    <div id="detalhe-ferias" style="color: #1E293B;"></div>
+                    <div id="detalhe-ferias"></div>
                     <p style="margin-top:15px; font-size: 12px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate a supervisão.</p>
                 </div>
             </div>
@@ -332,16 +294,17 @@
                 <label>1ª Opção (Mês/Ano)</label><input type="month" id="f-op1">
                 <label>2ª Opção (Mês/Ano)</label><input type="month" id="f-op2">
                 <label>3ª Opção (Mês/Ano)</label><input type="month" id="f-op3">
-                <button class="btn btn-orange" onclick="sendFerias()">Enviar Sugestão</button>
+                <button type="button" class="btn btn-orange" onclick="sendFerias()">Enviar Sugestão</button>
             </div>
-            <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
+            <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
+        <!-- SUCESSO -->
         <div id="step-sucesso" class="step" style="text-align:center; padding-top: 20px;">
             <div style="font-size:60px;">✅</div>
             <h2 style="color: #fff; margin-top: 16px; font-weight: 800;">Registro Concluído!</h2>
-            <p style="color:rgba(255,255,255,0.8); font-size: 15px; max-width: 85%; margin: 10px auto 0; line-height: 1.5;">Seus dados foram processados com sucesso no sistema.</p>
-            <button class="btn btn-orange" style="margin-top: 20px;" onclick="goToMenu()">Retornar ao Menu</button>
+            <p style="color:rgba(255,255,255,0.8); font-size: 15px; max-width: 85%; margin: 10px auto 0; line-height: 1.5;">Seus dados foram processados e gravados com sucesso na Planilha.</p>
+            <button type="button" class="btn btn-orange" style="margin-top: 20px;" onclick="goToMenu()">Retornar ao Menu</button>
         </div>
         
         <div class="watermark">Desenvolvido por M.Custodio</div>
@@ -354,55 +317,12 @@
 </div>
 
 <script>
-    // Endpoint Único Consolidado
+    // DEPOIS DE ATUALIZAR O .GS, COLE A SUA NOVA URL DE IMPLANTAÇÃO AQUI:
     const URL_API = 'https://script.google.com/macros/s/AKfycbzIsW1W6jjHe9B3Z890xytMIf-bbCjtAXeFmUDfpsx9iCyYtA7P0XdHZARFt_sBXIFg/exec'; 
 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
     let cart = [];
-    let deferredPrompt;
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-        const banner = document.getElementById('install-banner');
-        
-        if (!isStandalone) {
-            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            
-            if (isIos) {
-                document.getElementById('install-text').innerHTML = 'Adicione o Portal VIC à tela inicial <span>Toque no botão de Compartilhar <b style="font-size:15px; color:var(--vli-laranja);">⎋</b> do Safari e escolha "Adicionar à Tela de Início"</span>';
-                document.getElementById('install-button').style.display = 'none';
-                banner.style.display = 'block';
-            } else {
-                window.addEventListener('beforeinstallprompt', (e) => {
-                    e.preventDefault();
-                    deferredPrompt = e;
-                    banner.style.display = 'block';
-                });
-
-                setTimeout(() => {
-                    if (!deferredPrompt && banner.style.display !== 'block') {
-                        document.getElementById('install-text').innerHTML = 'Instale o Portal VIC no seu Android <span>Toque nos 3 pontinhos <b style="font-size:16px; color:var(--vli-laranja);">⋮</b> do navegador e selecione "Instalar aplicativo" ou "Adicionar à tela inicial"</span>';
-                        document.getElementById('install-button').style.display = 'none';
-                        banner.style.display = 'block';
-                    }
-                }, 2000);
-            }
-        }
-    });
-
-    function triggerPwaInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('Usuário aceitou a instalação.');
-                }
-                document.getElementById('install-banner').style.display = 'none';
-                deferredPrompt = null;
-            });
-        }
-    }
 
     async function initSystem() {
         showLoad("Sincronizando Dados...");
@@ -411,6 +331,8 @@
             const json = await r.json();
             db = json.dados;
             if (!db.desvios) db.desvios = []; 
+            
+            // Popula o Select de EPIs principal
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
@@ -448,10 +370,7 @@
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         document.getElementById(stepId).classList.add('active');
     }
-        
-    function goToMenu() {
-        goTo('step-menu');
-    }
+    function goToMenu() { goTo('step-menu'); }
         
     function handleLogin() {
         const mat = document.getElementById('input-mat').value.trim();
@@ -483,6 +402,7 @@
         goTo('step-login');
     }
         
+    // LÓGICA CORRIGIDA: ATUALIZAÇÃO DINÂMICA DAS VARIAÇÕES (TAMANHOS/SUBTIPOS)
     function updateEpiFields() {
         const itemSelecionado = document.getElementById('select-epi').value;
         const container = document.getElementById('epi-dinamico');
@@ -490,14 +410,35 @@
         if (!itemSelecionado) return;
         
         const epi = db.epis.find(e => e.nome === itemSelecionado);
-        if (epi && epi.tamanhos && epi.tamanhos.length > 0) {
+        
+        // Verifica se o item possui tamanhos definidos na planilha
+        if (epi && epi.tamanhos && epi.tamanhos.length > 0 && epi.tamanhos[0] !== "") {
             container.innerHTML = `
-                <label>Tamanho</label>
+                <label>Tamanho / Variação</label>
                 <select id="epi-tamanho">
                     ${epi.tamanhos.map(t => `<option value="${t}">${t}</option>`).join('')}
                 </select>
             `;
+        } else {
+            // Se for calça, camisa ou calçado e veio sem tamanho no banco, gera tamanhos padrão estruturados
+            const nomeMinusculo = itemSelecionado.toLowerCase();
+            if (nomeMinusculo.includes("calça") || nomeMinusculo.includes("camisa") || nomeMinusculo.includes("uniforme") || nomeMinusculo.includes("botina") || nomeMinusculo.includes("sapato")) {
+                let tamanhosPadrao = ["P", "M", "G", "GG", "EXG", "38", "40", "42", "44"];
+                if (nomeMinusculo.includes("botina") || nomeMinusculo.includes("sapato")) {
+                    tamanhosPadrao = ["37", "38", "39", "40", "41", "42", "43", "44"];
+                }
+                container.innerHTML = `
+                    <label>Tamanho (Selecione)</label>
+                    <select id="epi-tamanho">
+                        ${tamanhosPadrao.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                `;
+            } else {
+                // Para itens sem variação de tamanho (Ex: Óculos, Protetor Auricular)
+                container.innerHTML = `<input type="hidden" id="epi-tamanho" value="Único">`;
+            }
         }
+        
         container.innerHTML += `
             <label>Quantidade</label>
             <input type="number" id="epi-qtd" value="1" min="1" max="5">
@@ -510,12 +451,13 @@
         if (!item) { alert("Selecione um EPI primeiro."); return; }
         
         const tamSelect = document.getElementById('epi-tamanho');
-        const tamanho = tamSelect ? tamSelect.value : 'N/A';
+        const tamanho = tamSelect ? tamSelect.value : 'Único';
         const qtd = document.getElementById('epi-qtd').value;
         
         cart.push({ item, tamanho, qtd });
         renderCart();
         
+        // Regra do Ledger: Limpa a lista de seleção para ficar pronta para o próximo item
         selectEpi.value = '';
         document.getElementById('epi-dinamico').innerHTML = '';
     }
@@ -540,10 +482,10 @@
             cartList.innerHTML += `
                 <div class="cart-item">
                     <div>
-                        <b>${elem.item}</b><br>
+                        <b style="color:#1E293B">${elem.item}</b><br>
                         <span style="color:#64748B; font-size:12px;">Tam: ${elem.tamanho} | Qtd: ${elem.qtd}</span>
                     </div>
-                    <button onclick="removeItem(${index})" style="background:none; border:none; color:var(--vli-erro); font-weight:bold; cursor:pointer; font-size:16px;">×</button>
+                    <button type="button" onclick="removeItem(${index})" style="background:none; border:none; color:var(--vli-erro); font-weight:bold; font-size:18px;">×</button>
                 </div>
             `;
         });
@@ -563,11 +505,7 @@
             cart = [];
             renderCart();
             goTo('step-sucesso');
-        } catch (e) {
-            alert("Erro ao enviar a solicitação.");
-        } finally {
-            hideLoad();
-        }
+        } catch (e) { alert("Erro ao enviar a solicitação."); } finally { hideLoad(); }
     }
         
     async function sendDesvio() {
@@ -599,11 +537,7 @@
             await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
             document.getElementById('d-desc').value = '';
             goTo('step-sucesso');
-        } catch (e) {
-            alert("Erro ao registrar desvio.");
-        } finally {
-            hideLoad();
-        }
+        } catch (e) { alert("Erro ao registrar desvio."); } finally { hideLoad(); }
     }
         
     function verMeusDesvios() {
@@ -617,7 +551,7 @@
         const meusDesvios = db.desvios ? Object.values(db.desvios).filter(d => d.matricula == user.mat) : [];
         
         if (meusDesvios.length === 0) {
-            container.innerHTML = '<p style="font-size:13px; text-align:center; opacity:0.7; color:#fff;">Nenhum registro encontrado.</p>';
+            container.innerHTML = '<p style="font-size:13px; text-align:center; opacity:0.7;">Nenhum registro encontrado.</p>';
             return;
         }
         
@@ -672,11 +606,7 @@
             
             await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
             goTo('step-sucesso');
-        } catch (e) {
-            alert("Erro ao processar envio.");
-        } finally {
-            hideLoad();
-        }
+        } catch (e) { alert("Erro ao processar envio."); } finally { hideLoad(); }
     }
 
     async function sendTroca() {
@@ -689,10 +619,7 @@
         const insp1   = document.getElementById('t-inspetor1').value;
         const insp2   = document.getElementById('t-inspetor2').value;
 
-        if (!s2 || !dtTroca) { 
-            alert("Por favor, preencha pelo menos o nome do colega e a data da troca."); 
-            return; 
-        }
+        if (!s2 || !dtTroca) { alert("Por favor, preencha pelo menos o nome do colega e a data da troca."); return; }
 
         showLoad("Registrando Troca...");
         try {
@@ -709,10 +636,9 @@
                 inspetor2: insp2
             });
             
-            // Enviando direto para o URL_API principal unificado
             await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
             
-            // Limpa os campos após enviar
+            // Limpa os campos da troca
             document.getElementById('t-solicitante2').value = '';
             document.getElementById('t-data-troca').value = '';
             document.getElementById('t-data-compensacao').value = '';
@@ -722,21 +648,17 @@
             document.getElementById('t-inspetor2').value = '';
             
             goTo('step-sucesso');
-        } catch (e) {
-            alert("Erro ao registrar a troca.");
-        } finally {
-            hideLoad();
-        }
+        } catch (e) { alert("Erro ao registrar a troca."); } finally { hideLoad(); }
     }
 
     function showLoad(text) {
         document.getElementById('loading-overlay').style.display = 'flex';
         document.getElementById('loading-text').innerText = text;
     }
-
-    function hideLoad() {
-        document.getElementById('loading-overlay').style.display = 'none';
-    }
+    function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
+    
+    // Inicia automaticamente o sistema ao abrir a página
+    window.onload = initSystem;
 </script>
 </body>
 </html>
