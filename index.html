@@ -13,7 +13,6 @@
             --vli-verde: #24b34b; 
             --vli-erro: #e13d4b; 
             --radius-md: 14px; 
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         * { 
@@ -26,11 +25,13 @@
         body { background: var(--vli-azul-escuro); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 450px; background: var(--vli-azul); min-height: 100vh; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.3); }
         
+        /* RESTAURAÇÃO COMPLETA DA LOGO PWA */
         .header { padding: 40px 24px 10px; text-align: center; }
-        .logo-box { background: white; padding: 12px 24px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 15px; }
-        .logo-text { color: var(--vli-azul); font-weight: 800; font-size: 18px; letter-spacing: 1px; }
+        .logo-box { background: white; padding: 10px 20px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 15px; }
+        .logo-pwa { width: 90px; height: auto; display: block; }
         
-        .user-pill { background: rgba(255, 255, 255, 0.1); margin: 10px 28px 0; padding: 12px; border-radius: var(--radius-md); font-size: 13px; text-align: center; display: none; border: 1px solid rgba(255, 255, 255, 0.2); }
+        /* SAUDAÇÃO / PILULA DE USUÁRIO */
+        .user-pill { background: rgba(255, 255, 255, 0.15); margin: 10px 28px 0; padding: 14px; border-radius: var(--radius-md); font-size: 14px; text-align: center; display: none; border: 1px solid rgba(255, 255, 255, 0.25); }
         .content { padding: 20px 28px; flex-grow: 1; display: flex; flex-direction: column; }
         
         .step { display: none; width: 100%; }
@@ -42,6 +43,7 @@
         input, select, textarea { width: 100%; padding: 15px; border: none; border-radius: var(--radius-md); font-size: 15px; background: #fff; color: #1E293B; outline: none; }
         input:disabled { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
         
+        /* CORREÇÃO DO TEXTO INVISÍVEL NO MOBILE */
         select option { 
             color: #1E293B !important; 
             background-color: #FFFFFF !important; 
@@ -70,19 +72,17 @@
 <div class="container">
     <div class="header">
         <div class="logo-box">
-            <!-- Caso queira usar imagem futuramente, substitua a div abaixo por: <img src="SUA_URL" style="width:80px;"> -->
-            <div class="logo-text">VLI LOGÍSTICA</div>
+            <img src="https://upload.wikimedia.org/wikipedia/pt/e/e9/Logotipo_VLI.png" class="logo-pwa" alt="Logo VLI">
         </div>
     </div>
+    
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
-        <!-- TELA INICIAL (FORÇA O BOTÃO ADAPTATIVO CASO DE ERRO) -->
         <div id="step-start" class="step active">
             <button type="button" class="btn btn-orange" onclick="initSystem()">Entrar no Portal VIC</button>
         </div>
         
-        <!-- LOGIN -->
         <div id="step-login" class="step">
             <h3>Login</h3>
             <label>Matrícula</label>
@@ -90,7 +90,6 @@
             <button type="button" class="btn btn-orange" onclick="handleLogin()">Acessar</button>
         </div>
 
-        <!-- MENU -->
         <div id="step-menu" class="step">
             <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
@@ -103,7 +102,6 @@
             <button type="button" class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration:underline;">Sair / Trocar Usuário</button>
         </div>
 
-        <!-- EPI -->
         <div id="step-epi" class="step">
             <h3>Pedido de EPI</h3>
             <label>Escolha o Item</label>
@@ -121,7 +119,6 @@
             <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar</button>
         </div>
 
-        <!-- DESVIO -->
         <div id="step-desvio" class="step">
             <h3>Relatar Desvio</h3>
             <div id="desvio-form" style="display: flex; flex-direction: column; gap: 15px;">
@@ -154,12 +151,11 @@
             <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <!-- TROCA -->
         <div id="step-troca" class="step">
             <h3>Troca de Turno</h3>
             <div style="display: flex; flex-direction: column; gap: 15px;">
                 <label>Solicitante 1</label><input type="text" id="t-solicitante1" disabled>
-                <label>Colega (Solicitante 2)</label><input type="text" id="t-solicitante2" placeholder="Nome do Colega">
+                <label>Colega (Solicitante 2)</label><input type="text" id="t-solicitante2" placeholder="Nome Completo do Colega">
                 <label>Data da Troca</label><input type="date" id="t-data-troca">
                 <label>Data da Compensação</label><input type="date" id="t-data-compensacao">
                 <label>Sua Escala</label><input type="text" id="t-escala1" placeholder="Ex: Letra A">
@@ -191,7 +187,6 @@
             <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar</button>
         </div>
 
-        <!-- FÉRIAS -->
         <div id="step-ferias" class="step">
             <h3>Programação de Férias</h3>
             <div id="ferias-view-agendada" style="display:none;">
@@ -211,7 +206,6 @@
             <button type="button" class="btn btn-back" onclick="goToMenu()">Voltar</button>
         </div>
 
-        <!-- SUCESSO -->
         <div id="step-sucesso" class="step" style="text-align:center;">
             <div style="font-size:50px; margin-top:20px;">✅</div>
             <h2>Salvo com Sucesso!</h2>
@@ -219,67 +213,77 @@
             <button type="button" class="btn btn-orange" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
     </div>
-    <div class="watermark">Portal VIC v2.1</div>
+    <div class="watermark">Portal VIC v2.2</div>
 </div>
 
-<div id="loading-overlay"><div class="spinner"></div><div id="loading-text" style="margin-top:15px; font-weight:600;">Processando...</div></div>
+<div id="loading-overlay"><div class="spinner"></div><div id="loading-text" style="margin-top:15px; font-weight:600;">Sincronizando...</div></div>
 
 <script>
-    // CERTIFIQUE-SE DE MANTER SUA URL EXATA DE IMPLANTAÇÃO DA VERSÃO ATUALIZADA DO SCRIPT AQUI:
-    const URL_API = 'https://script.google.com/macros/s/AKfycbzIsW1W6jjHe9B3Z890xytMIf-bbCjtAXeFmUDfpsx9iCyYtA7P0XdHZARFt_sBXIFg/exec'; 
+    // RECOPIE SUA URL ATUALIZADA DO EXECUTÁVEL DO GOOGLE APPS SCRIPT AQUI:
+    const URL_API = 'https://script.google.com/macros/s/AKfycby7q7409A00TNwUpNn3v1SfuOfCKX56V290pztFS4BoFTPl95sUMhVvbE2J_epjKu4/exec'; 
 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
     let cart = [];
 
+    // Carrega o usuário local imediatamente para não perder a saudação em telas lentas
+    function checarUsuarioLocal() {
+        const savedMat = localStorage.getItem('vic_user_mat');
+        const savedNome = localStorage.getItem('vic_user_nome');
+        if (savedMat && savedNome && savedNome !== "undefined") {
+            user.mat = savedMat;
+            user.nome = savedNome;
+            exibirSaudacao();
+            return true;
+        }
+        return false;
+    }
+
     async function initSystem() {
-        showLoad("Buscando dados da Planilha...");
+        showLoad("Buscando dados da nuvem...");
+        
+        // Garante a exibição imediata se já houver login ativo localmente
+        const logado = checarUsuarioLocal();
+
         try {
             const r = await fetch(URL_API);
-            if (!r.ok) throw new Error("Erro na requisição externa");
-            
             const json = await r.json();
             db = json.dados;
             
-            // Popula os Itens de EPI de forma limpa
+            // Popula o select principal de EPIs com os dados brutos recebidos
             const sel = document.getElementById('select-epi');
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
-            if(db.epis && db.epis.length > 0) {
-                db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
+            if (db.epis && db.epis.length > 0) {
+                db.epis.forEach(e => {
+                    sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`;
+                });
             }
             
-            // FILTRO SEGURO CONTRA CACHE CORROMPIDO (Resgata o 'undefined' físico e mata o processo antigo)
-            const savedMat = localStorage.getItem('vic_user_mat');
-            
-            if (savedMat && db.funcionarios && db.funcionarios[savedMat]) {
-                user.mat = savedMat;
-                user.nome = db.funcionarios[savedMat].nome; // Puxa o nome atualizado e limpo vindo direto da planilha
-                localStorage.setItem('vic_user_nome', user.nome);
-                exibirSaudacao();
+            if (logado) {
                 hideLoad();
                 goTo('step-menu');
             } else {
-                fazerLogout(); // Limpa as variáveis corrompidas locais e força o login limpo
                 hideLoad();
                 goTo('step-login');
             }
         } catch (e) { 
             console.error(e);
-            alert("Erro crítico de sincronização. O cache local foi resetado por segurança. Tente logar novamente."); 
-            fazerLogout();
-            hideLoad(); 
-            goTo('step-login');
+            hideLoad();
+            // Se falhar a rede mas estiver logado localmente, deixa o usuário navegar no menu offline
+            if (logado) {
+                goTo('step-menu');
+            } else {
+                goTo('step-login');
+            }
         }
     }
     
     function exibirSaudacao() {
-        if (!user.nome || user.nome === "undefined") {
-            fazerLogout();
-            return;
+        if (user.nome) {
+            document.getElementById('user-pill').innerHTML = `👤 Nome: <b>${user.nome}</b><br><small>Matrícula: ${user.mat}</small>`;
+            document.getElementById('user-pill').style.display = 'block';
+            if (document.getElementById('t-solicitante1')) document.getElementById('t-solicitante1').value = user.nome;
         }
-        document.getElementById('user-pill').innerHTML = `👤 <b>${user.nome}</b> (${user.mat})`;
-        document.getElementById('user-pill').style.display = 'block';
-        if (document.getElementById('t-solicitante1')) document.getElementById('t-solicitante1').value = user.nome;
     }
     
     function goTo(id) { document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -289,18 +293,15 @@
         const mat = document.getElementById('input-mat').value.trim();
         if (!mat) { alert("Por favor, digite sua matrícula."); return; }
         
-        showLoad("Verificando Matrícula...");
         if (db.funcionarios && db.funcionarios[mat]) {
             user.mat = mat; 
-            user.nome = db.funcionarios[mat].nome;
+            user.nome = db.funcionarios[mat].nome; // Captura o nome completo exato da planilha
             localStorage.setItem('vic_user_mat', user.mat);
             localStorage.setItem('vic_user_nome', user.nome);
             exibirSaudacao(); 
-            hideLoad(); 
             goTo('step-menu');
         } else { 
-            hideLoad(); 
-            alert("Matrícula não localizada na aba Funcionarios. Verifique o número digitado."); 
+            alert("Matrícula não localizada na planilha. Tente digitar novamente."); 
         }
     }
     
@@ -316,12 +317,13 @@
         const item = document.getElementById('select-epi').value;
         const container = document.getElementById('epi-dinamico');
         container.innerHTML = '';
-        if (!item) return;
+        if (!item || !db.epis) return;
         
         const epi = db.epis.find(e => e.nome === item);
         if (!epi) return;
 
-        if (epi.v1_nome && epi.v1_itens.length > 0) {
+        // Renderiza Variação 1
+        if (epi.v1_nome && epi.v1_itens && epi.v1_itens.length > 0) {
             let html = `<label>${epi.v1_nome}</label><select id="epi-var1">`;
             epi.v1_itens.forEach(v => { html += `<option value="${v}">${v}</option>`; });
             html += `</select>`;
@@ -330,7 +332,8 @@
             container.innerHTML += `<input type="hidden" id="epi-var1" value="-">`;
         }
 
-        if (epi.v2_nome && epi.v2_itens.length > 0) {
+        // Renderiza Variação 2
+        if (epi.v2_nome && epi.v2_itens && epi.v2_itens.length > 0) {
             let html = `<label>${epi.v2_nome}</label><select id="epi-var2">`;
             epi.v2_itens.forEach(v => { html += `<option value="${v}">${v}</option>`; });
             html += `</select>`;
@@ -378,13 +381,14 @@
         });
     }
         
+    // AGRAVAMENTO DE SEGURANÇA NA SOLICITAÇÃO (Envia por POST para evitar estouro de URL ou falhas de gravação)
     async function sendEPI() {
-        showLoad("Enviando Pedido...");
+        showLoad("Gravando pedido...");
         try {
-            const query = new URLSearchParams({ acao: 'solicitarEpi', matricula: user.mat, nome: user.nome, itens: JSON.stringify(cart) });
-            await fetch(`${URL_API}?${query.toString()}`, { mode: 'no-cors' });
+            const corpo = { acao: 'solicitarEpi', matricula: user.mat, nome: user.nome, itens: JSON.stringify(cart) };
+            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
             cart = []; renderCart(); goTo('step-sucesso');
-        } catch (e) { alert("Falha ao salvar."); } finally { hideLoad(); }
+        } catch (e) { alert("Erro de envio."); } finally { hideLoad(); }
     }
         
     async function sendDesvio() {
@@ -397,14 +401,14 @@
         if (tipo === 'manual') {
             const d = document.getElementById('d-data-manual').value;
             const h = document.getElementById('d-hora-manual').value;
-            if (!d || !h) { alert("Insira data e hora completas."); return; }
+            if (!d || !h) { alert("Insira data e hora."); return; }
             dataHora = `${d} ${h}`;
         }
         
-        showLoad("Salvando Desvio...");
+        showLoad("Gravando desvio...");
         try {
-            const query = new URLSearchParams({ acao: 'registrarDesvio', matricula: user.mat, nome: user.nome, local: local, dataHora: dataHora, descricao: desc });
-            await fetch(`${URL_API}?${query.toString()}`, { mode: 'no-cors' });
+            const corpo = { acao: 'registrarDesvio', matricula: user.mat, nome: user.nome, local: local, dataHora: dataHora, descricao: desc };
+            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
             document.getElementById('d-desc').value = '';
             goTo('step-sucesso');
         } catch (e) { alert("Erro."); } finally { hideLoad(); }
@@ -418,7 +422,7 @@
         cont.innerHTML = '';
         
         const filtrados = db.desvios ? db.desvios.filter(d => d.matricula == user.mat) : [];
-        if (filtrados.length === 0) { cont.innerHTML = '<p style="text-align:center; color:#fff; font-size:12px;">Sem registros anteriores.</p>'; return; }
+        if (filtrados.length === 0) { cont.innerHTML = '<p style="text-align:center; color:#fff; font-size:12px;">Sem registros.</p>'; return; }
         
         filtrados.forEach(d => {
             cont.innerHTML += `<div class="info-box"><b>${d.local}</b> - <small>${d.dataHora}</small><br>${d.descricao}</div>`;
@@ -439,30 +443,33 @@
     }
         
     async function sendFerias() {
-        const query = new URLSearchParams({
-            acao: 'sugerirFerias', matricula: user.mat, nome: user.nome,
-            dias: document.getElementById('f-dias').value,
-            op1: document.getElementById('f-op1').value, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
-        });
-        showLoad("Gravando...");
-        try { await fetch(`${URL_API}?${query.toString()}`, { mode: 'no-cors' }); goTo('step-sucesso'); } catch(e){} finally { hideLoad(); }
+        showLoad("Gravando férias...");
+        try {
+            const corpo = {
+                acao: 'sugerirFerias', matricula: user.mat, nome: user.nome,
+                dias: document.getElementById('f-dias').value,
+                op1: document.getElementById('f-op1').value, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
+            };
+            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
+            goTo('step-sucesso');
+        } catch(e){} finally { hideLoad(); }
     }
 
     async function sendTroca() {
-        const query = new URLSearchParams({
-            acao: 'registrarTroca', matricula: user.mat,
-            solicitante1: document.getElementById('t-solicitante1').value,
-            solicitante2: document.getElementById('t-solicitante2').value,
-            dataTroca: document.getElementById('t-data-troca').value,
-            dataCompensacao: document.getElementById('t-data-compensacao').value,
-            escala1: document.getElementById('t-escala1').value,
-            escala2: document.getElementById('t-escala2').value,
-            inspetor1: document.getElementById('t-inspetor1').value,
-            inspetor2: document.getElementById('t-inspetor2').value
-        });
-        showLoad("Enviando Troca...");
+        showLoad("Gravando troca...");
         try { 
-            await fetch(`${URL_API}?${query.toString()}`, { mode: 'no-cors' }); 
+            const corpo = {
+                acao: 'registrarTroca', matricula: user.mat,
+                solicitante1: document.getElementById('t-solicitante1').value,
+                solicitante2: document.getElementById('t-solicitante2').value,
+                dataTroca: document.getElementById('t-data-troca').value,
+                dataCompensacao: document.getElementById('t-data-compensacao').value,
+                escala1: document.getElementById('t-escala1').value,
+                escala2: document.getElementById('t-escala2').value,
+                inspetor1: document.getElementById('t-inspetor1').value,
+                inspetor2: document.getElementById('t-inspetor2').value
+            };
+            await fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), mode: 'no-cors' });
             document.getElementById('t-solicitante2').value = '';
             goTo('step-sucesso'); 
         } catch(e){} finally { hideLoad(); }
@@ -470,7 +477,12 @@
 
     function showLoad(t) { document.getElementById('loading-overlay').style.display = 'flex'; document.getElementById('loading-text').innerText = t; }
     function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
-    window.onload = initSystem;
+    
+    // Execução inicial limpa
+    window.onload = () => {
+        checarUsuarioLocal();
+        initSystem();
+    };
 </script>
 </body>
 </html>
