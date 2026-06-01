@@ -129,7 +129,8 @@
         
         h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
         
-        label { display: block; font-weight: 700; margin: 8px 0 -8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
+        /* FIX: A margem inferior estava negativa (-8px), o que fazia os inputs "engolirem" o texto do label. Corrigido para 8px. */
+        label { display: block; font-weight: 700; margin: 0 0 8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
         
         input, select, textarea { 
             width: 100%; 
@@ -203,7 +204,9 @@
             <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
                 <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span><b>Relatar Desvio</b></div>
-                <div class="menu-card" onclick="goTo('step-troca')"><span>🔄</span><b>Trocar Turno</b></div>
+                <div class="menu-card" onclick="goTo('step-troca')" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
+                    <span>🔄</span><b>Trocar Turno</b>
+                </div>
             </div>
             <div class="menu-grid" style="margin-top: 16px;">
                 <div class="menu-card" onclick="checkFerias()" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
@@ -265,7 +268,6 @@
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
-        <!-- NOVA TELA: TROCA DE TURNO -->
         <div id="step-troca" class="step">
             <h3>Troca de Turno</h3>
             <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -294,11 +296,23 @@
                 <div style="display:flex; gap:12px;">
                     <div style="flex:1;">
                         <label>Sua Escala</label>
-                        <input type="text" id="t-esc1" placeholder="Ex: A" maxlength="2">
+                        <select id="t-esc1">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="ADM">ADM</option>
+                        </select>
                     </div>
                     <div style="flex:1;">
                         <label>Escala Dele</label>
-                        <input type="text" id="t-esc2" placeholder="Ex: B" maxlength="2">
+                        <select id="t-esc2">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="ADM">ADM</option>
+                        </select>
                     </div>
                 </div>
 
@@ -411,7 +425,6 @@
             sel.innerHTML = '<option value="">Selecione o EPI...</option>';
             db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
             
-            // Verifica se o usuário já tem um login salvo no localStorage
             const savedMat = localStorage.getItem('vic_user_mat');
             const savedNome = localStorage.getItem('vic_user_nome');
             
@@ -427,20 +440,17 @@
         } catch (e) { alert("Erro de conexão com o servidor corporativo."); hideLoad(); }
     }
     
-    // Função separada para lidar com a saudação de forma limpa
     function exibirSaudacao() {
         const hr = new Date().getHours();
         let saudacao = "Boa noite";
         if (hr >= 5 && hr < 12) saudacao = "Bom dia";
         else if (hr >= 12 && hr < 18) saudacao = "Boa tarde";
         
-        // Separa o nome completo pelos espaços e pega apenas a primeira parte
         const primeiroNome = user.nome.split(' ')[0];
         
         document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
         document.getElementById('user-pill').style.display = "block";
         
-        // Atualiza o nome na tela de troca
         if(document.getElementById('t-nome1')) {
             document.getElementById('t-nome1').innerText = user.nome;
         }
@@ -452,7 +462,6 @@
         if (func) {
             user = { mat: m, nome: func };
             
-            // Salva as credenciais no armazenamento do navegador
             localStorage.setItem('vic_user_mat', user.mat);
             localStorage.setItem('vic_user_nome', user.nome);
             
@@ -461,7 +470,6 @@
         } else { alert("Matrícula não localizada na base de dados."); }
     }
     
-    // Função para limpar o acesso do usuário
     function fazerLogout() {
         localStorage.removeItem('vic_user_mat');
         localStorage.removeItem('vic_user_nome');
@@ -543,7 +551,6 @@
         } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
     }
 
-    // NOVA FUNÇÃO: ENVIO DA TROCA DE TURNO
     async function sendTroca() {
         const nome2 = document.getElementById('t-nome2').value.trim();
         const dt1 = document.getElementById('t-dt1').value;
@@ -572,7 +579,6 @@
                 inspetor1: insp1
             }) });
             
-            // Limpa os campos após o envio
             document.getElementById('t-nome2').value = "";
             document.getElementById('t-dt1').value = "";
             document.getElementById('t-dt2').value = "";
