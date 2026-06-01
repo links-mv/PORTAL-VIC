@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal VIC | VLI</title>
+    <title>Portal VIC</title>
     
     <meta name="theme-color" content="#0085B2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- Ícones do PWA atualizados para logo-pwa.png -->
     <link rel="icon" type="image/png" sizes="192x192" href="logo-pwa.png">
     <link rel="apple-touch-icon" sizes="192x192" href="logo-pwa.png">
     <link rel="manifest" href="./manifest.json">
@@ -180,7 +179,6 @@
 
     <div class="header">
         <div class="logo-box">
-            <!-- Logo atualizada para logo-pwa.png -->
             <img src="logo-pwa.png" class="logo" alt="Portal VIC">
         </div>
         <div class="header-title">Portal VIC</div>
@@ -190,7 +188,7 @@
 
     <div class="content">
         <div id="step-start" class="step active" style="text-align:center;">
-            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500; line-height: 1.5;">Bem-vindo ao Portal VLI - VIC.</p>
+            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500; line-height: 1.5;">Bem-vindo ao Portal VIC.</p>
             <button class="btn btn-orange" onclick="initSystem()">Acessar Portal</button>
         </div>
         
@@ -356,8 +354,8 @@
 </div>
 
 <script>
-    const URL_API = 'https://script.google.com/macros/s/AKfycbytO_ANLIQSrhGDAJGQRUZD_-XjHHgp_yZZn8fyN-kvWj_SwT0QG_gcgqmdx9mqZx3OSw/exec'; 
-    const URL_API_TROCA = 'https://script.google.com/macros/s/AKfycbwHELPCLRERWnSvS3XTKwiVfYqlY8ho8nIEcQzeL0DOlR547dVFEvViPNCrgzDjm-5DQA/exec';
+    // Endpoint Único Consolidado
+    const URL_API = 'https://script.google.com/macros/s/AKfycbzIsW1W6jjHe9B3Z890xytMIf-bbCjtAXeFmUDfpsx9iCyYtA7P0XdHZARFt_sBXIFg/exec'; 
 
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
@@ -518,9 +516,13 @@
         cart.push({ item, tamanho, qtd });
         renderCart();
         
-        // Mantendo o select e os campos limpos após adicionar para evitar erros
         selectEpi.value = '';
         document.getElementById('epi-dinamico').innerHTML = '';
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        renderCart();
     }
         
     function renderCart() {
@@ -579,7 +581,6 @@
         if (tempoTipo === 'manual') {
             const data = document.getElementById('d-data-manual').value;
             const hora = document.getElementById('d-hora-manual').value;
-            // Validação de hora E data
             if (!data || !hora) { alert("Preencha a data e a hora da ocorrência."); return; }
             dataHora = `${data} às ${hora}`;
         }
@@ -696,6 +697,8 @@
         showLoad("Registrando Troca...");
         try {
             const queryParams = new URLSearchParams({
+                acao: 'registrarTroca',
+                matricula: user.mat,
                 solicitante1: s1,
                 solicitante2: s2,
                 dataTroca: dtTroca,
@@ -705,13 +708,11 @@
                 inspetor1: insp1,
                 inspetor2: insp2
             });
-
-            // Usando no-cors para não travar por bloqueio de cabeçalho igual nas outras funções
-            await fetch(`${URL_API_TROCA}?${queryParams.toString()}`, { mode: 'no-cors' });
             
-            goTo('step-sucesso');
-
-            // Limpa o formulário após a gravação
+            // Enviando direto para o URL_API principal unificado
+            await fetch(`${URL_API}?${queryParams.toString()}`, { mode: 'no-cors' });
+            
+            // Limpa os campos após enviar
             document.getElementById('t-solicitante2').value = '';
             document.getElementById('t-data-troca').value = '';
             document.getElementById('t-data-compensacao').value = '';
@@ -719,18 +720,18 @@
             document.getElementById('t-escala2').value = '';
             document.getElementById('t-inspetor1').value = '';
             document.getElementById('t-inspetor2').value = '';
-
-        } catch (erro) {
-            console.error("Erro na requisição:", erro);
-            alert("Erro ao processar a troca de turno no servidor.");
+            
+            goTo('step-sucesso');
+        } catch (e) {
+            alert("Erro ao registrar a troca.");
         } finally {
             hideLoad();
         }
     }
 
     function showLoad(text) {
-        document.getElementById('loading-text').innerText = text;
         document.getElementById('loading-overlay').style.display = 'flex';
+        document.getElementById('loading-text').innerText = text;
     }
 
     function hideLoad() {
