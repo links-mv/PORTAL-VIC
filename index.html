@@ -129,7 +129,6 @@
         
         h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
         
-        /* FIX: A margem inferior estava negativa (-8px), o que fazia os inputs "engolirem" o texto do label. Corrigido para 8px. */
         label { display: block; font-weight: 700; margin: 0 0 8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
         
         input, select, textarea { 
@@ -204,16 +203,10 @@
             <div class="menu-grid">
                 <div class="menu-card" onclick="goTo('step-epi')"><span>📦</span><b>Solicitar EPI</b></div>
                 <div class="menu-card" onclick="goTo('step-desvio')"><span>⚠️</span><b>Relatar Desvio</b></div>
-                <div class="menu-card" onclick="goTo('step-troca')" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
-                    <span>🔄</span><b>Trocar Turno</b>
-                </div>
+                <div class="menu-card" onclick="goTo('step-troca')"><span>🔄</span><b>Trocar Turno</b></div>
+                <div class="menu-card" onclick="checkFerias()"><span>📅</span><b>Minhas Férias</b></div>
             </div>
-            <div class="menu-grid" style="margin-top: 16px;">
-                <div class="menu-card" onclick="checkFerias()" style="grid-column: span 2; flex-direction: row; justify-content: center; padding: 22px; gap: 16px;">
-                    <span>📅</span><b>Minhas Férias 2027</b>
-                </div>
-            </div>
-            <button class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 10px;">Sair da Conta</button>
+            <button class="btn btn-back" onclick="fazerLogout()" style="border:none; text-decoration: underline; font-weight:700; margin-top: 20px;">Sair da Conta</button>
         </div>
 
         <div id="step-epi" class="step">
@@ -273,27 +266,16 @@
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 
                 <div class="info-box" style="padding: 12px 20px;">
-                    <b style="color: var(--vli-azul); font-size: 13px;">Seu Nome (Solicitante 1):</b><br>
-                    <span id="t-nome1" style="color: #1E293B; font-weight: 600;"></span>
-                </div>
-                
-                <div>
-                    <label>Nome do Colega </label>
-                    <input type="text" id="t-nome2" placeholder="Com quem vai trocar?">
+                    <b style="color: var(--vli-azul); font-size: 13px;">Seus Dados (Solicitante):</b><br>
+                    <span id="t-nome1" style="color: #1E293B; font-weight: 600;"></span><br>
+                    <span id="t-mat1" style="color: #64748B; font-size: 13px; font-weight: 600;"></span>
                 </div>
                 
                 <div style="display:flex; gap:10px;">
                     <div style="flex:1;">
-                        <label>Data da Troca</label>
+                        <label>Data da Sua Saída</label>
                         <input type="date" id="t-dt1">
                     </div>
-                    <div style="flex:1;">
-                        <label>Compensação</label>
-                        <input type="date" id="t-dt2">
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:12px;">
                     <div style="flex:1;">
                         <label>Sua Escala</label>
                         <select id="t-esc1">
@@ -302,6 +284,41 @@
                             <option value="C">C</option>
                             <option value="D">D</option>
                         </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>Horário (De)</label>
+                        <input type="time" id="t-hr-ini1">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Horário (Até)</label>
+                        <input type="time" id="t-hr-fim1">
+                    </div>
+                </div>
+
+                <div>
+                    <label>Seu Inspetor</label>
+                    <input type="text" id="t-insp1" placeholder="Nome do seu inspetor">
+                </div>
+
+                <hr style="border: 0; border-top: 1.5px solid rgba(255,255,255,0.2); margin: 5px 0;">
+
+                <div>
+                    <label>Nome do Colega (Cobertura)</label>
+                    <input type="text" id="t-nome2" placeholder="Com whom vai trocar?">
+                </div>
+                
+                <div>
+                    <label>Matrícula do Colega</label>
+                    <input type="tel" id="t-mat2" placeholder="Ex: 12345" maxlength="8">
+                </div>
+                
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>Data da Cobertura</label>
+                        <input type="date" id="t-dt2">
                     </div>
                     <div style="flex:1;">
                         <label>Escala Dele</label>
@@ -314,18 +331,46 @@
                     </div>
                 </div>
 
-                <div>
-                    <label>Inspetor Responsável</label>
-                    <input type="text" id="t-insp1" placeholder="Nome do Inspetor">
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>Horário (De)</label>
+                        <input type="time" id="t-hr-ini2">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Horário (Até)</label>
+                        <input type="time" id="t-hr-fim2">
+                    </div>
                 </div>
 
-                <button class="btn btn-orange" onclick="sendTroca()">Registrar Troca</button>
+                <div>
+                    <label>Inspetor do Colega</label>
+                    <input type="text" id="t-insp2" placeholder="Nome do inspetor dele">
+                </div>
+
+                <hr style="border: 0; border-top: 1.5px solid rgba(255,255,255,0.2); margin: 5px 0;">
+
+                <div>
+                    <label>Supervisor</label>
+                    <input type="text" id="t-sup" placeholder="Nome do supervisor">
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: var(--radius-md); border-left: 4px solid var(--vli-laranja); margin-top: 10px;">
+                    <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.6;">
+                        <b style="color: #fff; font-size: 13px;">Estou ciente que:</b><br>
+                        • A solicitação só será considerada aprovada após a assinatura do Supervisor<br>
+                        • A solicitação deverá ser feita com antecedência mínima de 15 dias<br>
+                        • A troca deverá ser realizada dentro do mesmo mês<br>
+                        • Limite máximo de 02 (duas) trocas por mês
+                    </p>
+                </div>
+
+                <button class="btn btn-orange" onclick="sendTroca()">Registrar Solicitação</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-ferias" class="step">
-            <h3>Minhas Férias 2027</h3>
+            <h3>Minhas Férias</h3>
             <div id="ferias-view-agendada" style="display:none;">
                 <div class="info-box">
                     <b style="color: var(--vli-azul); font-size: 15px;">Sugestão já registrada!</b><br><br>
@@ -451,6 +496,7 @@
         
         if(document.getElementById('t-nome1')) {
             document.getElementById('t-nome1').innerText = user.nome;
+            document.getElementById('t-mat1').innerText = "Matrícula: " + user.mat;
         }
     }
 
@@ -474,6 +520,7 @@
         location.reload();
     }
 
+    style="margin-top:16px;"
     function updateEpiFields() {
         const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
         const area = document.getElementById('epi-dinamico');
@@ -551,13 +598,25 @@
 
     async function sendTroca() {
         const nome2 = document.getElementById('t-nome2').value.trim();
+        const mat2 = document.getElementById('t-mat2').value.trim();
+        
         const dt1 = document.getElementById('t-dt1').value;
-        const dt2 = document.getElementById('t-dt2').value;
-        const esc1 = document.getElementById('t-esc1').value.trim();
-        const esc2 = document.getElementById('t-esc2').value.trim();
+        const hrIni1 = document.getElementById('t-hr-ini1').value;
+        const hrFim1 = document.getElementById('t-hr-fim1').value;
+        const esc1 = document.getElementById('t-esc1').value;
         const insp1 = document.getElementById('t-insp1').value.trim();
 
-        if(!nome2 || !dt1 || !dt2) return alert("Por favor, preencha o nome do colega e as datas da troca.");
+        const dt2 = document.getElementById('t-dt2').value;
+        const hrIni2 = document.getElementById('t-hr-ini2').value;
+        const hrFim2 = document.getElementById('t-hr-fim2').value;
+        const esc2 = document.getElementById('t-esc2').value;
+        const insp2 = document.getElementById('t-insp2').value.trim();
+        
+        const sup = document.getElementById('t-sup').value.trim();
+
+        if(!nome2 || !mat2 || !dt1 || !hrIni1 || !hrFim1 || !dt2 || !hrIni2 || !hrFim2) {
+            return alert("Por favor, preencha todas as datas, horários e as matrículas.");
+        }
 
         showLoad("Registrando Troca...");
         
@@ -569,20 +628,30 @@
                 tipo: "TROCA", 
                 matricula: user.mat,
                 solicitante1: user.nome,
+                matricula2: mat2,
                 solicitante2: nome2,
                 dataTroca: d1F,
-                dataCompensacao: d2F,
+                horario1: `${hrIni1} às ${hrFim1}`,
                 escala1: esc1,
+                inspetor1: insp1,
+                dataCompensacao: d2F,
+                horario2: `${hrIni2} às ${hrFim2}`,
                 escala2: esc2,
-                inspetor1: insp1
+                inspetor2: insp2,
+                supervisor: sup
             }) });
             
             document.getElementById('t-nome2').value = "";
+            document.getElementById('t-mat2').value = "";
             document.getElementById('t-dt1').value = "";
+            document.getElementById('t-hr-ini1').value = "";
+            document.getElementById('t-hr-fim1').value = "";
             document.getElementById('t-dt2').value = "";
-            document.getElementById('t-esc1').value = "";
-            document.getElementById('t-esc2').value = "";
+            document.getElementById('t-hr-ini2').value = "";
+            document.getElementById('t-hr-fim2').value = "";
             document.getElementById('t-insp1').value = "";
+            document.getElementById('t-insp2').value = "";
+            document.getElementById('t-sup').value = "";
 
             hideLoad(); 
             goTo('step-sucesso');
