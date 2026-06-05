@@ -287,27 +287,30 @@
                     </div>
                 </div>
 
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1;">
-                        <label>Horário (De)</label>
-                        <input type="time" id="t-hr-ini1">
-                    </div>
-                    <div style="flex:1;">
-                        <label>Horário (Até)</label>
-                        <input type="time" id="t-hr-fim1">
-                    </div>
+                <div>
+                    <label>Horário</label>
+                    <select id="t-hr1">
+                        <option value="06 às 18">06 às 18</option>
+                        <option value="18 às 06">18 às 06</option>
+                    </select>
                 </div>
 
                 <div>
                     <label>Seu Inspetor</label>
-                    <input type="text" id="t-insp1" placeholder="Nome do seu inspetor">
+                    <select id="t-insp1">
+                        <option value="Herques">Herques</option>
+                        <option value="Cátia">Cátia</option>
+                        <option value="Gilberto">Gilberto</option>
+                        <option value="Yuri">Yuri</option>
+                        <option value="Rafael Ramos">Rafael Ramos</option>
+                    </select>
                 </div>
 
                 <hr style="border: 0; border-top: 1.5px solid rgba(255,255,255,0.2); margin: 5px 0;">
 
                 <div>
                     <label>Nome do Colega (Cobertura)</label>
-                    <input type="text" id="t-nome2" placeholder="Com whom vai trocar?">
+                    <input type="text" id="t-nome2" placeholder="Com quem vai trocar?">
                 </div>
                 
                 <div>
@@ -331,28 +334,26 @@
                     </div>
                 </div>
 
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1;">
-                        <label>Horário (De)</label>
-                        <input type="time" id="t-hr-ini2">
-                    </div>
-                    <div style="flex:1;">
-                        <label>Horário (Até)</label>
-                        <input type="time" id="t-hr-fim2">
-                    </div>
+                <div>
+                    <label>Horário</label>
+                    <select id="t-hr2">
+                        <option value="06 às 18">06 às 18</option>
+                        <option value="18 às 06">18 às 06</option>
+                    </select>
                 </div>
 
                 <div>
                     <label>Inspetor do Colega</label>
-                    <input type="text" id="t-insp2" placeholder="Nome do inspetor dele">
+                    <select id="t-insp2">
+                        <option value="Herques">Herques</option>
+                        <option value="Cátia">Cátia</option>
+                        <option value="Gilberto">Gilberto</option>
+                        <option value="Yuri">Yuri</option>
+                        <option value="Rafael Ramos">Rafael Ramos</option>
+                    </select>
                 </div>
 
                 <hr style="border: 0; border-top: 1.5px solid rgba(255,255,255,0.2); margin: 5px 0;">
-
-                <div>
-                    <label>Supervisor</label>
-                    <input type="text" id="t-sup" placeholder="Nome do supervisor">
-                </div>
 
                 <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: var(--radius-md); border-left: 4px solid var(--vli-laranja); margin-top: 10px;">
                     <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.6;">
@@ -601,21 +602,17 @@
         const mat2 = document.getElementById('t-mat2').value.trim();
         
         const dt1 = document.getElementById('t-dt1').value;
-        const hrIni1 = document.getElementById('t-hr-ini1').value;
-        const hrFim1 = document.getElementById('t-hr-fim1').value;
+        const hr1 = document.getElementById('t-hr1').value;
         const esc1 = document.getElementById('t-esc1').value;
-        const insp1 = document.getElementById('t-insp1').value.trim();
+        const insp1 = document.getElementById('t-insp1').value;
 
         const dt2 = document.getElementById('t-dt2').value;
-        const hrIni2 = document.getElementById('t-hr-ini2').value;
-        const hrFim2 = document.getElementById('t-hr-fim2').value;
+        const hr2 = document.getElementById('t-hr2').value;
         const esc2 = document.getElementById('t-esc2').value;
-        const insp2 = document.getElementById('t-insp2').value.trim();
-        
-        const sup = document.getElementById('t-sup').value.trim();
+        const insp2 = document.getElementById('t-insp2').value;
 
-        if(!nome2 || !mat2 || !dt1 || !hrIni1 || !hrFim1 || !dt2 || !hrIni2 || !hrFim2) {
-            return alert("Por favor, preencha todas as datas, horários e as matrículas.");
+        if(!nome2 || !mat2 || !dt1 || !dt2) {
+            return alert("Por favor, preencha todas as datas e as matrículas.");
         }
 
         showLoad("Registrando Troca...");
@@ -631,27 +628,24 @@
                 matricula2: mat2,
                 solicitante2: nome2,
                 dataTroca: d1F,
-                horario1: `${hrIni1} às ${hrFim1}`,
+                horario1: hr1,
                 escala1: esc1,
                 inspetor1: insp1,
                 dataCompensacao: d2F,
-                horario2: `${hrIni2} às ${hrFim2}`,
+                horario2: hr2,
                 escala2: esc2,
                 inspetor2: insp2,
-                supervisor: sup
+                supervisor: "" 
             }) });
             
             document.getElementById('t-nome2').value = "";
             document.getElementById('t-mat2').value = "";
             document.getElementById('t-dt1').value = "";
-            document.getElementById('t-hr-ini1').value = "";
-            document.getElementById('t-hr-fim1').value = "";
+            document.getElementById('t-hr1').value = "06 às 18";
             document.getElementById('t-dt2').value = "";
-            document.getElementById('t-hr-ini2').value = "";
-            document.getElementById('t-hr-fim2').value = "";
-            document.getElementById('t-insp1').value = "";
-            document.getElementById('t-insp2').value = "";
-            document.getElementById('t-sup').value = "";
+            document.getElementById('t-hr2').value = "06 às 18";
+            document.getElementById('t-insp1').value = "Herques";
+            document.getElementById('t-insp2').value = "Herques";
 
             hideLoad(); 
             goTo('step-sucesso');
