@@ -172,8 +172,8 @@
                     <option value="manual">Selecionar Horário</option>
                 </select>
                 <div id="div-manual" style="display:none; gap:12px;">
-                    <input type="date" id="d-data-manual">
-                    <input type="time" id="d-hora-manual">
+                    <input type="date" id="d-data-manual" style="flex: 1; min-width: 0; padding: 16px 8px;">
+                    <input type="time" id="d-hora-manual" style="flex: 1; min-width: 0; padding: 16px 8px;">
                 </div>
                 
                 <label>Descrição do Evento</label>
@@ -202,13 +202,13 @@
                 </div>
                 
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1;">
+                    <div style="flex:1; min-width: 0;">
                         <label>Data da Sua Saída</label>
-                        <input type="date" id="t-dt1">
+                        <input type="date" id="t-dt1" style="padding: 16px 8px;">
                     </div>
-                    <div style="flex:1;">
+                    <div style="flex:1; min-width: 0;">
                         <label>Sua Escala</label>
-                        <select id="t-esc1">
+                        <select id="t-esc1" style="padding: 16px 8px;">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -249,13 +249,13 @@
                 </div>
                 
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1;">
+                    <div style="flex:1; min-width: 0;">
                         <label>Data da Cobertura</label>
-                        <input type="date" id="t-dt2">
+                        <input type="date" id="t-dt2" style="padding: 16px 8px;">
                     </div>
-                    <div style="flex:1;">
+                    <div style="flex:1; min-width: 0;">
                         <label>Escala Dele</label>
-                        <select id="t-esc2">
+                        <select id="t-esc2" style="padding: 16px 8px;">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -374,7 +374,6 @@
             }
         }
 
-        // NOVO: Verifica se o usuário já tem login salvo e inicia o sistema automaticamente
         const savedMat = localStorage.getItem('vic_user_mat');
         const savedNome = localStorage.getItem('vic_user_nome');
         
@@ -459,7 +458,6 @@
         location.reload();
     }
 
-    style="margin-top:16px;"
     function updateEpiFields() {
         const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
         const area = document.getElementById('epi-dinamico');
