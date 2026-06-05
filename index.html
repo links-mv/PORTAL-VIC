@@ -443,6 +443,14 @@
                 }, 2000);
             }
         }
+
+        // NOVO: Verifica se o usuário já tem login salvo e inicia o sistema automaticamente
+        const savedMat = localStorage.getItem('vic_user_mat');
+        const savedNome = localStorage.getItem('vic_user_nome');
+        
+        if (savedMat && savedNome) {
+            initSystem();
+        }
     });
 
     function triggerPwaInstall() {
