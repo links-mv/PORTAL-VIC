@@ -70,7 +70,6 @@
         .step { display: none; width: 100%; }
         .step.active { display: flex; flex-direction: column; gap: 15px; animation: fadeIn 0.4s ease-out; }
         
-        /* CORREÇÃO AQUI: Forçando espaçamento entre elementos internos */
         .step.active > div { margin-bottom: 5px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,8 +77,41 @@
         h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
         label { display: block; font-weight: 700; margin: 0 0 8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
         
-        input, select, textarea { width: 100%; padding: 16px; border: none; border-radius: var(--radius-md); font-size: 15px; background: #fff; color: #1E293B; outline: none; transition: all 0.25s ease; }
+        /* CORREÇÃO DO BUG DO IOS: min-width: 0 e box-sizing garantem que o WebKit obedeça a grid */
+        input, select, textarea { 
+            width: 100%; 
+            min-width: 0; 
+            box-sizing: border-box;
+            padding: 16px; 
+            border: none; 
+            border-radius: var(--radius-md); 
+            font-size: 15px; 
+            background: #fff; 
+            color: #1E293B; 
+            outline: none; 
+            transition: all 0.25s ease; 
+        }
         input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
+
+        /* Ajuste fino para os seletores de data/hora no iOS não vazarem */
+        input[type="date"], input[type="time"] {
+            font-size: 14px;
+            padding: 16px 10px;
+            -webkit-appearance: none;
+        }
+
+        /* Container CSS Grid imune ao bug de sobreposição de colunas no Safari Mobile */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
+        .grid-2col > div {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
         
         .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; margin-top: 10px; }
         .btn:active { transform: scale(0.98); opacity: 0.95; }
@@ -167,13 +199,20 @@
                 </select>
                 
                 <label>Quando ocorreu?</label>
-                <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'flex':'none')">
+                <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'grid':'none')">
                     <option value="agora">Agora</option>
                     <option value="manual">Selecionar Horário</option>
                 </select>
-                <div id="div-manual" style="display:none; gap:12px;">
-                    <input type="date" id="d-data-manual" style="flex: 1; min-width: 0; padding: 16px 8px;">
-                    <input type="time" id="d-hora-manual" style="flex: 1; min-width: 0; padding: 16px 8px;">
+                
+                <div id="div-manual" class="grid-2col" style="display:none;">
+                    <div>
+                        <label>Data</label>
+                        <input type="date" id="d-data-manual">
+                    </div>
+                    <div>
+                        <label>Hora</label>
+                        <input type="time" id="d-hora-manual">
+                    </div>
                 </div>
                 
                 <label>Descrição do Evento</label>
@@ -201,14 +240,14 @@
                     <span id="t-mat1" style="color: #64748B; font-size: 13px; font-weight: 600;"></span>
                 </div>
                 
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1; min-width: 0;">
+                <div class="grid-2col">
+                    <div>
                         <label>Data da Sua Saída</label>
-                        <input type="date" id="t-dt1" style="padding: 16px 8px;">
+                        <input type="date" id="t-dt1">
                     </div>
-                    <div style="flex:1; min-width: 0;">
+                    <div>
                         <label>Sua Escala</label>
-                        <select id="t-esc1" style="padding: 16px 8px;">
+                        <select id="t-esc1">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
@@ -248,14 +287,14 @@
                     <input type="tel" id="t-mat2" placeholder="Ex: 12345" maxlength="8">
                 </div>
                 
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:1; min-width: 0;">
+                <div class="grid-2col">
+                    <div>
                         <label>Data da Cobertura</label>
-                        <input type="date" id="t-dt2" style="padding: 16px 8px;">
+                        <input type="date" id="t-dt2">
                     </div>
-                    <div style="flex:1; min-width: 0;">
+                    <div>
                         <label>Escala Dele</label>
-                        <select id="t-esc2" style="padding: 16px 8px;">
+                        <select id="t-esc2">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
