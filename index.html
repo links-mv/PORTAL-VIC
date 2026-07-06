@@ -4,56 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal VIC | VLI</title>
-    
+
     <meta name="theme-color" content="#0085B2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    
+
     <link rel="icon" type="image/png" sizes="192x192" href="logo-pwa.png">
     <link rel="apple-touch-icon" sizes="192x192" href="logo-pwa.png">
     <link rel="manifest" href="./manifest.json">
 
     <style>
-        :root { 
+        :root {
             --vli-azul: #0085B2;
             --vli-azul-escuro: #005f83;
             --vli-laranja: #F37021;
-            --vli-verde: #24b34b; 
-            --vli-erro: #e13d4b; 
+            --vli-verde: #24b34b;
+            --vli-erro: #e13d4b;
             --radius-lg: 20px;
-            --radius-md: 14px; 
+            --radius-md: 14px;
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
             --shadow-md: 0 10px 25px rgba(0,0,0,0.15);
         }
 
-        * { 
-            box-sizing: border-box; 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-            color: #FFFFFF; 
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            color: #FFFFFF;
         }
 
-        body { 
-            background: var(--vli-azul-escuro); 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh; 
+        body {
+            background: var(--vli-azul-escuro);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        .container { 
-            width: 100%; 
-            max-width: 450px; 
-            background: var(--vli-azul); 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 0 40px rgba(0,0,0,0.3); 
-            z-index: 2; 
-            position: relative; 
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--vli-azul);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+            z-index: 2;
+            position: relative;
         }
-        
+
         .pwa-banner { display: none; background: #ffffff; padding: 16px; margin: 20px 20px 0 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border-left: 5px solid var(--vli-laranja); animation: fadeIn 0.5s ease; }
         .pwa-banner p { color: #1E293B; margin: 0 0 12px 0; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.5; }
         .pwa-banner p span { color: #64748B; font-size: 12px; display: block; font-weight: 400; margin-top: 4px;}
@@ -64,36 +64,38 @@
         .logo { width: 90px; display: block; }
         .header-title { font-weight: 800; letter-spacing: 1.5px; font-size: 20px; text-transform: uppercase; opacity: 0.95; }
         .user-pill { background: rgba(255, 255, 255, 0.1); margin: 15px 28px 0; padding: 14px 20px; border-radius: var(--radius-md); font-size: 14px; text-align: center; display: none; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); }
-        
+
         .content { padding: 32px 28px; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
-        
+
         .step { display: none; width: 100%; }
         .step.active { display: flex; flex-direction: column; gap: 15px; animation: fadeIn 0.4s ease-out; }
-        
         .step.active > div { margin-bottom: 5px; }
 
+        /* Classes reutilizáveis para formularios (evita repetir o mesmo style inline em cada bloco) */
+        .form-col { display: flex; flex-direction: column; gap: 20px; }
+        .list-col { display: flex; flex-direction: column; gap: 12px; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         h3 { font-weight: 700; font-size: 22px; margin: 0 0 10px 0; text-align: center; }
         label { display: block; font-weight: 700; margin: 0 0 8px 2px; font-size: 11px; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.8px; }
-        
+
         /* CORREÇÃO DO BUG DO IOS: min-width: 0 e box-sizing garantem que o WebKit obedeça a grid */
-        input, select, textarea { 
-            width: 100%; 
-            min-width: 0; 
+        input, select, textarea {
+            width: 100%;
+            min-width: 0;
             box-sizing: border-box;
-            padding: 16px; 
-            border: none; 
-            border-radius: var(--radius-md); 
-            font-size: 15px; 
-            background: #fff; 
-            color: #1E293B; 
-            outline: none; 
-            transition: all 0.25s ease; 
+            padding: 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            background: #fff;
+            color: #1E293B;
+            outline: none;
+            transition: all 0.25s ease;
         }
         input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
 
-        /* Ajuste fino para os seletores de data/hora no iOS não vazarem */
         input[type="date"], input[type="time"] {
             font-size: 14px;
             padding: 16px 10px;
@@ -112,22 +114,28 @@
             flex-direction: column;
             min-width: 0;
         }
-        
+
         .btn { width: 100%; padding: 18px; border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s ease; display: inline-flex; justify-content: center; align-items: center; margin-top: 10px; }
         .btn:active { transform: scale(0.98); opacity: 0.95; }
         .btn-orange { background: var(--vli-laranja); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .btn-back { background: transparent; color: white; font-size: 12px; border: 1.5px solid rgba(255,255,255,0.3); }
-        
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
         .menu-card { background: #fff; border: none; padding: 26px 16px; border-radius: var(--radius-md); cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; transition: all 0.25s ease; box-shadow: var(--shadow-sm); }
         .menu-card b { font-weight: 700; font-size: 14px; color: #1E293B; }
-        
+
         .cart-item { background: #fff; padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--vli-laranja); box-shadow: var(--shadow-sm); margin-bottom: 10px; }
         .info-box { background: #fff; padding: 20px; border-radius: var(--radius-md); color: #1E293B; font-size: 14px; line-height: 1.6; margin-top: 10px; }
         .watermark { text-align: center; padding: 40px 0 25px; font-size: 10px; font-weight: 600; color: rgba(255, 255, 255, 0.35); text-transform: uppercase; letter-spacing: 1px; pointer-events: none; margin-top: auto; }
         #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,133,178,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .spinner { border: 3px solid rgba(255,255,255,0.2); border-top: 3px solid #fff; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.7s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hist-item { background: #fff; padding: 16px; border-radius: var(--radius-md); font-size: 13px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 6px; }
+        .hist-item b { color: #1E293B; }
+        .hist-item span { color: #64748B; line-height: 1.4; }
+        .empty-msg { font-size: 13px; color: rgba(255,255,255,0.8); text-align: center; padding: 20px 0; }
     </style>
 </head>
 <body>
@@ -144,7 +152,7 @@
         </div>
         <div class="header-title">Portal VIC</div>
     </div>
-    
+
     <div id="user-pill" class="user-pill"></div>
 
     <div class="content">
@@ -152,7 +160,7 @@
             <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 0 0 10px 0; font-weight: 500; line-height: 1.5;">Bem-vindo ao Portal VLI - VIC.</p>
             <button class="btn btn-orange" onclick="initSystem()">Acessar Portal</button>
         </div>
-        
+
         <div id="step-login" class="step">
             <h3>Identificação</h3>
             <p style="text-align: center; color: rgba(255,255,255,0.8); font-size: 14px; margin: -10px 0 10px 0;">Insira sua matrícula para continuar.</p>
@@ -175,12 +183,12 @@
             <h3>Solicitação de EPI</h3>
             <label>Selecione o Item</label>
             <select id="select-epi" onchange="updateEpiFields()"></select>
-            <div id="epi-dinamico" style="display: flex; flex-direction: column; gap: 20px;"></div>
+            <div id="epi-dinamico" class="form-col"></div>
             <button class="btn btn-orange" style="background: white; color: var(--vli-laranja);" onclick="addItem()">+ Adicionar à Lista</button>
-            
-            <div id="cart-area" style="display:none; margin-top:15px; border-top:1.5px solid rgba(255,255,255,0.2); padding-top:20px; display: flex; flex-direction: column; gap: 16px;">
+
+            <div id="cart-area" class="form-col" style="display:none; margin-top:15px; border-top:1.5px solid rgba(255,255,255,0.2); padding-top:20px;">
                 <label>Itens Selecionados:</label>
-                <div id="cart-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                <div id="cart-list" class="list-col"></div>
                 <button class="btn btn-orange" onclick="sendEPI()">Finalizar Pedido</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
@@ -188,7 +196,7 @@
 
         <div id="step-desvio" class="step">
             <h3>Relatar Desvio</h3>
-            <div id="desvio-form" style="display: flex; flex-direction: column; gap: 20px;">
+            <div id="desvio-form" class="form-col">
                 <label>Local da Ocorrência</label>
                 <select id="d-local">
                     <option>Pátio de Cima</option>
@@ -197,13 +205,13 @@
                     <option>Oficina</option>
                     <option>Estação</option>
                 </select>
-                
+
                 <label>Quando ocorreu?</label>
-                <select id="d-tempo-tipo" onchange="document.getElementById('div-manual').style.display=(this.value==='manual'?'grid':'none')">
+                <select id="d-tempo-tipo" onchange="$('div-manual').style.display=(this.value==='manual'?'grid':'none')">
                     <option value="agora">Agora</option>
                     <option value="manual">Selecionar Horário</option>
                 </select>
-                
+
                 <div id="div-manual" class="grid-2col" style="display:none;">
                     <div>
                         <label>Data</label>
@@ -214,32 +222,32 @@
                         <input type="time" id="d-hora-manual">
                     </div>
                 </div>
-                
+
                 <label>Descrição do Evento</label>
                 <textarea id="d-desc" rows="4" placeholder="Descreva os detalhes do que aconteceu..."></textarea>
-                
+
                 <button class="btn btn-orange" onclick="sendDesvio()">Registrar Desvio</button>
                 <button class="btn btn-back" onclick="verMeusDesvios()">🔍 Ver Meu Histórico</button>
             </div>
-            
-            <div id="desvio-lista" style="display:none; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 15px; display: flex; flex-direction: column; gap: 16px;">
+
+            <div id="desvio-lista" class="list-col" style="display:none; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 15px;">
                 <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Seu Histórico:</p>
-                <div id="container-historico-desvios" style="display: flex; flex-direction: column; gap: 12px;"></div>
-                <button class="btn btn-back" onclick="document.getElementById('desvio-lista').style.display='none'; document.getElementById('desvio-form').style.display='block';">Voltar ao Formulário</button>
+                <div id="container-historico-desvios" class="list-col"></div>
+                <button class="btn btn-back" onclick="$('desvio-lista').style.display='none'; $('desvio-form').style.display='flex';">Voltar ao Formulário</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
 
         <div id="step-troca" class="step">
             <h3>Troca de Turno</h3>
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                
+            <div class="form-col">
+
                 <div class="info-box" style="padding: 12px 20px;">
                     <b style="color: var(--vli-azul); font-size: 13px;">Seus Dados (Solicitante):</b><br>
                     <span id="t-nome1" style="color: #1E293B; font-weight: 600;"></span><br>
                     <span id="t-mat1" style="color: #64748B; font-size: 13px; font-weight: 600;"></span>
                 </div>
-                
+
                 <div class="grid-2col">
                     <div>
                         <label>Data da Sua Saída</label>
@@ -247,32 +255,18 @@
                     </div>
                     <div>
                         <label>Sua Escala</label>
-                        <select id="t-esc1">
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
+                        <select id="t-esc1"></select>
                     </div>
                 </div>
 
                 <div>
                     <label>Horário</label>
-                    <select id="t-hr1">
-                        <option value="06 às 18">06 às 18</option>
-                        <option value="18 às 06">18 às 06</option>
-                    </select>
+                    <select id="t-hr1"></select>
                 </div>
 
                 <div>
                     <label>Seu Inspetor</label>
-                    <select id="t-insp1">
-                        <option value="Herques">Herques</option>
-                        <option value="Cátia">Cátia</option>
-                        <option value="Gilberto">Gilberto</option>
-                        <option value="Yuri">Yuri</option>
-                        <option value="Rafael Ramos">Rafael Ramos</option>
-                    </select>
+                    <select id="t-insp1"></select>
                 </div>
 
                 <hr style="border: 0; border-top: 1.5px solid rgba(255,255,255,0.2); margin: 5px 0;">
@@ -281,12 +275,12 @@
                     <label>Nome do Colega (Cobertura)</label>
                     <input type="text" id="t-nome2" placeholder="Com quem vai trocar?">
                 </div>
-                
+
                 <div>
                     <label>Matrícula do Colega</label>
                     <input type="tel" id="t-mat2" placeholder="Ex: 12345" maxlength="8">
                 </div>
-                
+
                 <div class="grid-2col">
                     <div>
                         <label>Data da Cobertura</label>
@@ -294,32 +288,18 @@
                     </div>
                     <div>
                         <label>Escala Dele</label>
-                        <select id="t-esc2">
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
+                        <select id="t-esc2"></select>
                     </div>
                 </div>
 
                 <div>
                     <label>Horário</label>
-                    <select id="t-hr2">
-                        <option value="06 às 18">06 às 18</option>
-                        <option value="18 às 06">18 às 06</option>
-                    </select>
+                    <select id="t-hr2"></select>
                 </div>
 
                 <div>
                     <label>Inspetor do Colega</label>
-                    <select id="t-insp2">
-                        <option value="Herques">Herques</option>
-                        <option value="Cátia">Cátia</option>
-                        <option value="Gilberto">Gilberto</option>
-                        <option value="Yuri">Yuri</option>
-                        <option value="Rafael Ramos">Rafael Ramos</option>
-                    </select>
+                    <select id="t-insp2"></select>
                 </div>
 
                 <hr style="border: 0; border-top: 1.5px solid rgba(255,255,255,0.2); margin: 5px 0;">
@@ -334,7 +314,7 @@
                     </p>
                 </div>
 
-                <button class="btn btn-orange" onclick="sendTroca()">Registrar Solicitação</button>
+                <button class="btn btn-orange" id="btn-troca" onclick="sendTroca()">Registrar Solicitação</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
@@ -348,7 +328,7 @@
                     <p style="margin-top:15px; font-size: 12px; font-weight:700; color:var(--vli-erro)">* Para alterações, contate a supervisão.</p>
                 </div>
             </div>
-            <div id="ferias-form-sugestao" style="display: flex; flex-direction: column; gap: 20px;">
+            <div id="ferias-form-sugestao" class="form-col">
                 <label>Quantidade de Dias</label>
                 <select id="f-dias">
                     <option value="30">30 Dias</option>
@@ -368,7 +348,7 @@
             <p style="color:rgba(255,255,255,0.8); font-size: 15px; max-width: 85%; margin: 10px auto 0; line-height: 1.5;">Seus dados foram processados com sucesso no sistema.</p>
             <button class="btn btn-orange" style="margin-top: 20px;" onclick="goToMenu()">Retornar ao Menu</button>
         </div>
-        
+
         <div class="watermark">Desenvolvido por M.Custodio</div>
     </div>
 </div>
@@ -379,22 +359,52 @@
 </div>
 
 <script>
-    const URL_API = 'https://script.google.com/macros/s/AKfycbwC7OkHaWmZn_VwBo_xMyXbvhns1dO5I1b09ge9sqhEhy9sy1UORXIh9iXzrbz4s6y-/exec'; 
+    const URL_API = 'https://script.google.com/macros/s/AKfycbwC7OkHaWmZn_VwBo_xMyXbvhns1dO5I1b09ge9sqhEhy9sy1UORXIh9iXzrbz4s6y-/exec';
+
+    // Atalho curto para document.getElementById, usado dezenas de vezes no arquivo.
+    // Deixa o código mais enxuto e mais rápido de ler/manter.
+    const $ = id => document.getElementById(id);
+
+    // Listas fixas centralizadas: antes ficavam duplicadas em dois <select> no HTML
+    // (um para o solicitante, outro para o colega). Agora existe um só lugar pra editar.
+    const ESCALAS = ['A', 'B', 'C', 'D'];
+    const HORARIOS = ['06 às 18', '18 às 06'];
+    const INSPETORES = ['Herques', 'Cátia', 'Gilberto', 'Yuri', 'Rafael Ramos'];
+
     let db = { funcionarios: {}, epis: [], ferias: {}, desvios: [] };
     let user = { mat: "", nome: "" };
     let cart = [];
     let deferredPrompt;
 
+    function buildOptions(values, defaultValue) {
+        return values.map(v => `<option value="${v}"${v === defaultValue ? ' selected' : ''}>${v}</option>`).join('');
+    }
+
+    function popularSelectsFixos() {
+        const optEsc = buildOptions(ESCALAS);
+        const optHr = buildOptions(HORARIOS, '06 às 18');
+        const optInsp = buildOptions(INSPETORES, 'Herques');
+
+        $('t-esc1').innerHTML = optEsc;
+        $('t-esc2').innerHTML = optEsc;
+        $('t-hr1').innerHTML = optHr;
+        $('t-hr2').innerHTML = optHr;
+        $('t-insp1').innerHTML = optInsp;
+        $('t-insp2').innerHTML = optInsp;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+        popularSelectsFixos();
+
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-        const banner = document.getElementById('install-banner');
-        
+        const banner = $('install-banner');
+
         if (!isStandalone) {
             const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            
+
             if (isIos) {
-                document.getElementById('install-text').innerHTML = 'Adicione o Portal VIC à tela inicial <span>Toque no botão de Compartilhar <b style="font-size:15px; color:var(--vli-laranja);">⎋</b> do Safari e escolha "Adicionar à Tela de Início"</span>';
-                document.getElementById('install-button').style.display = 'none';
+                $('install-text').innerHTML = 'Adicione o Portal VIC à tela inicial <span>Toque no botão de Compartilhar <b style="font-size:15px; color:var(--vli-laranja);">⎋</b> do Safari e escolha "Adicionar à Tela de Início"</span>';
+                $('install-button').style.display = 'none';
                 banner.style.display = 'block';
             } else {
                 window.addEventListener('beforeinstallprompt', (e) => {
@@ -405,8 +415,8 @@
 
                 setTimeout(() => {
                     if (!deferredPrompt && banner.style.display !== 'block') {
-                        document.getElementById('install-text').innerHTML = 'Instale o Portal VIC no seu Android <span>Toque nos 3 pontinhos <b style="font-size:16px; color:var(--vli-laranja);">⋮</b> do navegador e selecione "Instalar aplicativo" ou "Adicionar à tela inicial"</span>';
-                        document.getElementById('install-button').style.display = 'none';
+                        $('install-text').innerHTML = 'Instale o Portal VIC no seu Android <span>Toque nos 3 pontinhos <b style="font-size:16px; color:var(--vli-laranja);">⋮</b> do navegador e selecione "Instalar aplicativo" ou "Adicionar à tela inicial"</span>';
+                        $('install-button').style.display = 'none';
                         banner.style.display = 'block';
                     }
                 }, 2000);
@@ -415,7 +425,7 @@
 
         const savedMat = localStorage.getItem('vic_user_mat');
         const savedNome = localStorage.getItem('vic_user_nome');
-        
+
         if (savedMat && savedNome) {
             initSystem();
         }
@@ -428,69 +438,80 @@
                 if (choiceResult.outcome === 'accepted') {
                     console.log('Usuário aceitou a instalação.');
                 }
-                document.getElementById('install-banner').style.display = 'none';
+                $('install-banner').style.display = 'none';
                 deferredPrompt = null;
             });
         }
     }
 
     async function initSystem() {
+        if (!navigator.onLine) {
+            alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+            return;
+        }
         showLoad("Sincronizando Dados...");
         try {
             const r = await fetch(URL_API);
             const json = await r.json();
             db = json.dados;
-            if (!db.desvios) db.desvios = []; 
-            const sel = document.getElementById('select-epi');
-            sel.innerHTML = '<option value="">Selecione o EPI...</option>';
-            db.epis.forEach(e => sel.innerHTML += `<option value="${e.nome}">${e.nome}</option>`);
-            
+            if (!db.desvios) db.desvios = [];
+
+            const sel = $('select-epi');
+            const opts = ['<option value="">Selecione o EPI...</option>'];
+            db.epis.forEach(e => opts.push(`<option value="${e.nome}">${e.nome}</option>`));
+            sel.innerHTML = opts.join('');
+
             const savedMat = localStorage.getItem('vic_user_mat');
             const savedNome = localStorage.getItem('vic_user_nome');
-            
+
             if (savedMat && savedNome) {
                 user = { mat: savedMat, nome: savedNome };
                 exibirSaudacao();
                 hideLoad();
                 goTo('step-menu');
             } else {
-                hideLoad(); 
+                hideLoad();
                 goTo('step-login');
             }
-        } catch (e) { alert("Erro de conexão com o servidor corporativo."); hideLoad(); }
+        } catch (e) {
+            hideLoad();
+            alert("Erro ao carregar os dados do servidor corporativo. Tente novamente em instantes.");
+        }
     }
-    
+
     function exibirSaudacao() {
         const hr = new Date().getHours();
         let saudacao = "Boa noite";
         if (hr >= 5 && hr < 12) saudacao = "Bom dia";
         else if (hr >= 12 && hr < 18) saudacao = "Boa tarde";
-        
+
         const primeiroNome = user.nome.split(' ')[0];
-        
-        document.getElementById('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
-        document.getElementById('user-pill').style.display = "block";
-        
-        if(document.getElementById('t-nome1')) {
-            document.getElementById('t-nome1').innerText = user.nome;
-            document.getElementById('t-mat1').innerText = "Matrícula: " + user.mat;
+
+        $('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
+        $('user-pill').style.display = "block";
+
+        if ($('t-nome1')) {
+            $('t-nome1').innerText = user.nome;
+            $('t-mat1').innerText = "Matrícula: " + user.mat;
         }
     }
 
     function handleLogin() {
-        const m = document.getElementById('input-mat').value.trim();
+        const m = $('input-mat').value.trim();
         const func = db.funcionarios[m] || db.funcionarios[parseInt(m)];
         if (func) {
             user = { mat: m, nome: func };
-            
+
             localStorage.setItem('vic_user_mat', user.mat);
             localStorage.setItem('vic_user_nome', user.nome);
-            
+
             exibirSaudacao();
             goTo('step-menu');
-        } else { alert("Matrícula não localizada na base de dados."); }
+        } else {
+            alert("Matrícula não localizada na base de dados.");
+        }
     }
-    
+
     function fazerLogout() {
         localStorage.removeItem('vic_user_mat');
         localStorage.removeItem('vic_user_nome');
@@ -498,42 +519,38 @@
     }
 
     function updateEpiFields() {
-        const item = db.epis.find(i => i.nome === document.getElementById('select-epi').value);
-        const area = document.getElementById('epi-dinamico');
-        area.innerHTML = "";
-        if (item && item.label) {
-            let html = `<div><label>${item.label}</label><select id="o1" style="margin-top:16px;">`;
-            String(item.opcoes).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
-            html += `</select></div>`;
-            if(item.label2 && item.opcoes2) {
-                html += `<div><label>${item.label2}</label><select id="o2" style="margin-top:16px;">`;
-                String(item.opcoes2).split(';').forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
-                html += `</select></div>`;
-            }
-            area.innerHTML = html;
+        const item = db.epis.find(i => i.nome === $('select-epi').value);
+        const area = $('epi-dinamico');
+        if (!item || !item.label) { area.innerHTML = ""; return; }
+
+        const partes = [`<div><label>${item.label}</label><select id="o1" style="margin-top:16px;">${
+            String(item.opcoes).split(';').filter(o => o.trim()).map(o => `<option value="${o.trim()}">${o.trim()}</option>`).join('')
+        }</select></div>`];
+
+        if (item.label2 && item.opcoes2) {
+            partes.push(`<div><label>${item.label2}</label><select id="o2" style="margin-top:16px;">${
+                String(item.opcoes2).split(';').filter(o => o.trim()).map(o => `<option value="${o.trim()}">${o.trim()}</option>`).join('')
+            }</select></div>`);
         }
+
+        area.innerHTML = partes.join('');
     }
 
     function addItem() {
-        const sel = document.getElementById('select-epi');
-        if(!sel.value) return;
-        const val1 = document.getElementById('o1') ? document.getElementById('o1').value : "";
-        const val2 = document.getElementById('o2') ? document.getElementById('o2').value : "";
-        const detStr = `${val1} ${val2}`.trim();
-        cart.push({ n: sel.value, det: detStr, o1: val1, o2: val2 });
-        sel.value = ""; 
-        document.getElementById('epi-dinamico').innerHTML = "";
+        const sel = $('select-epi');
+        if (!sel.value) return;
+        const val1 = $('o1') ? $('o1').value : "";
+        const val2 = $('o2') ? $('o2').value : "";
+        cart.push({ n: sel.value, det: `${val1} ${val2}`.trim(), o1: val1, o2: val2 });
+        sel.value = "";
+        $('epi-dinamico').innerHTML = "";
         renderCart();
     }
 
     function renderCart() {
-        const area = document.getElementById('cart-area');
-        if(cart.length) {
-            area.style.setProperty('display', 'flex', 'important');
-        } else {
-            area.style.display = 'none';
-        }
-        document.getElementById('cart-list').innerHTML = cart.map((it, i) => `
+        const area = $('cart-area');
+        area.style.display = cart.length ? 'flex' : 'none';
+        $('cart-list').innerHTML = cart.map((it, i) => `
             <div class="cart-item">
                 <div><b style="color:var(--vli-azul); font-size:15px;">${it.n}</b><br><small style="color:#64748B;">${it.det}</small></div>
                 <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;padding:4px;">✕</button>
@@ -541,63 +558,87 @@
     }
 
     async function sendEPI() {
+        if (!cart.length) return;
+        if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
         showLoad("Processando Pedido...");
         try {
             for (const it of cart) {
                 await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI"+Date.now()
+                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI" + Date.now()
                 }) });
             }
-            cart = []; 
+            cart = [];
             hideLoad(); goTo('step-sucesso');
         } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
 
     async function sendDesvio() {
-        const desc = document.getElementById('d-desc').value.trim();
-        if(!desc) return alert("Por favor, descreva o desvio.");
+        const desc = $('d-desc').value.trim();
+        if (!desc) return alert("Por favor, descreva o desvio.");
+        if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+
         showLoad("Registrando...");
         let dF = new Date().toLocaleDateString('pt-BR');
-        let hF = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-        if(document.getElementById('d-tempo-tipo').value === 'manual') {
-            dF = document.getElementById('d-data-manual').value.split('-').reverse().join('/');
-            hF = document.getElementById('d-hora-manual').value;
+        let hF = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        if ($('d-tempo-tipo').value === 'manual') {
+            dF = $('d-data-manual').value.split('-').reverse().join('/');
+            hF = $('d-hora-manual').value;
         }
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: document.getElementById('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
+                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: $('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
             }) });
-            document.getElementById('d-desc').value = ""; 
+            $('d-desc').value = "";
             hideLoad(); goTo('step-sucesso');
-        } catch(e) { hideLoad(); alert("Erro ao registrar desvio."); }
+        } catch (e) { hideLoad(); alert("Erro ao registrar desvio."); }
+    }
+
+    // Validação leve, só pra evitar ida ao servidor com dados incompletos/fora das regras.
+    // Não substitui a conferência final feita pelo Supervisor.
+    function validarTroca(dt1Str, dt2Str) {
+        const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
+        const dt1 = new Date(dt1Str + 'T00:00:00');
+        const dt2 = new Date(dt2Str + 'T00:00:00');
+
+        const diffDias = Math.round((dt1 - hoje) / 86400000);
+        if (diffDias < 15) return "A troca deve ser solicitada com no mínimo 15 dias de antecedência.";
+        if (dt1.getFullYear() !== dt2.getFullYear() || dt1.getMonth() !== dt2.getMonth()) {
+            return "A data de saída e a de compensação devem estar dentro do mesmo mês.";
+        }
+        return null;
     }
 
     async function sendTroca() {
-        const nome2 = document.getElementById('t-nome2').value.trim();
-        const mat2 = document.getElementById('t-mat2').value.trim();
-        
-        const dt1 = document.getElementById('t-dt1').value;
-        const hr1 = document.getElementById('t-hr1').value;
-        const esc1 = document.getElementById('t-esc1').value;
-        const insp1 = document.getElementById('t-insp1').value;
+        const nome2 = $('t-nome2').value.trim();
+        const mat2 = $('t-mat2').value.trim();
 
-        const dt2 = document.getElementById('t-dt2').value;
-        const hr2 = document.getElementById('t-hr2').value;
-        const esc2 = document.getElementById('t-esc2').value;
-        const insp2 = document.getElementById('t-insp2').value;
+        const dt1 = $('t-dt1').value;
+        const hr1 = $('t-hr1').value;
+        const esc1 = $('t-esc1').value;
+        const insp1 = $('t-insp1').value;
 
-        if(!nome2 || !mat2 || !dt1 || !dt2) {
+        const dt2 = $('t-dt2').value;
+        const hr2 = $('t-hr2').value;
+        const esc2 = $('t-esc2').value;
+        const insp2 = $('t-insp2').value;
+
+        if (!nome2 || !mat2 || !dt1 || !dt2) {
             return alert("Por favor, preencha todas as datas e as matrículas.");
         }
 
+        const erro = validarTroca(dt1, dt2);
+        if (erro) return alert(erro);
+
+        if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+
         showLoad("Registrando Troca...");
-        
-        let d1F = dt1.split('-').reverse().join('/');
-        let d2F = dt2.split('-').reverse().join('/');
+
+        const d1F = dt1.split('-').reverse().join('/');
+        const d2F = dt2.split('-').reverse().join('/');
 
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "TROCA", 
+                tipo: "TROCA",
                 matricula: user.mat,
                 solicitante1: user.nome,
                 matricula2: mat2,
@@ -610,78 +651,79 @@
                 horario2: hr2,
                 escala2: esc2,
                 inspetor2: insp2,
-                supervisor: "" 
+                supervisor: ""
             }) });
-            
-            document.getElementById('t-nome2').value = "";
-            document.getElementById('t-mat2').value = "";
-            document.getElementById('t-dt1').value = "";
-            document.getElementById('t-hr1').value = "06 às 18";
-            document.getElementById('t-dt2').value = "";
-            document.getElementById('t-hr2').value = "06 às 18";
-            document.getElementById('t-insp1').value = "Herques";
-            document.getElementById('t-insp2').value = "Herques";
 
-            hideLoad(); 
+            $('t-nome2').value = "";
+            $('t-mat2').value = "";
+            $('t-dt1').value = "";
+            $('t-dt2').value = "";
+            popularSelectsFixos();
+
+            hideLoad();
             goTo('step-sucesso');
-        } catch(e) { 
-            hideLoad(); 
-            alert("Erro ao registrar a troca de turno."); 
+        } catch (e) {
+            hideLoad();
+            alert("Erro ao registrar a troca de turno.");
         }
     }
 
     function verMeusDesvios() {
-        document.getElementById('desvio-form').style.display = 'none';
-        document.getElementById('desvio-lista').style.setProperty('display', 'flex', 'important');
-        const container = document.getElementById('container-historico-desvios');
-        container.innerHTML = "";
+        $('desvio-form').style.display = 'none';
+        $('desvio-lista').style.display = 'flex';
         const meusDesvios = (db.desvios || []).filter(d => String(d.matricula) === String(user.mat));
-        if (meusDesvios.length > 0) {
-            [...meusDesvios].reverse().forEach(d => {
-                container.innerHTML += `<div style="background:#fff; padding:16px; border-radius:var(--radius-md); font-size:13px; box-shadow: var(--shadow-sm); display:flex; flex-direction:column; gap:6px;">
-                    <b style="color:#1E293B;">📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b>
-                    <span style="color:#64748B; line-height:1.4;">${d.descricao}</span>
-                </div>`;
-            });
-        } else { container.innerHTML = "<p style='font-size:13px; color:rgba(255,255,255,0.8); text-align:center; padding: 20px 0;'>Nenhum registro encontrado no seu histórico.</p>"; }
+
+        $('container-historico-desvios').innerHTML = meusDesvios.length
+            ? [...meusDesvios].reverse().map(d => `
+                <div class="hist-item">
+                    <b>📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b>
+                    <span>${d.descricao}</span>
+                </div>`).join('')
+            : "<p class='empty-msg'>Nenhum registro encontrado no seu histórico.</p>";
     }
 
     function checkFerias() {
         const reg = db.ferias[user.mat];
         if (reg) {
-            document.getElementById('ferias-view-agendada').style.display = 'block';
-            document.getElementById('ferias-form-sugestao').style.display = 'none';
-            const formatar = (v) => { if (!v) return ""; const p = v.split('T')[0].split('-'); return p.length >= 2 ? p[1] + "/" + p[0] : v; };
+            $('ferias-view-agendada').style.display = 'block';
+            $('ferias-form-sugestao').style.display = 'none';
+            const formatar = (v) => {
+                if (!v) return "";
+                const p = v.split('T')[0].split('-');
+                return p.length >= 2 ? p[1] + "/" + p[0] : v;
+            };
             let h = `<b>Período Solicitado:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
             if (reg.op2) h += `<br><b>2ª Opção:</b> ${formatar(reg.op2)}`;
             if (reg.op3) h += `<br><b>3ª Opção:</b> ${formatar(reg.op3)}`;
-            document.getElementById('detalhe-ferias').innerHTML = h;
+            $('detalhe-ferias').innerHTML = h;
         } else {
-            document.getElementById('ferias-view-agendada').style.display = 'none';
-            document.getElementById('ferias-form-sugestao').style.setProperty('display', 'flex', 'important');
+            $('ferias-view-agendada').style.display = 'none';
+            $('ferias-form-sugestao').style.display = 'flex';
         }
         goTo('step-ferias');
     }
 
     async function sendFerias() {
-        const op1 = document.getElementById('f-op1').value;
-        if(!op1) return alert("Selecione obrigatoriamente a 1ª opção de data.");
+        const op1 = $('f-op1').value;
+        if (!op1) return alert("Selecione obrigatoriamente a 1ª opção de data.");
+        if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+
         showLoad("Enviando...");
         try {
             await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: document.getElementById('f-dias').value, op1: op1, op2: document.getElementById('f-op2').value, op3: document.getElementById('f-op3').value
+                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: $('f-dias').value, op1: op1, op2: $('f-op2').value, op3: $('f-op3').value
             }) });
             hideLoad(); goTo('step-sucesso');
-        } catch(e) { hideLoad(); alert("Erro ao enviar solicitação."); }
+        } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
     }
 
-    function showLoad(t) { document.getElementById('loading-text').innerText = t; document.getElementById('loading-overlay').style.display = 'flex'; }
-    function hideLoad() { document.getElementById('loading-overlay').style.display = 'none'; }
-    
-    function goTo(id) { 
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active')); 
-        document.getElementById(id).classList.add('active'); 
-        window.scrollTo(0,0); 
+    function showLoad(t) { $('loading-text').innerText = t; $('loading-overlay').style.display = 'flex'; }
+    function hideLoad() { $('loading-overlay').style.display = 'none'; }
+
+    function goTo(id) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        $(id).classList.add('active');
+        window.scrollTo(0, 0);
     }
     function goToMenu() { goTo('step-menu'); }
 
