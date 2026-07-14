@@ -1,9 +1,13 @@
 // Portal VIC - Service Worker
-// v2: cache-first com atualização em segundo plano (stale-while-revalidate)
+// v3: cache-first com atualização em segundo plano (stale-while-revalidate)
 // para os arquivos estáticos, e bypass total para a API (Google Apps Script)
 // para nunca servir dados de funcionários/EPI/férias desatualizados.
+//
+// Mudança desta versão: o cache inicial (install) agora tolera falha de um
+// arquivo individual (ex: logo-pwa.png ausente no deploy) sem derrubar a
+// instalação inteira do Service Worker.
 
-const CACHE_NAME = 'portal-vic-v2';
+const CACHE_NAME = 'portal-vic-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -14,7 +18,13 @@ const ASSETS = [
 self.addEventListener('install', e => {
   self.skipWaiting(); // aplica a versão nova assim que possível, sem esperar todas as abas fecharem
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(
+        ASSETS.map(url =>
+          cache.add(url).catch(err => console.warn('SW: falha ao cachear', url, err))
+        )
+      )
+    )
   );
 });
 
