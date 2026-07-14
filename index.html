@@ -375,6 +375,17 @@
     let user = { mat: "", nome: "" };
     let cart = [];
     let deferredPrompt;
+    let enviando = false; // trava simples pra evitar duplo clique/duplo envio em qualquer formulário
+
+    // Escapa qualquer texto antes de jogar em innerHTML. Tudo que vem do banco
+    // (descrição de desvio, nomes, opções de EPI) passa por aqui antes de ser exibido,
+    // pra evitar que alguém injete <script>/<img onerror> num campo de texto livre
+    // e isso rode na tela de quem visualizar depois (histórico, saudação, etc).
+    function esc(str) {
+        return String(str ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+    }
 
     function buildOptions(values, defaultValue) {
         return values.map(v => `<option value="${v}"${v === defaultValue ? ' selected' : ''}>${v}</option>`).join('');
@@ -458,18 +469,27 @@
 
             const sel = $('select-epi');
             const opts = ['<option value="">Selecione o EPI...</option>'];
-            db.epis.forEach(e => opts.push(`<option value="${e.nome}">${e.nome}</option>`));
+            db.epis.forEach(e => opts.push(`<option value="${esc(e.nome)}">${esc(e.nome)}</option>`));
             sel.innerHTML = opts.join('');
 
             const savedMat = localStorage.getItem('vic_user_mat');
             const savedNome = localStorage.getItem('vic_user_nome');
 
-            if (savedMat && savedNome) {
+            // Revalida a matrícula salva contra a base atualizada: se o funcionário
+            // não existe mais (desligado, matrícula alterada), força novo login
+            // em vez de confiar cegamente no que estava no localStorage.
+            const aindaValido = savedMat && (db.funcionarios[savedMat] || db.funcionarios[parseInt(savedMat)]);
+
+            if (savedMat && savedNome && aindaValido) {
                 user = { mat: savedMat, nome: savedNome };
                 exibirSaudacao();
                 hideLoad();
                 goTo('step-menu');
             } else {
+                if (savedMat && !aindaValido) {
+                    localStorage.removeItem('vic_user_mat');
+                    localStorage.removeItem('vic_user_nome');
+                }
                 hideLoad();
                 goTo('step-login');
             }
@@ -487,7 +507,7 @@
 
         const primeiroNome = user.nome.split(' ')[0];
 
-        $('user-pill').innerHTML = `👤 ${saudacao}, <b>${primeiroNome}</b>`;
+        $('user-pill').innerHTML = `👤 ${saudacao}, <b>${esc(primeiroNome)}</b>`;
         $('user-pill').style.display = "block";
 
         if ($('t-nome1')) {
@@ -523,13 +543,13 @@
         const area = $('epi-dinamico');
         if (!item || !item.label) { area.innerHTML = ""; return; }
 
-        const partes = [`<div><label>${item.label}</label><select id="o1" style="margin-top:16px;">${
-            String(item.opcoes).split(';').filter(o => o.trim()).map(o => `<option value="${o.trim()}">${o.trim()}</option>`).join('')
+        const partes = [`<div><label>${esc(item.label)}</label><select id="o1" style="margin-top:16px;">${
+            String(item.opcoes).split(';').filter(o => o.trim()).map(o => `<option value="${esc(o.trim())}">${esc(o.trim())}</option>`).join('')
         }</select></div>`];
 
         if (item.label2 && item.opcoes2) {
-            partes.push(`<div><label>${item.label2}</label><select id="o2" style="margin-top:16px;">${
-                String(item.opcoes2).split(';').filter(o => o.trim()).map(o => `<option value="${o.trim()}">${o.trim()}</option>`).join('')
+            partes.push(`<div><label>${esc(item.label2)}</label><select id="o2" style="margin-top:16px;">${
+                String(item.opcoes2).split(';').filter(o => o.trim()).map(o => `<option value="${esc(o.trim())}">${esc(o.trim())}</option>`).join('')
             }</select></div>`);
         }
 
@@ -552,7 +572,7 @@
         area.style.display = cart.length ? 'flex' : 'none';
         $('cart-list').innerHTML = cart.map((it, i) => `
             <div class="cart-item">
-                <div><b style="color:var(--vli-azul); font-size:15px;">${it.n}</b><br><small style="color:#64748B;">${it.det}</small></div>
+                <div><b style="color:var(--vli-azul); font-size:15px;">${esc(it.n)}</b><br><small style="color:#64748B;">${esc(it.det)}</small></div>
                 <button onclick="cart.splice(${i},1);renderCart()" style="border:none;background:none;color:var(--vli-erro);font-size:18px;cursor:pointer;padding:4px;">✕</button>
             </div>`).join('');
     }
@@ -560,22 +580,39 @@
     async function sendEPI() {
         if (!cart.length) return;
         if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+        if (enviando) return; // evita disparar o pedido duas vezes com clique duplo
+        enviando = true;
+
         showLoad("Processando Pedido...");
-        try {
-            for (const it of cart) {
+        const falhas = [];
+        for (const it of cart) {
+            try {
                 await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                     tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI" + Date.now()
                 }) });
+            } catch (e) {
+                falhas.push(it); // guarda o item que falhou por queda de conexão, em vez de descartar
             }
+        }
+        hideLoad();
+        enviando = false;
+
+        if (falhas.length) {
+            cart = falhas;
+            renderCart();
+            alert(`${falhas.length} item(ns) não foram enviados por falha de conexão e continuam na sua lista. Tente novamente.`);
+        } else {
             cart = [];
-            hideLoad(); goTo('step-sucesso');
-        } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
+            goTo('step-sucesso');
+        }
     }
 
     async function sendDesvio() {
         const desc = $('d-desc').value.trim();
         if (!desc) return alert("Por favor, descreva o desvio.");
         if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+        if (enviando) return; // evita clique duplo enviar o mesmo desvio duas vezes
+        enviando = true;
 
         showLoad("Registrando...");
         let dF = new Date().toLocaleDateString('pt-BR');
@@ -590,7 +627,12 @@
             }) });
             $('d-desc').value = "";
             hideLoad(); goTo('step-sucesso');
-        } catch (e) { hideLoad(); alert("Erro ao registrar desvio."); }
+        } catch (e) {
+            hideLoad();
+            alert("Erro ao registrar desvio. Verifique sua conexão e tente novamente.");
+        } finally {
+            enviando = false;
+        }
     }
 
     // Validação leve, só pra evitar ida ao servidor com dados incompletos/fora das regras.
@@ -630,6 +672,8 @@
         if (erro) return alert(erro);
 
         if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+        if (enviando) return; // evita registrar a mesma troca duas vezes com clique duplo
+        enviando = true;
 
         showLoad("Registrando Troca...");
 
@@ -664,7 +708,9 @@
             goTo('step-sucesso');
         } catch (e) {
             hideLoad();
-            alert("Erro ao registrar a troca de turno.");
+            alert("Erro ao registrar a troca de turno. Verifique sua conexão e tente novamente.");
+        } finally {
+            enviando = false;
         }
     }
 
@@ -676,8 +722,8 @@
         $('container-historico-desvios').innerHTML = meusDesvios.length
             ? [...meusDesvios].reverse().map(d => `
                 <div class="hist-item">
-                    <b>📅 ${d.dataFato} às ${d.horaFato} - ${d.local}</b>
-                    <span>${d.descricao}</span>
+                    <b>📅 ${esc(d.dataFato)} às ${esc(d.horaFato)} - ${esc(d.local)}</b>
+                    <span>${esc(d.descricao)}</span>
                 </div>`).join('')
             : "<p class='empty-msg'>Nenhum registro encontrado no seu histórico.</p>";
     }
@@ -692,9 +738,9 @@
                 const p = v.split('T')[0].split('-');
                 return p.length >= 2 ? p[1] + "/" + p[0] : v;
             };
-            let h = `<b>Período Solicitado:</b> ${reg.dias} dias<br><br><b>1ª Opção:</b> ${formatar(reg.op1)}`;
-            if (reg.op2) h += `<br><b>2ª Opção:</b> ${formatar(reg.op2)}`;
-            if (reg.op3) h += `<br><b>3ª Opção:</b> ${formatar(reg.op3)}`;
+            let h = `<b>Período Solicitado:</b> ${esc(reg.dias)} dias<br><br><b>1ª Opção:</b> ${esc(formatar(reg.op1))}`;
+            if (reg.op2) h += `<br><b>2ª Opção:</b> ${esc(formatar(reg.op2))}`;
+            if (reg.op3) h += `<br><b>3ª Opção:</b> ${esc(formatar(reg.op3))}`;
             $('detalhe-ferias').innerHTML = h;
         } else {
             $('ferias-view-agendada').style.display = 'none';
@@ -707,6 +753,8 @@
         const op1 = $('f-op1').value;
         if (!op1) return alert("Selecione obrigatoriamente a 1ª opção de data.");
         if (!navigator.onLine) return alert("Sem conexão com a internet. Verifique sua rede e tente novamente.");
+        if (enviando) return; // evita enviar a mesma sugestão de férias duas vezes
+        enviando = true;
 
         showLoad("Enviando...");
         try {
@@ -714,11 +762,23 @@
                 tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: $('f-dias').value, op1: op1, op2: $('f-op2').value, op3: $('f-op3').value
             }) });
             hideLoad(); goTo('step-sucesso');
-        } catch (e) { hideLoad(); alert("Erro ao enviar solicitação."); }
+        } catch (e) {
+            hideLoad();
+            alert("Erro ao enviar solicitação. Verifique sua conexão e tente novamente.");
+        } finally {
+            enviando = false;
+        }
     }
 
-    function showLoad(t) { $('loading-text').innerText = t; $('loading-overlay').style.display = 'flex'; }
-    function hideLoad() { $('loading-overlay').style.display = 'none'; }
+    function showLoad(t) {
+        $('loading-text').innerText = t;
+        $('loading-overlay').style.display = 'flex';
+        document.querySelectorAll('.btn').forEach(b => b.disabled = true);
+    }
+    function hideLoad() {
+        $('loading-overlay').style.display = 'none';
+        document.querySelectorAll('.btn').forEach(b => b.disabled = false);
+    }
 
     function goTo(id) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
