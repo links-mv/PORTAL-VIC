@@ -96,6 +96,14 @@
         }
         input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); }
 
+        /* Corrige texto invisível nas opções dos <select> (herdavam branco do seletor "*" e ficavam
+           brancas sobre o fundo branco da lista suspensa nativa) */
+        option { color: #1E293B; }
+
+        /* Corrige os títulos em negrito da tela "Minhas Férias" que também herdavam branco
+           e ficavam invisíveis sobre o fundo branco do info-box */
+        #detalhe-ferias b { color: var(--vli-azul); }
+
         input[type="date"], input[type="time"] {
             font-size: 14px;
             padding: 16px 10px;
@@ -136,6 +144,28 @@
         .hist-item b { color: #1E293B; }
         .hist-item span { color: #64748B; line-height: 1.4; }
         .empty-msg { font-size: 13px; color: rgba(255,255,255,0.8); text-align: center; padding: 20px 0; }
+
+        /* ===== LAYOUT DESKTOP =====
+           Em telas largas (PC/notebook), o app passa a ser exibido como um "cartão" de
+           celular centralizado, com moldura e sombra — em vez de uma faixa esticada
+           colada do topo até o rodapé da tela. Nada aqui altera o comportamento em
+           celulares (essas regras só valem a partir de 700px de largura). */
+        @media (min-width: 700px) {
+            body {
+                align-items: center;
+                padding: 40px 20px;
+                background:
+                    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.06), transparent 45%),
+                    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05), transparent 45%),
+                    var(--vli-azul-escuro);
+            }
+            .container {
+                min-height: min(860px, calc(100vh - 80px));
+                max-height: calc(100vh - 80px);
+                border-radius: 32px;
+                overflow-y: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -240,7 +270,7 @@
 
         <div id="step-troca" class="step">
             <h3>Troca de Turno</h3>
-            <div class="form-col">
+            <div id="troca-form" class="form-col">
 
                 <div class="info-box" style="padding: 12px 20px;">
                     <b style="color: var(--vli-azul); font-size: 13px;">Seus Dados (Solicitante):</b><br>
@@ -315,6 +345,13 @@
                 </div>
 
                 <button class="btn btn-orange" id="btn-troca" onclick="sendTroca()">Registrar Solicitação</button>
+                <button class="btn btn-back" onclick="verMinhasTrocas()">🔍 Ver Minhas Solicitações</button>
+            </div>
+
+            <div id="troca-lista" class="list-col" style="display:none; border-top: 1.5px solid rgba(255,255,255,0.2); padding-top: 15px;">
+                <p style="font-size:11px; color:rgba(255,255,255,0.8); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Suas Solicitações:</p>
+                <div id="container-historico-trocas" class="list-col"></div>
+                <button class="btn btn-back" onclick="$('troca-lista').style.display='none'; $('troca-form').style.display='flex';">Voltar ao Formulário</button>
             </div>
             <button class="btn btn-back" onclick="goToMenu()">Voltar ao Menu</button>
         </div>
@@ -359,7 +396,7 @@
 </div>
 
 <script>
-    const URL_API = 'https://script.google.com/macros/s/AKfycbwC7OkHaWmZn_VwBo_xMyXbvhns1dO5I1b09ge9sqhEhy9sy1UORXIh9iXzrbz4s6y-/exec';
+    const URL_API = 'https://script.google.com/macros/s/AKfycbwJkRKk8PbLb0kMJ3nbN1s6k2I5ftZk3nBZ4mjOGPQ5VP8GSL2V6m7pJ_0R80CX2w_6/exec';
 
     // Atalho curto para document.getElementById, usado dezenas de vezes no arquivo.
     // Deixa o código mais enxuto e mais rápido de ler/manter.
@@ -389,6 +426,12 @@
 
     function buildOptions(values, defaultValue) {
         return values.map(v => `<option value="${v}"${v === defaultValue ? ' selected' : ''}>${v}</option>`).join('');
+    }
+
+    // Ponto único de envio ao Apps Script. Todas as funções sendX só montam o payload
+    // e chamam isto, em vez de repetir o mesmo objeto fetch() quatro vezes no arquivo.
+    function postToApi(tipo, payload) {
+        return fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipo, ...payload }) });
     }
 
     function popularSelectsFixos() {
@@ -587,9 +630,7 @@
         const falhas = [];
         for (const it of cart) {
             try {
-                await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                    tipo: "EPI", funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI" + Date.now()
-                }) });
+                await postToApi("EPI", { funcionario: user.nome, matricula: user.mat, epi: it.n, detalhes: it.det, opcao: it.o1, opcao2: it.o2, protocolo: "EPI" + Date.now() });
             } catch (e) {
                 falhas.push(it); // guarda o item que falhou por queda de conexão, em vez de descartar
             }
@@ -622,9 +663,7 @@
             hF = $('d-hora-manual').value;
         }
         try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "DESVIO", nome: user.nome, matricula: user.mat, local: $('d-local').value, descricao: desc, dataFato: dF, horaFato: hF
-            }) });
+            await postToApi("DESVIO", { nome: user.nome, matricula: user.mat, local: $('d-local').value, descricao: desc, dataFato: dF, horaFato: hF });
             $('d-desc').value = "";
             hideLoad(); goTo('step-sucesso');
         } catch (e) {
@@ -681,8 +720,7 @@
         const d2F = dt2.split('-').reverse().join('/');
 
         try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "TROCA",
+            await postToApi("TROCA", {
                 matricula: user.mat,
                 solicitante1: user.nome,
                 matricula2: mat2,
@@ -696,7 +734,7 @@
                 escala2: esc2,
                 inspetor2: insp2,
                 supervisor: ""
-            }) });
+            });
 
             $('t-nome2').value = "";
             $('t-mat2').value = "";
@@ -712,6 +750,33 @@
         } finally {
             enviando = false;
         }
+    }
+
+    // Monta o status a partir da coluna N (Supervisor) da planilha Trocas:
+    // vazio = pendente, "Sim" = aprovada, "Não"/"Nao" = reprovada.
+    function statusTroca(valor) {
+        const v = String(valor || '').trim().toLowerCase();
+        if (v === 'sim') return { texto: '✅ Aprovada', cor: 'var(--vli-verde)' };
+        if (v === 'não' || v === 'nao') return { texto: '❌ Reprovada', cor: 'var(--vli-erro)' };
+        return { texto: '⏳ Aguardando Aprovação', cor: '#F59E0B' };
+    }
+
+    function verMinhasTrocas() {
+        $('troca-form').style.display = 'none';
+        $('troca-lista').style.display = 'flex';
+        const minhas = (db.trocas || []).filter(t => String(t.matricula1) === String(user.mat));
+
+        $('container-historico-trocas').innerHTML = minhas.length
+            ? [...minhas].reverse().map(t => {
+                const st = statusTroca(t.supervisor);
+                return `
+                <div class="hist-item">
+                    <b>🔄 Troca com ${esc(t.solicitante2)} (Mat. ${esc(t.matricula2)})</b>
+                    <span>Sua saída: ${esc(t.dataTroca)} às ${esc(t.horario1)} • Cobertura: ${esc(t.dataCompensacao)} às ${esc(t.horario2)}</span>
+                    <span style="color:${st.cor}; font-weight:700;">${st.texto}</span>
+                </div>`;
+            }).join('')
+            : "<p class='empty-msg'>Nenhuma solicitação de troca encontrada.</p>";
     }
 
     function verMeusDesvios() {
@@ -758,9 +823,7 @@
 
         showLoad("Enviando...");
         try {
-            await fetch(URL_API, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipo: "FERIAS", nome: user.nome, matricula: user.mat, dias: $('f-dias').value, op1: op1, op2: $('f-op2').value, op3: $('f-op3').value
-            }) });
+            await postToApi("FERIAS", { nome: user.nome, matricula: user.mat, dias: $('f-dias').value, op1: op1, op2: $('f-op2').value, op3: $('f-op3').value });
             hideLoad(); goTo('step-sucesso');
         } catch (e) {
             hideLoad();
