@@ -1,13 +1,17 @@
 // Portal VIC - Service Worker
-// v3: cache-first com atualização em segundo plano (stale-while-revalidate)
-// para os arquivos estáticos, e bypass total para a API (Google Apps Script)
-// para nunca servir dados de funcionários/EPI/férias desatualizados.
+// v4: network-first para os arquivos do próprio app (HTML, manifest, ícone) —
+// ou seja, ele sempre tenta buscar a versão mais nova na rede primeiro, e só
+// usa o que está guardado no cache como reserva se o usuário estiver offline
+// ou a rede falhar. Isso resolve o problema de atualizações publicadas no
+// repositório não "chegarem" pro usuário sem ele precisar limpar os dados de
+// navegação manualmente. Continua com bypass total para a API (Google Apps
+// Script), para nunca servir dados de funcionários/EPI/férias desatualizados.
 //
-// Mudança desta versão: o cache inicial (install) agora tolera falha de um
-// arquivo individual (ex: logo-pwa.png ausente no deploy) sem derrubar a
-// instalação inteira do Service Worker.
+// Versão anterior (v3) usava stale-while-revalidate, que sempre entregava a
+// versão antiga imediatamente e só baixava a nova em segundo plano para a
+// PRÓXIMA visita — por isso a atualização nunca parecia "pegar".
 
-const CACHE_NAME = 'portal-vic-v3';
+const CACHE_NAME = 'portal-vic-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -48,17 +52,17 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Arquivos estáticos locais: responde rápido com o cache, mas já busca
-  // uma versão nova em segundo plano para a próxima vez (stale-while-revalidate).
+  // Arquivos do próprio app (HTML, manifest, ícone): tenta a rede primeiro,
+  // pra sempre pegar a versão mais nova publicada no repositório. Se der
+  // certo, atualiza o cache também (serve de reserva). Só usa o cache
+  // (reserva) se a rede falhar, ou seja, se o usuário estiver offline.
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      const network = fetch(e.request)
-        .then(resp => {
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, resp.clone()));
-          return resp;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(e.request, { cache: 'no-store' })
+      .then(resp => {
+        const copia = resp.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(e.request, copia));
+        return resp;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
